@@ -31,13 +31,24 @@ This helper is used by different "condition"-rules: if - and - or - not - ternar
 
 :bulb: We use this "hack" (helper) to run the check for all kind of conditions.
 
-#### Configuring container interfaces
+- double negative string conditions. e.g. `(string)$foo != \'\'` is the same as `(string)$foo`
+  - https://3v4l.org/oDMie
+- double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`
+  - https://3v4l.org/OWhrc
+- double negative boolean conditions. e.g. `(bool)$foo != false` is the same as `(bool)$foo`
+  - https://3v4l.org/SHoQP
+- double negative null conditions. Use "!==" instead if needed
+  - https://3v4l.org/a4VdC
+- check non-empty string is never empty
+- check non-empty string is always empty
+
+#### Configuration
 
 If you want to configure a list of classes / subclasses that can NOT be used in conditions directly:
 
 e.g.:
-- ok: `if ($valueObject->isValid())`
-- error: `if ($valueObject != '')`
+- ok: `if ($emailValueObject->isValid())`
+- error: `if ($emailValueObject != '')`
 
 ```neon
 parameters:

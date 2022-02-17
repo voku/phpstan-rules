@@ -214,6 +214,34 @@ final class IfConditionHelper {
             }
         }
 
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+            ||
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
+        ) {
+            if (
+                (
+                    $rightType instanceof \PHPStan\Type\Constant\ConstantStringType
+                    &&
+                    $rightType->getValue() === ''
+                    &&
+                    $leftType->isNonEmptyString()->yes()
+                )
+                ||
+                (
+                    $leftType instanceof \PHPStan\Type\Constant\ConstantStringType
+                    &&
+                    $leftType->getValue() === ''
+                    &&
+                    $rightType->isNonEmptyString()->yes()
+                )
+            ) {
+                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
+                    'Non-empty string is always empty.'
+                )->line($cond->getAttribute('startLine'))->build();
+            }
+        }
+
         // -----------------------------------------------------------------------------------------
 
         return $errors;
