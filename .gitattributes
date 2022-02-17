@@ -5,4 +5,5 @@
 /.gitattributes export-ignore
 /.github export-ignore
 /.gitignore export-ignore
+/.whitesource export-ignore
 /phpstan.neon export-ignore
