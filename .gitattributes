@@ -1,0 +1,8 @@
+* text=auto
+
+/tests export-ignore
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/phpstan.neon export-ignore

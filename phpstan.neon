@@ -1,0 +1,6 @@
+includes:
+	- rules.neon
+parameters:
+    level: 8
+    paths:
+        - %currentWorkingDirectory%/src/

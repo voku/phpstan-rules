@@ -1,0 +1,44 @@
+parameters:
+	voku:
+		classesNotInIfConditions: []
+
+parametersSchema:
+	voku: structure([
+		classesNotInIfConditions: listOf(string())
+	])
+
+services:
+	-
+		class: voku\PHPStan\Rules\IfConditionBooleanAndRule
+		arguments:
+			classesNotInIfConditions: %voku.classesNotInIfConditions%
+		tags:
+			- phpstan.rules.rule
+
+	-
+		class: voku\PHPStan\Rules\IfConditionBooleanNotRule
+		arguments:
+			classesNotInIfConditions: %voku.classesNotInIfConditions%
+		tags:
+			- phpstan.rules.rule
+
+	-
+		class: voku\PHPStan\Rules\IfConditionBooleanOrRule
+		arguments:
+			classesNotInIfConditions: %voku.classesNotInIfConditions%
+		tags:
+			- phpstan.rules.rule
+
+	-
+		class: voku\PHPStan\Rules\IfConditionRule
+		arguments:
+			classesNotInIfConditions: %voku.classesNotInIfConditions%
+		tags:
+			- phpstan.rules.rule
+
+	-
+		class: voku\PHPStan\Rules\IfConditionTernaryOperatorRule
+		arguments:
+			classesNotInIfConditions: %voku.classesNotInIfConditions%
+		tags:
+			- phpstan.rules.rule
