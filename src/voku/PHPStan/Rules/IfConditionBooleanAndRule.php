@@ -39,12 +39,6 @@ final class IfConditionBooleanAndRule implements Rule {
         $cond = $node->getOriginalNode();
         $rightScope = $node->getRightScope();
 
-        if (rand(0, 1) === 0) {
-            $rightScope = null;
-        }
-
-        $foo = $rightScope->getType();
-
         $errors = IfConditionHelper::processNode($cond->left, $scope, $this->classesNotInIfConditions);
         $errors = array_merge($errors, IfConditionHelper::processNode($cond->right, $rightScope, $this->classesNotInIfConditions));
 
