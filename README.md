@@ -25,7 +25,7 @@ includes:
 
 ## Rules
 
-### `IfConditionHelper.php`
+### IfConditionHelper
 
 This helper is used by different "condition"-rules: if - and - or - not - ternary
 
@@ -52,10 +52,20 @@ e.g.:
 
 ```neon
 parameters:
-	voku:
-		classesNotInIfConditions: [
-			Other\EmailValueObject
-		]
+    voku:
+        classesNotInIfConditions: [
+            AbstractValueObject
+        ]
+```
+
+### DisallowedCallMethodOnNull
+
+This code is copy&pasted from [`phpstan/phpstan-src`] and I used it to prevent `Call to a member function on null` errors while I wasn't already on level 8 where all kind of "NULL" checks are already covered by default.
+
+e.g.
+```neon
+rules:
+    - voku\PHPStan\Rules\DisallowedCallMethodOnNullRule
 ```
 
 ### Support
