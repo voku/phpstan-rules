@@ -35,7 +35,7 @@ final class IfConditionHelper {
         $rightType = $scope->getType($cond->right);
 
         // DEBUG
-        //var_dump(get_class($cond));
+        //var_dump(get_class($rightType), get_class($cond), get_class($leftType));
 
         if ($cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual) {
 
@@ -182,6 +182,26 @@ final class IfConditionHelper {
                     'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.'
                 )->line($cond->getAttribute('startLine'))->build();
             }
+        }
+
+        // -----------------------------------------------------------------------------------------
+
+        if (
+            (
+                $rightType instanceof \PHPStan\Type\BooleanType
+                &&
+                $leftType instanceof \PHPStan\Type\Constant\ConstantIntegerType
+            )
+            ||
+            (
+                $leftType instanceof \PHPStan\Type\BooleanType
+                &&
+                $rightType instanceof \PHPStan\Type\Constant\ConstantIntegerType
+            )
+        ) {
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
+                'Do not compare boolean and integer'
+            )->line($cond->getAttribute('startLine'))->build();
         }
 
         // -----------------------------------------------------------------------------------------
