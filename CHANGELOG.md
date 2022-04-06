@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.2.1 (2022-04-06)
+- add check for boolean <> integer conditions
+
 ### 1.2.0 (2022-02-23)
 - add check for call method on NULL before level 8
 
