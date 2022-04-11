@@ -27,35 +27,36 @@ use function count;
  *
  * @implements Rule<\PhpParser\Node\Expr\MethodCall>
  */
-final class DisallowedCallMethodOnNullRule implements Rule {
+final class DisallowedCallMethodOnNullRule implements Rule
+{
 
     /**
      * @var ReflectionProvider
      */
     private $reflectionProvider;
 
-    public function __construct(ReflectionProvider $reflectionProvider) {
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
         $this->reflectionProvider = $reflectionProvider;
     }
 
-    public function getNodeType(): string {
+    public function getNodeType(): string
+    {
         return MethodCall::class;
     }
 
     /**
      * @param \PhpParser\Node|MethodCall $node
      */
-    public function processNode(Node $node, Scope $scope): array {
+    public function processNode(Node $node, Scope $scope): array
+    {
         assert($node instanceof MethodCall);
 
         if (!$node->name instanceof Node\Identifier) {
             return [];
         }
 
-        $typeResult = $this->findTypeToCheck(
-            $scope,
-            $node->var
-        );
+        $typeResult = $this->findTypeToCheck($scope, $node->var);
 
         $calledOnType = $typeResult->getType();
 
@@ -73,22 +74,14 @@ final class DisallowedCallMethodOnNullRule implements Rule {
         $className = $method->getDeclaringClass()->getDisplayName();
 
         if ($calledOnType->accepts((new NullType()), true)->yes()) {
-            return [
-                RuleErrorBuilder::message(
-                    sprintf(
-                        'Call to %s %s::%s() on NULL.',
-                        $method->isStatic() ? 'static method' : 'method',
-                        $className,
-                        $methodName
-                    )
-                )->build(),
-            ];
+            return [RuleErrorBuilder::message(sprintf('Call to %s %s::%s() on NULL.', $method->isStatic() ? 'static method' : 'method', $className, $methodName))->build(),];
         }
 
         return [];
     }
 
-    public function findTypeToCheck(\PHPStan\Analyser\Scope $scope, Expr $var): FoundTypeResult {
+    public function findTypeToCheck(\PHPStan\Analyser\Scope $scope, Expr $var): FoundTypeResult
+    {
 
         $type = $scope->getType($var);
 
@@ -116,10 +109,7 @@ final class DisallowedCallMethodOnNullRule implements Rule {
                 continue;
             }
 
-            $errors[] = RuleErrorBuilder::message($referencedClass)
-                                                       ->line($var->getLine())
-                                                       ->discoveringSymbolsTip()
-                                                       ->build();
+            $errors[] = RuleErrorBuilder::message($referencedClass)->line($var->getLine())->discoveringSymbolsTip()->build();
         }
 
         if ($hasClassExistsClass || count($errors) > 0) {

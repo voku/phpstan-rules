@@ -11,7 +11,8 @@ use PHPStan\Rules\Rule;
 /**
  * @implements Rule<\PhpParser\Node\Stmt>
  */
-final class IfConditionRule implements Rule {
+final class IfConditionRule implements Rule
+{
 
     /**
      * @var array<int, class-string>
@@ -26,7 +27,8 @@ final class IfConditionRule implements Rule {
         $this->classesNotInIfConditions = $classesNotInIfConditions;
     }
 
-    public function getNodeType(): string {
+    public function getNodeType(): string
+    {
         return \PhpParser\Node\Stmt::class;
     }
 
@@ -35,12 +37,9 @@ final class IfConditionRule implements Rule {
      *
      * @return array<int, \PHPStan\Rules\RuleError>
      */
-    public function processNode(Node $node, Scope $scope): array {
-        if (
-            !($node instanceof \PhpParser\Node\Stmt\If_)
-            &&
-            !($node instanceof \PhpParser\Node\Stmt\ElseIf_)
-        ) {
+    public function processNode(Node $node, Scope $scope): array
+    {
+        if (!($node instanceof \PhpParser\Node\Stmt\If_) && !($node instanceof \PhpParser\Node\Stmt\ElseIf_)) {
             return [];
         }
 

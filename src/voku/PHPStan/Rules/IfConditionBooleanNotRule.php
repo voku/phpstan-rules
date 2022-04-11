@@ -11,7 +11,8 @@ use PHPStan\Rules\Rule;
 /**
  * @implements Rule<\PhpParser\Node\Expr\BooleanNot>
  */
-final class IfConditionBooleanNotRule implements Rule {
+final class IfConditionBooleanNotRule implements Rule
+{
 
     /**
      * @var array<int, class-string>
@@ -26,7 +27,8 @@ final class IfConditionBooleanNotRule implements Rule {
         $this->classesNotInIfConditions = $classesNotInIfConditions;
     }
 
-    public function getNodeType(): string {
+    public function getNodeType(): string
+    {
         return \PhpParser\Node\Expr\BooleanNot::class;
     }
 
@@ -35,7 +37,8 @@ final class IfConditionBooleanNotRule implements Rule {
      *
      * @return array<int, \PHPStan\Rules\RuleError>
      */
-    public function processNode(Node $node, Scope $scope): array {
+    public function processNode(Node $node, Scope $scope): array
+    {
         $cond = $node->expr;
 
         return IfConditionHelper::processNode($cond, $scope, $this->classesNotInIfConditions);

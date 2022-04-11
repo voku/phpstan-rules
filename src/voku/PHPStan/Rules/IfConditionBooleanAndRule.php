@@ -11,7 +11,8 @@ use PHPStan\Rules\Rule;
 /**
  * @implements Rule<\PHPStan\Node\BooleanAndNode>
  */
-final class IfConditionBooleanAndRule implements Rule {
+final class IfConditionBooleanAndRule implements Rule
+{
 
     /**
      * @var array<int, class-string>
@@ -26,7 +27,8 @@ final class IfConditionBooleanAndRule implements Rule {
         $this->classesNotInIfConditions = $classesNotInIfConditions;
     }
 
-    public function getNodeType(): string {
+    public function getNodeType(): string
+    {
         return \PHPStan\Node\BooleanAndNode::class;
     }
 
@@ -35,7 +37,8 @@ final class IfConditionBooleanAndRule implements Rule {
      *
      * @return array<int, \PHPStan\Rules\RuleError>
      */
-    public function processNode(Node $node, Scope $scope): array {
+    public function processNode(Node $node, Scope $scope): array
+    {
         $cond = $node->getOriginalNode();
         $rightScope = $node->getRightScope();
 

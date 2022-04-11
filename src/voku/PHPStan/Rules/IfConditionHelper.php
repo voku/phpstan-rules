@@ -7,7 +7,8 @@ namespace voku\PHPStan\Rules;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 
-final class IfConditionHelper {
+final class IfConditionHelper
+{
 
     /**
      * @param \PhpParser\Node\Expr $cond
@@ -15,7 +16,8 @@ final class IfConditionHelper {
      *
      * @return array<int, \PHPStan\Rules\RuleError>
      */
-    public static function processNode(Node $cond, Scope $scope, $classesNotInIfConditions): array {
+    public static function processNode(Node $cond, Scope $scope, $classesNotInIfConditions): array
+    {
         // init
         $errors = [];
 
@@ -34,130 +36,111 @@ final class IfConditionHelper {
         $leftType = $scope->getType($cond->left);
         $rightType = $scope->getType($cond->right);
 
-        // DEBUG
-        //var_dump(get_class($rightType), get_class($cond), get_class($leftType));
+        // left <-> right
+        $errors = self::extracted($leftType, $rightType, $cond, $errors, $classesNotInIfConditions);
+        // right <-> left
+        $errors = self::extracted($rightType, $leftType, $cond, $errors, $classesNotInIfConditions);
+        
+        return $errors;
+    }
 
-        if ($cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual) {
+    /**
+     * @param \PhpParser\Node\Expr $cond
+     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     * @param array<int, class-string> $classesNotInIfConditions
+     *
+     * @return array<int, \PHPStan\Rules\RuleError>
+     */
+    private static function extracted(
+        \PHPStan\Type\Type $type_1,
+        \PHPStan\Type\Type $type_2,
+        Node $cond, 
+        array $errors, 
+        array $classesNotInIfConditions
+    ): array
+    {
+
+        // DEBUG
+        //var_dump(get_class($type_1), get_class($cond), get_class($type_2));
+
+        if ($cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual) { 
 
             // DEBUG
-            //var_dump(get_class($leftType));
+            //var_dump(get_class($type_2));
 
             if (
-                $rightType instanceof \PHPStan\Type\Constant\ConstantStringType
+                $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType 
                 &&
-                $rightType->getValue() === ''
+                $type_1->getValue() === '' 
                 &&
-                $leftType instanceof \PHPStan\Type\StringType
+                $type_2 instanceof \PHPStan\Type\StringType
             ) {
-                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
-                    'Please do not use double negative string conditions. e.g. `(string)$foo != \'\'` is the same as `(string)$foo`.'
-                )->line($cond->getAttribute('startLine'))->build();
+                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use double negative string conditions. e.g. `(string)$foo != \'\'` is the same as `(string)$foo`.')->line($cond->getAttribute('startLine'))->build();
             }
 
             if (
                 (
-                    (
-                        $rightType instanceof \PHPStan\Type\Constant\ConstantStringType
-                        &&
-                        $rightType->getValue() === ''
-                    )
+                    ($type_1 instanceof \PHPStan\Type\Constant\ConstantStringType && $type_1->getValue() === '') 
                     ||
-                    (
-                        $rightType instanceof \PHPStan\Type\Constant\ConstantIntegerType
-                        &&
-                        $rightType->getValue() === 0
-                    )
+                    ($type_1 instanceof \PHPStan\Type\Constant\ConstantIntegerType && $type_1->getValue() === 0) 
                     ||
-                    (
-                        $rightType instanceof \PHPStan\Type\Constant\ConstantBooleanType
-                        &&
-                        $rightType->getValue() === false
-                    )
-                )
+                    ($type_1 instanceof \PHPStan\Type\Constant\ConstantBooleanType && $type_1->getValue() === false)
+                ) 
                 &&
                 (
-                    $leftType instanceof \PHPStan\Type\IntegerType
+                    $type_2 instanceof \PHPStan\Type\IntegerType 
                     ||
                     (
-                        $leftType instanceof \PHPStan\Type\UnionType
+                        $type_2 instanceof \PHPStan\Type\UnionType && $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
                         &&
-                        $leftType->getTypes()[0] instanceof \PHPStan\Type\IntegerType
-                        &&
-                        $leftType->getTypes()[1] instanceof \PHPStan\Type\NullType
+                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
                     )
                 )
             ) {
-                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
-                    'Please do not use double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`.'
-                )->line($cond->getAttribute('startLine'))->build();
+                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`.')->line($cond->getAttribute('startLine'))->build();
             }
 
             if (
                 (
-                    (
-                        $rightType instanceof \PHPStan\Type\Constant\ConstantStringType
-                        &&
-                        $rightType->getValue() === ''
-                    )
+                    ($type_1 instanceof \PHPStan\Type\Constant\ConstantStringType && $type_1->getValue() === '') 
                     ||
-                    (
-                        $rightType instanceof \PHPStan\Type\Constant\ConstantIntegerType
-                        &&
-                        $rightType->getValue() === 0
-                    )
+                    ($type_1 instanceof \PHPStan\Type\Constant\ConstantIntegerType && $type_1->getValue() === 0) 
                     ||
-                    (
-                        $rightType instanceof \PHPStan\Type\Constant\ConstantBooleanType
-                        &&
-                        $rightType->getValue() === false
-                    )
-                )
+                    ($type_1 instanceof \PHPStan\Type\Constant\ConstantBooleanType && $type_1->getValue() === false)
+                ) 
                 &&
                 (
-                    $leftType instanceof \PHPStan\Type\BooleanType
+                    $type_2 instanceof \PHPStan\Type\BooleanType 
                     ||
                     (
-                        $leftType instanceof \PHPStan\Type\UnionType
-                        &&
-                        $leftType->getTypes()[0] instanceof \PHPStan\Type\BooleanType
-                        &&
-                        $leftType->getTypes()[1] instanceof \PHPStan\Type\NullType
+                        $type_2 instanceof \PHPStan\Type\UnionType && $type_2->getTypes()[0] instanceof \PHPStan\Type\BooleanType 
+                        && $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
                     )
                 )
             ) {
-                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
-                    'Please do not use double negative boolean conditions. e.g. `(bool)$foo != false` is the same as `(bool)$foo`.'
-                )->line($cond->getAttribute('startLine'))->build();
+                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use double negative boolean conditions. e.g. `(bool)$foo != false` is the same as `(bool)$foo`.')->line($cond->getAttribute('startLine'))->build();
             }
 
             // NULL checks are difficult and maybe unexpected, so that we should use strict check here
             // https://3v4l.org/a4VdC
             if (
-                $rightType instanceof \PHPStan\Type\ConstantScalarType
-                &&
-                $rightType->getValue() === null
+                $type_1 instanceof \PHPStan\Type\ConstantScalarType && $type_1->getValue() === null 
                 &&
                 (
                     (
-                        $leftType instanceof \PHPStan\Type\UnionType
+                        $type_2 instanceof \PHPStan\Type\UnionType && $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType 
                         &&
-                        $leftType->getTypes()[0] instanceof \PHPStan\Type\IntegerType
-                        &&
-                        $leftType->getTypes()[1] instanceof \PHPStan\Type\NullType
+                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
                     )
                     ||
                     (
-                        $leftType instanceof \PHPStan\Type\UnionType
+                        $type_2 instanceof \PHPStan\Type\UnionType && $type_2->getTypes()[0] instanceof \PHPStan\Type\StringType 
                         &&
-                        $leftType->getTypes()[0] instanceof \PHPStan\Type\StringType
-                        &&
-                        $leftType->getTypes()[1] instanceof \PHPStan\Type\NullType
+                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
                     )
                 )
             ) {
-                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
-                    'Please do not use double negative null conditions. Use "!==" instead if needed.'
-                )->line($cond->getAttribute('startLine'))->build();
+                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use double negative null conditions. Use "!==" instead if needed.')->line($cond->getAttribute('startLine'))->build();
             }
 
         }
@@ -166,99 +149,61 @@ final class IfConditionHelper {
 
         foreach ($classesNotInIfConditions as $classesNotInIfCondition) {
             if (
-                (
-                    $leftType instanceof \PHPStan\Type\ObjectType
-                    &&
-                    is_a($leftType->getClassName(), $classesNotInIfCondition, true)
-                )
-                ||
-                (
-                    $rightType instanceof \PHPStan\Type\ObjectType
-                    &&
-                    is_a($rightType->getClassName(), $classesNotInIfCondition, true)
-                )
+                $type_1 instanceof \PHPStan\Type\ObjectType 
+                &&
+                is_a($type_1->getClassName(), $classesNotInIfCondition, true)
             ) {
-                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
-                    'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.'
-                )->line($cond->getAttribute('startLine'))->build();
+                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.')->line($cond->getAttribute('startLine'))->build();
             }
         }
 
         // -----------------------------------------------------------------------------------------
 
         if (
-            (
-                $rightType instanceof \PHPStan\Type\BooleanType
-                &&
-                $leftType instanceof \PHPStan\Type\Constant\ConstantIntegerType
-            )
-            ||
-            (
-                $leftType instanceof \PHPStan\Type\BooleanType
-                &&
-                $rightType instanceof \PHPStan\Type\Constant\ConstantIntegerType
-            )
+            $type_1 instanceof \PHPStan\Type\BooleanType 
+            &&
+            $type_2 instanceof \PHPStan\Type\Constant\ConstantIntegerType
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
-                'Do not compare boolean and integer'
-            )->line($cond->getAttribute('startLine'))->build();
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare boolean and integer')->line($cond->getAttribute('startLine'))->build();
+        }
+
+        if (
+            $type_1 instanceof \PHPStan\Type\BooleanType 
+            &&
+            $type_2 instanceof \PHPStan\Type\Constant\ConstantStringType
+            
+        ) {
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare boolean and string')->line($cond->getAttribute('startLine'))->build();
         }
 
         // -----------------------------------------------------------------------------------------
 
         if (
-            $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual
-            ||
-            $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
+            $type_1 instanceof \PHPStan\Type\ObjectType 
+            &&
+            $type_2 instanceof \PHPStan\Type\Type
+            &&
+            !$type_2 instanceof \PHPStan\Type\ObjectType
         ) {
-            if (
-                (
-                    $rightType instanceof \PHPStan\Type\Constant\ConstantStringType
-                    &&
-                    $rightType->getValue() === ''
-                    &&
-                    $leftType->isNonEmptyString()->yes()
-                )
-                ||
-                (
-                    $leftType instanceof \PHPStan\Type\Constant\ConstantStringType
-                    &&
-                    $leftType->getValue() === ''
-                    &&
-                    $rightType->isNonEmptyString()->yes()
-                )
-            ) {
-                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
-                    'Non-empty string is never empty.'
-                )->line($cond->getAttribute('startLine'))->build();
-            }
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare objects directly')->line($cond->getAttribute('startLine'))->build();
         }
 
+        // -----------------------------------------------------------------------------------------
+
         if (
-            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual 
             ||
-            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical 
         ) {
             if (
-                (
-                    $rightType instanceof \PHPStan\Type\Constant\ConstantStringType
-                    &&
-                    $rightType->getValue() === ''
-                    &&
-                    $leftType->isNonEmptyString()->yes()
-                )
-                ||
-                (
-                    $leftType instanceof \PHPStan\Type\Constant\ConstantStringType
-                    &&
-                    $leftType->getValue() === ''
-                    &&
-                    $rightType->isNonEmptyString()->yes()
-                )
+                $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType 
+                &&
+                $type_1->getValue() === ''
+                &&
+                $type_2->isNonEmptyString()->yes()
+                
             ) {
-                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
-                    'Non-empty string is always empty.'
-                )->line($cond->getAttribute('startLine'))->build();
+                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Non-empty string is never empty.')->line($cond->getAttribute('startLine'))->build();
             }
         }
 
