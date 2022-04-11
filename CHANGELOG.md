@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.3.0 (2022-04-11)
+- add checks for boolean <> string conditions
+- add checks for non-nullable object conditions
+- use the same checks for "left <-> right" and "right <-> left" 
+
 ### 1.2.1 (2022-04-06)
 - add check for boolean <> integer conditions
 
