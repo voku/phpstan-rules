@@ -1,3 +1,10 @@
+[![Build Status](https://github.com/voku/phpstan-rules/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/voku/phpstan-rules/actions)
+[![codecov.io](https://codecov.io/github/voku/phpstan-rules/coverage.svg?branch=master)](https://codecov.io/github/voku/phpstan-rules?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/voku/phpstan-rules/v/stable)](https://packagist.org/packages/voku/phpstan-rules)
+[![License](https://poser.pugx.org/voku/phpstan-rules/license)](https://packagist.org/packages/voku/phpstan-rules)
+[![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/moelleken)
+[![Donate to this project using Patreon](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/voku)
+
 # phpstan-rules
 
 Provides additional rules for [`phpstan/phpstan`](https://github.com/phpstan/phpstan).
