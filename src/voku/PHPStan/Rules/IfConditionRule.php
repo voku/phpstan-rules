@@ -22,7 +22,7 @@ final class IfConditionRule implements Rule
     /**
      * @param array<int, class-string> $classesNotInIfConditions
      */
-    public function __construct(array $classesNotInIfConditions)
+    public function __construct(array $classesNotInIfConditions = [])
     {
         $this->classesNotInIfConditions = $classesNotInIfConditions;
     }
