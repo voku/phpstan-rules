@@ -14,4 +14,7 @@
     <testsuite name="VokuPhpStan">
         <directory>./tests</directory>
     </testsuite>
+    <logging>
+        <testdoxXml outputFile="build/logs/clover.xml"/>
+    </logging>
 </phpunit>
