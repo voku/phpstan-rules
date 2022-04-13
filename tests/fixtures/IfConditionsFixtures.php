@@ -19,3 +19,15 @@ $a = new \stdClass();
 if ($a != '') {
     // ...
 }
+
+// Do not compare boolean and int
+$a = rand(0, 1) ? true : false;
+if ($a == 0) {
+    // ...
+}
+
+// Do not compare boolean and string
+$a = rand(0, 1) ? true : false;
+if ($a != '') {
+    // ...
+}

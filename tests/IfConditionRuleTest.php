@@ -41,6 +41,18 @@ final class IfConditionRuleTest extends RuleTestCase
                     'Do not compare objects directly.',
                     19,
                 ],
+                [
+                    'Do not compare boolean and integer.',
+                    25,
+                ],
+                [
+                    'Do not compare boolean and string.',
+                    31,
+                ],
+                [
+                    'Please do not use double negative boolean conditions. e.g. `(bool)$foo != false` is the same as `(bool)$foo`.',
+                    31,
+                ],
             ]
         );
     }

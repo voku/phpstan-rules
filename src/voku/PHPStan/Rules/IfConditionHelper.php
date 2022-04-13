@@ -164,7 +164,7 @@ final class IfConditionHelper
             &&
             $type_2 instanceof \PHPStan\Type\Constant\ConstantIntegerType
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare boolean and integer')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare boolean and integer.')->line($cond->getAttribute('startLine'))->build();
         }
 
         if (
@@ -173,7 +173,7 @@ final class IfConditionHelper
             $type_2 instanceof \PHPStan\Type\Constant\ConstantStringType
             
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare boolean and string')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare boolean and string.')->line($cond->getAttribute('startLine'))->build();
         }
 
         // -----------------------------------------------------------------------------------------
