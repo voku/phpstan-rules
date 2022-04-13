@@ -207,6 +207,23 @@ final class IfConditionHelper
             }
         }
 
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+            ||
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
+        ) {
+            if (
+                $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
+                &&
+                $type_1->getValue() === ''
+                &&
+                $type_2->isNonEmptyString()->yes()
+
+            ) {
+                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Non-empty string is always non-empty.')->line($cond->getAttribute('startLine'))->build();
+            }
+        }
+
         // -----------------------------------------------------------------------------------------
 
         return $errors;

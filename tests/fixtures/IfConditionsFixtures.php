@@ -31,3 +31,9 @@ $a = rand(0, 1) ? true : false;
 if ($a != '') {
     // ...
 }
+
+// Non-empty string is always empty
+$a = 'test';
+if ($a == '') {
+    // ...
+}

@@ -53,6 +53,10 @@ final class IfConditionRuleTest extends RuleTestCase
                     'Please do not use double negative boolean conditions. e.g. `(bool)$foo != false` is the same as `(bool)$foo`.',
                     31,
                 ],
+                [
+                    'Non-empty string is always non-empty.',
+                    37
+                ]
             ]
         );
     }
