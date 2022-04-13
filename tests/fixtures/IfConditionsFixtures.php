@@ -37,3 +37,10 @@ $a = 'test';
 if ($a == '') {
     // ...
 }
+
+// Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.
+$a = new \stdClass();
+$b = rand(0, 1) ? true : false;
+if ($a && !$b) {
+    // ...
+}

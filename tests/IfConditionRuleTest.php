@@ -15,7 +15,7 @@ final class IfConditionRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        return new IfConditionRule([]);
+        return new IfConditionRule([\stdClass::class]);
     }
 
     public function testIfConditions(): void
@@ -38,6 +38,10 @@ final class IfConditionRuleTest extends RuleTestCase
                     13,
                 ],
                 [
+                    'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    19
+                ],
+                [
                     'Do not compare objects directly.',
                     19,
                 ],
@@ -56,6 +60,14 @@ final class IfConditionRuleTest extends RuleTestCase
                 [
                     'Non-empty string is always non-empty.',
                     37
+                ],
+                [
+                    'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    44
+                ],
+                [
+                    'Do not compare objects directly.',
+                    44
                 ]
             ]
         );

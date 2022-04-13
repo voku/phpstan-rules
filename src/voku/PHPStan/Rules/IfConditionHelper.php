@@ -16,30 +16,47 @@ final class IfConditionHelper
      *
      * @return array<int, \PHPStan\Rules\RuleError>
      */
-    public static function processNode(Node $cond, Scope $scope, $classesNotInIfConditions): array
+    public static function processNode(
+        Node $cond, 
+        Scope $scope, 
+        array $classesNotInIfConditions
+    ): array
     {
         // init
         $errors = [];
 
-        if (!property_exists($cond, 'left')) {
-            return [];
-        }
-        if (!property_exists($cond, 'right')) {
-            return [];
-        }
-
+        // ignore mixed types
         $condType = $scope->getType($cond);
         if ($condType instanceof \PHPStan\Type\MixedType) {
             return [];
         }
 
-        $leftType = $scope->getType($cond->left);
-        $rightType = $scope->getType($cond->right);
+        if (
+            !property_exists($cond, 'left')
+            &&
+            !property_exists($cond, 'right')
+        ) {
+            $errors = self::prcessNodeHelper($condType, null, $cond, $errors, $classesNotInIfConditions);
+            
+            return $errors;
+        }
+
+        if (property_exists($cond, 'left')) {
+            $leftType = $scope->getType($cond->left);
+        } else {
+            $leftType = null;
+        }
+
+        if (property_exists($cond, 'right')) {
+            $rightType = $scope->getType($cond->right);
+        } else {
+            $rightType = null;
+        }
 
         // left <-> right
-        $errors = self::extracted($leftType, $rightType, $cond, $errors, $classesNotInIfConditions);
+        $errors = self::prcessNodeHelper($leftType, $rightType, $cond, $errors, $classesNotInIfConditions);
         // right <-> left
-        $errors = self::extracted($rightType, $leftType, $cond, $errors, $classesNotInIfConditions);
+        $errors = self::prcessNodeHelper($rightType, $leftType, $cond, $errors, $classesNotInIfConditions);
         
         return $errors;
     }
@@ -51,9 +68,9 @@ final class IfConditionHelper
      *
      * @return array<int, \PHPStan\Rules\RuleError>
      */
-    private static function extracted(
-        \PHPStan\Type\Type $type_1,
-        \PHPStan\Type\Type $type_2,
+    private static function prcessNodeHelper(
+        ?\PHPStan\Type\Type $type_1,
+        ?\PHPStan\Type\Type $type_2,
         Node $cond, 
         array $errors, 
         array $classesNotInIfConditions
@@ -114,7 +131,8 @@ final class IfConditionHelper
                     ||
                     (
                         $type_2 instanceof \PHPStan\Type\UnionType && $type_2->getTypes()[0] instanceof \PHPStan\Type\BooleanType 
-                        && $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
+                        && 
+                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
                     )
                 )
             ) {
