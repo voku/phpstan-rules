@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.4.0 (2022-04-13)
+- fix ternary checks
+- re-add the "Non-empty string is always non-empty." check
+- add tests and ci config
+
 ### 1.3.0 (2022-04-11)
 - add checks for boolean <> string conditions
 - add checks for non-nullable object conditions
