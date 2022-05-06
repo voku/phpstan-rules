@@ -201,8 +201,13 @@ final class IfConditionHelper
             &&
             $type_2 instanceof \PHPStan\Type\Type
             &&
-            !$type_2 instanceof \PHPStan\Type\ObjectType
-            && !(
+            !(
+                $type_2 instanceof \PHPStan\Type\ObjectType
+                ||
+                $type_2 instanceof \PHPStan\Type\ThisType
+            )
+            && 
+            !(
                 (
                     $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
                     ||
