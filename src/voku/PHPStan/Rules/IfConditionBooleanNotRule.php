@@ -41,6 +41,6 @@ final class IfConditionBooleanNotRule implements Rule
     {
         $cond = $node->expr;
 
-        return IfConditionHelper::processNode($cond, $scope, $this->classesNotInIfConditions);
+        return IfConditionHelper::processNodeHelper($scope->getType($cond), null, $node, [], $this->classesNotInIfConditions);
     }
 }

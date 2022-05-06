@@ -9,66 +9,14 @@ use PHPStan\Analyser\Scope;
 
 final class IfConditionHelper
 {
-
     /**
-     * @param \PhpParser\Node\Expr $cond
-     * @param array<int, class-string> $classesNotInIfConditions
-     *
-     * @return array<int, \PHPStan\Rules\RuleError>
-     */
-    public static function processNode(
-        Node $cond, 
-        Scope $scope, 
-        array $classesNotInIfConditions
-    ): array
-    {
-        // init
-        $errors = [];
-
-        // ignore mixed types
-        $condType = $scope->getType($cond);
-        if ($condType instanceof \PHPStan\Type\MixedType) {
-            return [];
-        }
-
-        if (
-            !property_exists($cond, 'left')
-            &&
-            !property_exists($cond, 'right')
-        ) {
-            $errors = self::prcessNodeHelper($condType, null, $cond, $errors, $classesNotInIfConditions);
-            
-            return $errors;
-        }
-
-        if (property_exists($cond, 'left')) {
-            $leftType = $scope->getType($cond->left);
-        } else {
-            $leftType = null;
-        }
-
-        if (property_exists($cond, 'right')) {
-            $rightType = $scope->getType($cond->right);
-        } else {
-            $rightType = null;
-        }
-
-        // left <-> right
-        $errors = self::prcessNodeHelper($leftType, $rightType, $cond, $errors, $classesNotInIfConditions);
-        // right <-> left
-        $errors = self::prcessNodeHelper($rightType, $leftType, $cond, $errors, $classesNotInIfConditions);
-        
-        return $errors;
-    }
-
-    /**
-     * @param \PhpParser\Node\Expr $cond
+     * @param \PhpParser\Node $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
      * @param array<int, class-string> $classesNotInIfConditions
      *
      * @return array<int, \PHPStan\Rules\RuleError>
      */
-    private static function prcessNodeHelper(
+    public static function processNodeHelper(
         ?\PHPStan\Type\Type $type_1,
         ?\PHPStan\Type\Type $type_2,
         Node $cond, 
