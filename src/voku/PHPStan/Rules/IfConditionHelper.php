@@ -201,7 +201,11 @@ final class IfConditionHelper
             &&
             $type_2 instanceof \PHPStan\Type\Type
             &&
-            !$type_2 instanceof \PHPStan\Type\ObjectType
+            !(
+                $type_2 instanceof \PHPStan\Type\ObjectType
+                ||
+                $type_2 instanceof \PHPStan\Type\ThisType
+            )
         ) {
             $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare objects directly.')->line($cond->getAttribute('startLine'))->build();
         }

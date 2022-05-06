@@ -55,3 +55,14 @@ if ('2032-03-04' >= new \DateTimeImmutable()) {
 if ('2032-03-04' == new \DateTimeImmutable()) {
   // ...
 }
+
+class A1
+{
+    public function foo(self $bar)
+    {
+        // Allow this and static comparison
+        if ($bar === $this) {
+            //
+        }
+    }
+}
