@@ -34,7 +34,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "voku\\PHPStan\\Rules\\Test\\": "test/"
+            "voku\\PHPStan\\Rules\\Test\\": "tests/"
         }
     },
     "extra": {

@@ -206,6 +206,20 @@ final class IfConditionHelper
                 ||
                 $type_2 instanceof \PHPStan\Type\ThisType
             )
+            && 
+            !(
+                (
+                    $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
+                    ||
+                    $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
+                )
+                &&
+                $type_1 instanceof \PHPStan\Type\Enum\EnumCaseObjectType
+                &&
+                $type_2 instanceof \PHPStan\Type\UnionType
+                &&
+                $type_2->isSuperTypeOf($type_1)->yes()
+            )
         ) {
             $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare objects directly.')->line($cond->getAttribute('startLine'))->build();
         }

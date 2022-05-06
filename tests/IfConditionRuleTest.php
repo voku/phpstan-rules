@@ -84,4 +84,22 @@ final class IfConditionRuleTest extends RuleTestCase
             ]
         );
     }
+
+    /**
+     * @requires PHP 8.1
+     */
+    public function testIfConditions81(): void
+    {
+        $this->analyse(
+            [
+                __DIR__ . '/fixtures/IfConditionsFixtures81.php',
+            ],
+            [
+                [
+                    'Do not compare objects directly.',
+                    12
+                ],
+            ]
+        );
+    }
 }
