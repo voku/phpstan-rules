@@ -66,3 +66,8 @@ class A1
         }
     }
 }
+
+// Intercept binary op wherever they are
+$var = function(): bool {
+    return '2032-03-04' <= new \DateTimeImmutable();
+};

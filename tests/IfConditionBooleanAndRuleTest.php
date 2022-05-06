@@ -29,6 +29,10 @@ final class IfConditionBooleanAndRuleTest extends RuleTestCase
                     'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     8,
                 ],
+                [
+                    'Do not compare objects directly.',
+                    8,
+                ],
             ]
         );
     }

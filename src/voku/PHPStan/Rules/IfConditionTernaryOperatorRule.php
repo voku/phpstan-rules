@@ -43,8 +43,6 @@ final class IfConditionTernaryOperatorRule implements Rule
             return []; // elvis ?:
         }
 
-        $cond = $node->cond;
-
-        return IfConditionHelper::processNode($cond, $scope, $this->classesNotInIfConditions);
+        return IfConditionHelper::processNodeHelper($scope->getType($node->cond), null, $node, [], $this->classesNotInIfConditions);
     }
 }

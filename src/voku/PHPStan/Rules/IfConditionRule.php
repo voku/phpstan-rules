@@ -9,7 +9,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 
 /**
- * @implements Rule<\PhpParser\Node\Stmt>
+ * @implements Rule<\PhpParser\Node\Expr\BinaryOp>
  */
 final class IfConditionRule implements Rule
 {
@@ -29,22 +29,23 @@ final class IfConditionRule implements Rule
 
     public function getNodeType(): string
     {
-        return \PhpParser\Node\Stmt::class;
+        return \PhpParser\Node\Expr\BinaryOp::class;
     }
 
     /**
-     * @param \PhpParser\Node\Stmt $node
+     * @param \PhpParser\Node\Expr\BinaryOp $node
      *
      * @return array<int, \PHPStan\Rules\RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        if (!($node instanceof \PhpParser\Node\Stmt\If_) && !($node instanceof \PhpParser\Node\Stmt\ElseIf_)) {
-            return [];
-        }
+        $leftType = $scope->getType($node->left);
+        $rightType = $scope->getType($node->right);
 
-        $cond = $node->cond;
+        $errors = [];
+        $errors = IfConditionHelper::processNodeHelper($leftType, $rightType, $node, $errors, $this->classesNotInIfConditions);
+        $errors = IfConditionHelper::processNodeHelper($rightType, $leftType, $node, $errors, $this->classesNotInIfConditions);
 
-        return IfConditionHelper::processNode($cond, $scope, $this->classesNotInIfConditions);
+        return $errors;
     }
 }
