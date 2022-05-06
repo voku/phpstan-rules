@@ -27,7 +27,7 @@ Otherwise, you need to include `rules.neon` in your `phpstan.neon`:
 
 ```neon
 includes:
-	- vendor/voku/PHPStan/Rules/rules.neon
+	- vendor/voku/phpstan-rules/rules.neon
 ```
 
 ## Rules
