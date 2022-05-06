@@ -14,7 +14,7 @@ if ($a != '') {
     // ...
 }
 
-// Do not compare objects directly
+// Do not compare objects directly v1
 $a = new \stdClass();
 if ($a != '') {
     // ...
@@ -43,4 +43,15 @@ $a = new \stdClass();
 $b = rand(0, 1) ? true : false;
 if ($a && !$b) {
     // ...
+}
+
+// Do not compare objects directly v2
+if ('2032-03-04' <= new \DateTimeImmutable()) {
+  // ...
+}
+if ('2032-03-04' >= new \DateTimeImmutable()) {
+  // ...
+}
+if ('2032-03-04' == new \DateTimeImmutable()) {
+  // ...
 }

@@ -68,7 +68,19 @@ final class IfConditionRuleTest extends RuleTestCase
                 [
                     'Do not compare objects directly.',
                     44
-                ]
+                ],
+                [
+                    'Do not compare objects directly.',
+                    49
+                ],
+                [
+                    'Do not compare objects directly.',
+                    52
+                ],
+                [
+                    'Do not compare objects directly.',
+                    55
+                ],
             ]
         );
     }
