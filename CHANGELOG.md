@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.5.0 (2020-05-09)
+- inspect all binary operations regardless within or without if/else statement | thanks @Slamdunk
+- do not compare objects with another type: allow $this object type comparison | thanks @Slamdunk
+- do not compare objects with another type: allow object strict comparison for ENUM types | thanks @Slamdunk
+
 ### 1.4.0 (2022-04-13)
 - fix ternary checks
 - re-add the "Non-empty string is always non-empty." check
