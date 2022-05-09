@@ -71,3 +71,13 @@ class A1
 $var = function(): bool {
     return '2032-03-04' <= new \DateTimeImmutable();
 };
+
+// Allow NULL checks on objects
+$a = [new \DateTime(), new \DateTime()];
+$rand = random_int(0, 5);
+if (isset($a[$rand])) {
+    $b = $a[$rand];
+} else {
+    $b = null;
+}
+$b = $a[$rand] ?? null;

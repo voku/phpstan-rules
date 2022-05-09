@@ -44,8 +44,20 @@ final class IfConditionBooleanAndRule implements Rule
         $left = $scope->getType($cond->left);
         $right = $scope->getType($cond->right);
         $errors = [];
-        $errors = IfConditionHelper::processNodeHelper($left, $right, $node, $errors, $this->classesNotInIfConditions);
-        $errors = IfConditionHelper::processNodeHelper($right, $left, $node, $errors, $this->classesNotInIfConditions);
+        $errors = IfConditionHelper::processNodeHelper(
+            $left, 
+            $right, 
+            $node, 
+            $errors, 
+            $this->classesNotInIfConditions
+        );
+        $errors = IfConditionHelper::processNodeHelper(
+            $right, 
+            $left, 
+            $node, 
+            $errors, 
+            $this->classesNotInIfConditions
+        );
 
         return $errors;
     }

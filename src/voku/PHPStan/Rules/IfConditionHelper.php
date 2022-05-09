@@ -28,10 +28,7 @@ final class IfConditionHelper
         // DEBUG
         //var_dump(get_class($type_1), get_class($cond), get_class($type_2));
 
-        if ($cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual) { 
-
-            // DEBUG
-            //var_dump(get_class($type_2));
+        if ($cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual) {
 
             if (
                 $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType 
@@ -56,7 +53,9 @@ final class IfConditionHelper
                     $type_2 instanceof \PHPStan\Type\IntegerType 
                     ||
                     (
-                        $type_2 instanceof \PHPStan\Type\UnionType && $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
+                        $type_2 instanceof \PHPStan\Type\UnionType 
+                        &&
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
                         &&
                         $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
                     )
@@ -78,7 +77,9 @@ final class IfConditionHelper
                     $type_2 instanceof \PHPStan\Type\BooleanType 
                     ||
                     (
-                        $type_2 instanceof \PHPStan\Type\UnionType && $type_2->getTypes()[0] instanceof \PHPStan\Type\BooleanType 
+                        $type_2 instanceof \PHPStan\Type\UnionType 
+                        &&
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\BooleanType 
                         && 
                         $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
                     )
@@ -90,17 +91,23 @@ final class IfConditionHelper
             // NULL checks are difficult and maybe unexpected, so that we should use strict check here
             // https://3v4l.org/a4VdC
             if (
-                $type_1 instanceof \PHPStan\Type\ConstantScalarType && $type_1->getValue() === null 
+                $type_1 instanceof \PHPStan\Type\ConstantScalarType 
+                &&
+                $type_1->getValue() === null 
                 &&
                 (
                     (
-                        $type_2 instanceof \PHPStan\Type\UnionType && $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType 
+                        $type_2 instanceof \PHPStan\Type\UnionType 
+                        &&
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType 
                         &&
                         $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
                     )
                     ||
                     (
-                        $type_2 instanceof \PHPStan\Type\UnionType && $type_2->getTypes()[0] instanceof \PHPStan\Type\StringType 
+                        $type_2 instanceof \PHPStan\Type\UnionType 
+                        &&
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\StringType 
                         &&
                         $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
                     )
@@ -117,7 +124,7 @@ final class IfConditionHelper
             if (
                 $type_1 instanceof \PHPStan\Type\ObjectType 
                 &&
-                is_a($type_1->getClassName(), $classesNotInIfCondition, true)
+                \is_a($type_1->getClassName(), $classesNotInIfCondition, true)
             ) {
                 $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.')->line($cond->getAttribute('startLine'))->build();
             }
@@ -153,6 +160,8 @@ final class IfConditionHelper
                 $type_2 instanceof \PHPStan\Type\ObjectType
                 ||
                 $type_2 instanceof \PHPStan\Type\ThisType
+                ||
+                $type_2 instanceof \PHPStan\Type\NullType
             )
             && 
             !(

@@ -43,8 +43,20 @@ final class IfConditionRule implements Rule
         $rightType = $scope->getType($node->right);
 
         $errors = [];
-        $errors = IfConditionHelper::processNodeHelper($leftType, $rightType, $node, $errors, $this->classesNotInIfConditions);
-        $errors = IfConditionHelper::processNodeHelper($rightType, $leftType, $node, $errors, $this->classesNotInIfConditions);
+        $errors = IfConditionHelper::processNodeHelper(
+            $leftType, 
+            $rightType, 
+            $node, 
+            $errors, 
+            $this->classesNotInIfConditions
+        );
+        $errors = IfConditionHelper::processNodeHelper(
+            $rightType, 
+            $leftType, 
+            $node, 
+            $errors, 
+            $this->classesNotInIfConditions
+        );
 
         return $errors;
     }
