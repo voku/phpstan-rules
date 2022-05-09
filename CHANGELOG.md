@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.5.1 (2020-05-09)
+- do not compare objects with another type: allow NULL checks
+
 ### 1.5.0 (2020-05-09)
 - inspect all binary operations regardless within or without if/else statement | thanks @Slamdunk
 - do not compare objects with another type: allow $this object type comparison | thanks @Slamdunk
