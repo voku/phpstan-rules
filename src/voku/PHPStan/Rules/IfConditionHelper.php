@@ -162,6 +162,18 @@ final class IfConditionHelper
                 $type_2 instanceof \PHPStan\Type\ThisType
                 ||
                 $type_2 instanceof \PHPStan\Type\NullType
+                ||
+                (    
+                    $type_2 instanceof \PHPStan\Type\UnionType
+                    &&
+                    $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
+                    &&
+                    (
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\ObjectType
+                        ||
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\ThisType
+                    )
+                )
             )
             && 
             !(

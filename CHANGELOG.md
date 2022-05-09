@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.5.2 (2020-05-09)
+- do not compare objects with another type: allow UnionType with the same ObjectType and NULL
+
 ### 1.5.1 (2020-05-09)
 - do not compare objects with another type: allow NULL checks
 
