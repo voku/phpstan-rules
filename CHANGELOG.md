@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.6.0 (2020-05-11)
+- check more conditions (left <-> right) | thanks @Slamdunk
+- check DateTime/DateTimeImmutable conditions | thanks @Slamdunk
+
 ### 1.5.2 (2020-05-09)
 - do not compare objects with another type: allow UnionType with the same ObjectType and NULL
 
