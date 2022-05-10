@@ -7,6 +7,7 @@ namespace voku\PHPStan\Rules;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\Enum\EnumCaseObjectType;
+use PHPStan\Type\VerbosityLevel;
 
 final class IfConditionHelper
 {
@@ -218,7 +219,10 @@ final class IfConditionHelper
             return;
         }
 
-        $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare objects directly.')->line($cond->getAttribute('startLine'))->build();
+        $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(sprintf(
+            'Do not compare objects directly, %s found.',
+            $type_1->describe(VerbosityLevel::value())
+        ))->line($cond->getAttribute('startLine'))->build();
     }
 
     /**

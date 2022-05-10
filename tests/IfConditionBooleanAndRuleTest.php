@@ -30,7 +30,7 @@ final class IfConditionBooleanAndRuleTest extends RuleTestCase
                     8,
                 ],
                 [
-                    'Do not compare objects directly.',
+                    'Do not compare objects directly, stdClass found.',
                     8,
                 ],
             ]

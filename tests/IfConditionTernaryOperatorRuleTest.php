@@ -31,7 +31,7 @@ final class IfConditionTernaryOperatorRuleTest extends RuleTestCase
                     7,
                 ],
                 [
-                    'Do not compare objects directly.',
+                    'Do not compare objects directly, stdClass found.',
                     7,
                 ],
             ]
