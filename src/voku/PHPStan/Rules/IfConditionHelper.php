@@ -33,15 +33,27 @@ final class IfConditionHelper
         // DEBUG
         //var_dump(get_class($type_1), get_class($cond), get_class($type_2));
 
+        // -----------------------------------------------------------------------------------------
+
+        self::processObjectMethodUsageForComparison($type_1, $cond, $errors, $classesNotInIfConditions);
+
+        // -----------------------------------------------------------------------------------------
+
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd
+            ||
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanOr
+        ) {
+            return $errors;
+        }
+
+        // -----------------------------------------------------------------------------------------
+
         self::processNotEqualRules($type_1, $type_2, $cond, $errors);
 
         // -----------------------------------------------------------------------------------------
 
         self::processBooleanComparison($type_1, $type_2, $cond, $errors);
-
-        // -----------------------------------------------------------------------------------------
-
-        self::processObjectMethodUsageForComparison($type_1, $cond, $errors, $classesNotInIfConditions);
 
         // -----------------------------------------------------------------------------------------
 
@@ -225,10 +237,6 @@ final class IfConditionHelper
             self::isDateTime($type_2)
         ) {
             return;
-        }
-        
-        if ($type_2 instanceof \PHPStan\Type\BooleanType) {
-            return;    
         }
 
         $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(sprintf(

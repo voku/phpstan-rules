@@ -109,7 +109,14 @@ if ($date instanceof \DateTimeImmutable || $date === null) {
 // Allow NULL and BOOLEAN checks on objects
 $a = random_int(0, 1) ? new \SplFixedArray(2) : null;
 $b = random_int(0, 1) ? new \SplFixedArray(2) : null;
+$c = 1;
 if ($b) {
+    // ...
+}
+if (!$b) {
+    // ...
+}
+if (!$b && $c) {
     // ...
 }
 if ($a !== null) {
