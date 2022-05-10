@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.6.2 (2020-05-11)
+- do not compare objects with another type: allow AND && OR conditions
+
 ### 1.6.1 (2020-05-11)
 - do not compare objects with another type: allow NULL and BOOLEAN checks
 
