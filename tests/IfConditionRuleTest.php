@@ -66,10 +66,6 @@ final class IfConditionRuleTest extends RuleTestCase
                     44
                 ],
                 [
-                    'Do not compare objects directly, stdClass found.',
-                    44
-                ],
-                [
                     'Do not compare objects directly, DateTimeImmutable found.',
                     49
                 ],
