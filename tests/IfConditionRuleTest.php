@@ -89,6 +89,14 @@ final class IfConditionRuleTest extends RuleTestCase
                     'Do not compare objects directly, DateTimeImmutable|null found.',
                     87
                 ],
+                [
+                    'Do not compare objects directly, DateTimeImmutable|null found.',
+                    97
+                ],
+                [
+                    'Do not compare objects directly, DateTimeImmutable found.',
+                    97
+                ],
             ]
         );
     }

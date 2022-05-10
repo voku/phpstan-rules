@@ -219,6 +219,14 @@ final class IfConditionHelper
             return;
         }
 
+        if (
+            self::isDateTime($type_1)
+            &&
+            self::isDateTime($type_2)
+        ) {
+            return;
+        }
+
         $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(sprintf(
             'Do not compare objects directly, %s found.',
             $type_1->describe(VerbosityLevel::value())
@@ -316,5 +324,14 @@ final class IfConditionHelper
         }
 
         return $return;
+    }
+
+    private static function isDateTime(?\PHPStan\Type\Type $type): bool
+    {
+        return (
+            $type instanceof \PHPStan\Type\ObjectType
+            &&
+            $type->isInstanceOf(\DateTimeInterface::class)->yes()
+        );
     }
 }

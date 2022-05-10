@@ -88,7 +88,20 @@ if ($date instanceof \DateTimeImmutable || $date === null) {
         //
     }
 
+    // Allow strict comparison
     if ($date === null) {
         //
+    }
+
+    // Do not compare nullable DateTime
+    if ($date < new \DateTimeImmutable()) {
+        //
+    }
+
+    if ($date !== null) {
+        // Allow DateTime comparison when type is certain
+        if ($date < new \DateTimeImmutable()) {
+            //
+        }
     }
 }
