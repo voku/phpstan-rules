@@ -85,6 +85,10 @@ final class IfConditionRuleTest extends RuleTestCase
                     'Do not compare objects directly.',
                     72
                 ],
+                [
+                    'Do not compare objects directly.',
+                    87
+                ],
             ]
         );
     }
@@ -99,6 +103,10 @@ final class IfConditionRuleTest extends RuleTestCase
                 __DIR__ . '/fixtures/IfConditionsFixtures81.php',
             ],
             [
+                [
+                    'Do not compare objects directly.',
+                    12
+                ],
                 [
                     'Do not compare objects directly.',
                     12

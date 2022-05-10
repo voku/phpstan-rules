@@ -81,3 +81,14 @@ if (isset($a[$rand])) {
     $b = null;
 }
 $b = $a[$rand] ?? null;
+
+if ($date instanceof \DateTimeImmutable || $date === null) {
+    // Do not compare nullable objects on non-strict binary operators
+    if ($date < '2013-04-05') {
+        //
+    }
+
+    if ($date === null) {
+        //
+    }
+}

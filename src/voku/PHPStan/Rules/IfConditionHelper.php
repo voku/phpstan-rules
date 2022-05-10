@@ -6,6 +6,7 @@ namespace voku\PHPStan\Rules;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Type\Enum\EnumCaseObjectType;
 
 final class IfConditionHelper
 {
@@ -204,48 +205,16 @@ final class IfConditionHelper
     ): void
     {
         if (
-            ! $type_1 instanceof \PHPStan\Type\ObjectType
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
             ||
-            ! $type_2 instanceof \PHPStan\Type\Type
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
+            ||
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Coalesce
         ) {
             return;
         }
 
-        if (
-            $type_2 instanceof \PHPStan\Type\ObjectType
-            ||
-            $type_2 instanceof \PHPStan\Type\ThisType
-            ||
-            $type_2 instanceof \PHPStan\Type\NullType
-            ||
-            (
-                $type_2 instanceof \PHPStan\Type\UnionType
-                &&
-                $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                &&
-                (
-                    $type_2->getTypes()[0] instanceof \PHPStan\Type\ObjectType
-                    ||
-                    $type_2->getTypes()[0] instanceof \PHPStan\Type\ThisType
-                )
-            )
-        ) {
-            return;
-        }
-
-        if (
-            (
-                $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
-                ||
-                $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
-            )
-            &&
-            $type_1 instanceof \PHPStan\Type\Enum\EnumCaseObjectType
-            &&
-            $type_2 instanceof \PHPStan\Type\UnionType
-            &&
-            $type_2->isSuperTypeOf($type_1)->yes()
-        ) {
+        if (! self::isObjectOrNullType($type_1)) {
             return;
         }
 
@@ -319,5 +288,29 @@ final class IfConditionHelper
                 $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.')->line($cond->getAttribute('startLine'))->build();
             }
         }
+    }
+
+    private static function isObjectOrNullType(?\PHPStan\Type\Type $type): bool
+    {
+        if (
+            $type instanceof \PHPStan\Type\ObjectType
+            ||
+            $type instanceof \PHPStan\Type\StaticType
+            ||
+            $type instanceof \PHPStan\Type\NullType
+        ) {
+            return true;
+        }
+
+        if (! $type instanceof  \PHPStan\Type\UnionType) {
+            return false;
+        }
+
+        $return = true;
+        foreach ($type->getTypes() as $typeFromUnion) {
+            $return = $return && self::isObjectOrNullType($typeFromUnion);
+        }
+
+        return $return;
     }
 }
