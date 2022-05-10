@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.6.1 (2020-05-11)
+- do not compare objects with another type: allow NULL and BOOLEAN checks
+
 ### 1.6.0 (2020-05-11)
 - check more conditions (left <-> right) | thanks @Slamdunk
 - check DateTime/DateTimeImmutable conditions | thanks @Slamdunk
