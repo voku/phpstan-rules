@@ -226,6 +226,10 @@ final class IfConditionHelper
         ) {
             return;
         }
+        
+        if ($type_2 instanceof \PHPStan\Type\BooleanType) {
+            return;    
+        }
 
         $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(sprintf(
             'Do not compare objects directly, %s found.',
@@ -314,13 +318,16 @@ final class IfConditionHelper
             return true;
         }
 
-        if (! $type instanceof  \PHPStan\Type\UnionType) {
+        if (! $type instanceof \PHPStan\Type\UnionType) {
             return false;
         }
 
         $return = true;
         foreach ($type->getTypes() as $typeFromUnion) {
-            $return = $return && self::isObjectOrNullType($typeFromUnion);
+            $return = self::isObjectOrNullType($typeFromUnion);
+            if (! $return) {
+                break;
+            }
         }
 
         return $return;
