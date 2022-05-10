@@ -30,6 +30,10 @@ final class IfConditionTernaryOperatorRuleTest extends RuleTestCase
                     'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     7,
                 ],
+                [
+                    'Do not compare objects directly, stdClass found.',
+                    7,
+                ],
             ]
         );
     }

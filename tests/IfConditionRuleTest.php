@@ -42,7 +42,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     19
                 ],
                 [
-                    'Do not compare objects directly.',
+                    'Do not compare objects directly, stdClass found.',
                     19,
                 ],
                 [
@@ -66,24 +66,36 @@ final class IfConditionRuleTest extends RuleTestCase
                     44
                 ],
                 [
-                    'Do not compare objects directly.',
+                    'Do not compare objects directly, stdClass found.',
                     44
                 ],
                 [
-                    'Do not compare objects directly.',
+                    'Do not compare objects directly, DateTimeImmutable found.',
                     49
                 ],
                 [
-                    'Do not compare objects directly.',
+                    'Do not compare objects directly, DateTimeImmutable found.',
                     52
                 ],
                 [
-                    'Do not compare objects directly.',
+                    'Do not compare objects directly, DateTimeImmutable found.',
                     55
                 ],
                 [
-                    'Do not compare objects directly.',
+                    'Do not compare objects directly, DateTimeImmutable found.',
                     72
+                ],
+                [
+                    'Do not compare objects directly, DateTimeImmutable|null found.',
+                    87
+                ],
+                [
+                    'Do not compare objects directly, DateTimeImmutable|null found.',
+                    97
+                ],
+                [
+                    'Do not compare objects directly, DateTimeImmutable found.',
+                    97
                 ],
             ]
         );
@@ -100,7 +112,11 @@ final class IfConditionRuleTest extends RuleTestCase
             ],
             [
                 [
-                    'Do not compare objects directly.',
+                    'Do not compare objects directly, voku\PHPStan\Rules\Test\fixtures\BulbOn::ON found.',
+                    12
+                ],
+                [
+                    'Do not compare objects directly, voku\PHPStan\Rules\Test\fixtures\BulbOn::OFF|voku\PHPStan\Rules\Test\fixtures\BulbOn::ON found.',
                     12
                 ],
             ]
