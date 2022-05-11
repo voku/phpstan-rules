@@ -9,3 +9,4 @@
 /.whitesource export-ignore
 /phpstan.neon export-ignore
 /phpunit.xml export-ignore
+/renovate.json export-ignore
