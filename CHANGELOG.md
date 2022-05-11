@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.6.3 (2020-05-11)
+- do not compare objects with another type: fix false-positive errors
+
 ### 1.6.2 (2020-05-11)
 - do not compare objects with another type: allow AND && OR conditions
 
