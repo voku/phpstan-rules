@@ -6,11 +6,61 @@ namespace voku\PHPStan\Rules;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Type\Enum\EnumCaseObjectType;
 use PHPStan\Type\VerbosityLevel;
 
 final class IfConditionHelper
 {
+    /**
+     * @param \PhpParser\Node\Expr $cond
+     * @param array<int, class-string> $classesNotInIfConditions
+     *
+     * @return array<int, \PHPStan\Rules\RuleError>
+     */
+    public static function processBooleanNodeHelper(
+        Node $cond,
+        Scope $scope,
+        array $classesNotInIfConditions
+    ): array
+    {
+        // init
+        $errors = [];
+
+        // ignore mixed types
+        $condType = $scope->getType($cond);
+        if ($condType instanceof \PHPStan\Type\MixedType) {
+            return [];
+        }
+
+        if (
+            !property_exists($cond, 'left')
+            &&
+            !property_exists($cond, 'right')
+        ) {
+            $errors = self::processNodeHelper($condType, null, $cond, $errors, $classesNotInIfConditions);
+
+            return $errors;
+        }
+
+        if (property_exists($cond, 'left')) {
+            $leftType = $scope->getType($cond->left);
+        } else {
+            $leftType = null;
+        }
+
+        if (property_exists($cond, 'right')) {
+            $rightType = $scope->getType($cond->right);
+        } else {
+            $rightType = null;
+        }
+
+        // left <-> right
+        $errors = self::processNodeHelper($leftType, $rightType, $cond, $errors, $classesNotInIfConditions);
+        // right <-> left
+        $errors = self::processNodeHelper($rightType, $leftType, $cond, $errors, $classesNotInIfConditions);
+
+        return $errors;
+    }
+    
     /**
      * @param \PHPStan\Type\Type|null $type_1
      * @param \PHPStan\Type\Type|null $type_2
@@ -230,18 +280,23 @@ final class IfConditionHelper
         if (! self::isObjectOrNullType($type_1)) {
             return;
         }
+        
+        if ($type_1 instanceof \PHPStan\Type\NullType) {
+            return;
+        }
+        
+        if (!$type_2) {
+            return;
+        }
 
-        if (
-            self::isDateTime($type_1)
-            &&
-            self::isDateTime($type_2)
-        ) {
+        if ($type_1->equals($type_2)) {
             return;
         }
 
         $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(sprintf(
-            'Do not compare objects directly, %s found.',
-            $type_1->describe(VerbosityLevel::value())
+            'Do not compare objects directly, %s and %s found.',
+            $type_1->describe(VerbosityLevel::value()),
+            $type_2->describe(VerbosityLevel::value())
         ))->line($cond->getAttribute('startLine'))->build();
     }
 
@@ -339,14 +394,5 @@ final class IfConditionHelper
         }
 
         return $return;
-    }
-
-    private static function isDateTime(?\PHPStan\Type\Type $type): bool
-    {
-        return (
-            $type instanceof \PHPStan\Type\ObjectType
-            &&
-            $type->isInstanceOf(\DateTimeInterface::class)->yes()
-        );
     }
 }

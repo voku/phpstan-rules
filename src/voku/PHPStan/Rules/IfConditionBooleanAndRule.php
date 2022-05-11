@@ -40,24 +40,10 @@ final class IfConditionBooleanAndRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         $cond = $node->getOriginalNode();
+        $rightScope = $node->getRightScope();
 
-        $left = $scope->getType($cond->left);
-        $right = $scope->getType($cond->right);
-        $errors = [];
-        $errors = IfConditionHelper::processNodeHelper(
-            $left, 
-            $right, 
-            $node, 
-            $errors, 
-            $this->classesNotInIfConditions
-        );
-        $errors = IfConditionHelper::processNodeHelper(
-            $right, 
-            $left, 
-            $node, 
-            $errors, 
-            $this->classesNotInIfConditions
-        );
+        $errors = IfConditionHelper::processBooleanNodeHelper($cond->left, $scope, $this->classesNotInIfConditions);
+        $errors = array_merge($errors, IfConditionHelper::processBooleanNodeHelper($cond->right, $rightScope, $this->classesNotInIfConditions));
 
         return $errors;
     }

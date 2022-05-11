@@ -2,10 +2,11 @@
 
 namespace voku\PHPStan\Rules\Test\fixtures;
 
-// Do not compare objects directly
+// Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.
 $a = new \stdClass();
-$b = rand(1, 2);
-$b = $a && $b ? $a->lall : 'foo';
+if (!$a) {
+    // ...
+}
 
 // Allow AND && OR checks on objects
 $a = random_int(0, 1) ? new \SplFixedArray(2) : null;

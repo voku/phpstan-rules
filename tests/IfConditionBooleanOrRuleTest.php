@@ -7,22 +7,23 @@ namespace voku\PHPStan\Rules\Test;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 use voku\PHPStan\Rules\IfConditionBooleanAndRule;
+use voku\PHPStan\Rules\IfConditionBooleanOrRule;
 
 /**
- * @extends RuleTestCase<IfConditionBooleanAndRule>
+ * @extends RuleTestCase<IfConditionBooleanOrRule>
  */
-final class IfConditionBooleanAndRuleTest extends RuleTestCase
+final class IfConditionBooleanOrRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        return new IfConditionBooleanAndRule([\stdClass::class]);
+        return new IfConditionBooleanOrRule([\stdClass::class]);
     }
 
     public function testIfConditions(): void
     {
         $this->analyse(
             [
-                __DIR__ . '/fixtures/IfConditionsBooleanAndFixtures.php',
+                __DIR__ . '/fixtures/IfConditionsBooleanOrFixtures.php',
             ],
             [
                 [
