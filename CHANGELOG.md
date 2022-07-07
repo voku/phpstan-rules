@@ -1,25 +1,29 @@
 # Changelog
 
-### 1.6.3 (2020-05-11)
+### 1.7.0 (2022-07-07)
+- use "count()" instead of something like `if ($a)`
+- check non-empty array is never empty
+
+### 1.6.3 (2022-05-11)
 - do not compare objects with another type: fix false-positive errors
 
-### 1.6.2 (2020-05-11)
+### 1.6.2 (2022-05-11)
 - do not compare objects with another type: allow AND && OR conditions
 
-### 1.6.1 (2020-05-11)
+### 1.6.1 (2022-05-11)
 - do not compare objects with another type: allow NULL and BOOLEAN checks
 
-### 1.6.0 (2020-05-11)
+### 1.6.0 (2022-05-11)
 - check more conditions (left <-> right) | thanks @Slamdunk
 - check DateTime/DateTimeImmutable conditions | thanks @Slamdunk
 
-### 1.5.2 (2020-05-09)
+### 1.5.2 (2022-05-09)
 - do not compare objects with another type: allow UnionType with the same ObjectType and NULL
 
-### 1.5.1 (2020-05-09)
+### 1.5.1 (2022-05-09)
 - do not compare objects with another type: allow NULL checks
 
-### 1.5.0 (2020-05-09)
+### 1.5.0 (2022-05-09)
 - inspect all binary operations regardless within or without if/else statement | thanks @Slamdunk
 - do not compare objects with another type: allow $this object type comparison | thanks @Slamdunk
 - do not compare objects with another type: allow object strict comparison for ENUM types | thanks @Slamdunk
