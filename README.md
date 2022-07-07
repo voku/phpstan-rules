@@ -48,6 +48,7 @@ This helper is used by different "condition"-rules: if - and - or - not - ternar
   - https://3v4l.org/a4VdC
 - check non-empty string is never empty
 - check non-empty string is always empty
+- check non-empty array is never empty
 - do not compare objects with another type
 
 #### Configuration

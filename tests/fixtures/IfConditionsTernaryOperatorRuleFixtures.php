@@ -31,3 +31,14 @@ if ($a !== null) {
 if ($b && $a !== null) {
     // ...
 }
+
+// do not report this
+$postTmp = $_POST ?? [];
+$getTmp = $_GET ?? [];
+if (
+    isset($_REQUEST)
+    &&
+    ($getTmp + $postTmp) != $_REQUEST
+) {
+    // ...
+}

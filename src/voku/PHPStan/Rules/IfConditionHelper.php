@@ -60,7 +60,7 @@ final class IfConditionHelper
 
         return $errors;
     }
-    
+
     /**
      * @param \PHPStan\Type\Type|null $type_1
      * @param \PHPStan\Type\Type|null $type_2
@@ -82,6 +82,10 @@ final class IfConditionHelper
 
         // DEBUG
         //var_dump(get_class($type_1), get_class($cond), get_class($type_2));
+
+        // -----------------------------------------------------------------------------------------
+
+        self::processNonCountOnArray($type_1, $cond, $errors);
 
         // -----------------------------------------------------------------------------------------
 
@@ -280,11 +284,11 @@ final class IfConditionHelper
         if (! self::isObjectOrNullType($type_1)) {
             return;
         }
-        
+
         if ($type_1 instanceof \PHPStan\Type\NullType) {
             return;
         }
-        
+
         if (!$type_2) {
             return;
         }
@@ -340,6 +344,34 @@ final class IfConditionHelper
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
         ) {
             $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Non-empty string is always non-empty.')->line($cond->getAttribute('startLine'))->build();
+        }
+    }
+
+    /**
+     * @param \PHPStan\Type\Type|null $type_1
+     * @param Node $cond
+     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     *
+     * @throws \PHPStan\ShouldNotHappenException
+     */
+    private static function processNonCountOnArray(
+        ?\PHPStan\Type\Type $type_1,
+        Node                $cond,
+        array               &$errors
+    ): void
+    {
+        if (
+            $cond instanceof \PhpParser\Node\Expr\Ternary
+            ||
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp
+        ) {
+            return;
+        }
+        
+        if ($type_1 instanceof \PHPStan\Type\Accessory\NonEmptyArrayType) {
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Non-empty array is never empty.')->line($cond->getAttribute('startLine'))->build();
+        } elseif ($type_1 instanceof \PHPStan\Type\ArrayType) {
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a function e.g. `count($foo) > 0` instead of `$foo`.')->line($cond->getAttribute('startLine'))->build();
         }
     }
 

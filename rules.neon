@@ -35,6 +35,20 @@ services:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 		tags:
 			- phpstan.rules.rule
+			
+	-
+		class: voku\PHPStan\Rules\IfConditionBasicRule
+		arguments:
+			classesNotInIfConditions: %voku.classesNotInIfConditions%
+		tags:
+			- phpstan.rules.rule
+
+	-
+		class: voku\PHPStan\Rules\ElseIfConditionBasicRule
+		arguments:
+			classesNotInIfConditions: %voku.classesNotInIfConditions%
+		tags:
+			- phpstan.rules.rule
 
 	-
 		class: voku\PHPStan\Rules\IfConditionTernaryOperatorRule
