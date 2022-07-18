@@ -367,12 +367,22 @@ final class IfConditionHelper
         ) {
             return;
         }
+
+        if ($type_1 instanceof \PHPStan\Type\UnionType) {
+            $type_1 = $type_1->generalize(\PHPStan\Type\GeneralizePrecision::lessSpecific());
+        }
         
         if ($type_1 instanceof \PHPStan\Type\Accessory\NonEmptyArrayType) {
             $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Non-empty array is never empty.')->line($cond->getAttribute('startLine'))->build();
         } elseif ($type_1 instanceof \PHPStan\Type\ArrayType) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a function e.g. `count($foo) > 0` instead of `$foo`.')->line($cond->getAttribute('startLine'))->build();
-        }
+
+
+            if ($cond instanceof Node\Expr\BooleanNot) {
+                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a function e.g. `count($foo) === 0` instead of `!$foo`.')->line($cond->getAttribute('startLine'))->build();
+            } else {
+                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a function e.g. `count($foo) > 0` instead of `$foo`.')->line($cond->getAttribute('startLine'))->build();
+            }
+         }
     }
 
     /**

@@ -34,3 +34,9 @@ if (
 ) {
     // ...
 }
+
+// check for use "count()"
+$b = rand(0, 1) ? [] : [true];
+if (!$b) {
+    // ...
+}

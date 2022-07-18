@@ -39,6 +39,20 @@ final class IfConditionBasicRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        if (
+            $node->cond instanceof Node\Expr\BooleanNot
+            &&
+            $node->cond->expr instanceof Node\Expr\Variable
+        ) {
+            return IfConditionHelper::processNodeHelper(
+                $scope->getType($node->cond->expr),
+                null,
+                $node->cond,
+                [],
+                $this->classesNotInIfConditions
+            );
+        }
+        
         if (!$node->cond instanceof Node\Expr\Variable) {
             return [];
         }

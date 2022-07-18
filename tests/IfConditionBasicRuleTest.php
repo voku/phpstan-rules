@@ -37,6 +37,10 @@ final class IfConditionBasicRuleTest extends RuleTestCase
                 [
                     'Use a function e.g. `count($foo) > 0` instead of `$foo`.',
                     23
+                ],
+                [
+                    'Use a function e.g. `count($foo) === 0` instead of `!$foo`.',
+                    40
                 ]
             ]
         );

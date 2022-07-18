@@ -1,7 +1,10 @@
 # Changelog
 
+### 1.8.0 (2022-07-18)
+- use `count($a) === 0` instead of something like `if (!$a)`
+
 ### 1.7.0 (2022-07-07)
-- use "count()" instead of something like `if ($a)`
+- use `count($a) > 0` instead of something like `if ($a)`
 - check non-empty array is never empty
 
 ### 1.6.3 (2022-05-11)
