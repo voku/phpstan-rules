@@ -30,6 +30,10 @@ final class IfConditionBooleanNotRuleTest extends RuleTestCase
                     'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     7,
                 ],
+                [
+                    'Use a function e.g. `count($foo) === 0` instead of `!$foo`.',
+                    39
+                ]
             ]
         );
     }

@@ -19,7 +19,8 @@ final class IfConditionHelper
     public static function processBooleanNodeHelper(
         Node $cond,
         Scope $scope,
-        array $classesNotInIfConditions
+        array $classesNotInIfConditions,
+        ?Node $origNode = null
     ): array
     {
         // init
@@ -36,7 +37,7 @@ final class IfConditionHelper
             &&
             !property_exists($cond, 'right')
         ) {
-            $errors = self::processNodeHelper($condType, null, $cond, $errors, $classesNotInIfConditions);
+            $errors = self::processNodeHelper($condType, null, $origNode ?? $cond, $errors, $classesNotInIfConditions);
 
             return $errors;
         }
@@ -85,7 +86,7 @@ final class IfConditionHelper
 
         // -----------------------------------------------------------------------------------------
 
-        self::processNonCountOnArray($type_1, $cond, $errors);
+        self::processCheckOnArray($type_1, $cond, $errors);
 
         // -----------------------------------------------------------------------------------------
 
@@ -354,7 +355,7 @@ final class IfConditionHelper
      *
      * @throws \PHPStan\ShouldNotHappenException
      */
-    private static function processNonCountOnArray(
+    private static function processCheckOnArray(
         ?\PHPStan\Type\Type $type_1,
         Node                $cond,
         array               &$errors
@@ -373,15 +374,17 @@ final class IfConditionHelper
         }
         
         if ($type_1 instanceof \PHPStan\Type\Accessory\NonEmptyArrayType) {
+          
             $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Non-empty array is never empty.')->line($cond->getAttribute('startLine'))->build();
+       
         } elseif ($type_1 instanceof \PHPStan\Type\ArrayType) {
-
 
             if ($cond instanceof Node\Expr\BooleanNot) {
                 $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a function e.g. `count($foo) === 0` instead of `!$foo`.')->line($cond->getAttribute('startLine'))->build();
             } else {
                 $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a function e.g. `count($foo) > 0` instead of `$foo`.')->line($cond->getAttribute('startLine'))->build();
             }
+            
          }
     }
 
