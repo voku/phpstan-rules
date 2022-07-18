@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.8.2 (2022-07-18)
+- fix for `count($a) === 0` instead of something like `if (!$a)`
+
 ### 1.8.1 (2022-07-18)
 - use `count($a) === 0` instead of something like `elseif (!$a)`
 
