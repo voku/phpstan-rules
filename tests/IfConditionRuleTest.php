@@ -94,28 +94,68 @@ final class IfConditionRuleTest extends RuleTestCase
                     97
                 ],
                 [
-                    'Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.', 
+                    'Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.',
+                    148
+                ],
+                [
+                    'Possible insane comparison between \'\' and 0.0',
                     148
                 ],
                 [
                     'Please do not use empty-string check for numeric values. e.g. `0 != \'\'` is not working with >= PHP 8.',
-                    152
+                    152,
+                ],
+                [
+                    'Possible insane comparison between \'\' and 0.0',
+                    152,
                 ],
                 [
                     'Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.',
-                    156
+                    156,
+                ],
+                [
+                    'Possible insane comparison between \'\' and 0',
+                    156,
                 ],
                 [
                     'Please do not use empty-string check for numeric values. e.g. `0 != \'\'` is not working with >= PHP 8.',
-                    160
+                    160,
                 ],
                 [
                     'Please do not use double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`.',
                     160,
                 ],
                 [
+                    'Possible insane comparison between \'\' and 0',
+                    160,
+                ],
+                [
                     'Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.',
-                    164, 
+                    164,
+                ],
+                [
+                    'Possible insane comparison between \'\' and 0',
+                    164,
+                ],
+                [
+                    'Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.',
+                    168,
+                ],
+                [
+                    'Possible insane comparison between \'\' and 0|null',
+                    168,
+                ],
+                [
+                    'Possible insane comparison between \'0foo\' and 0',
+                    175,
+                ],
+                [
+                    'Possible insane comparison between \'0foo\' and 0',
+                    178,
+                ],
+                [
+                    'Possible insane comparison between \'0foo\' and 1',
+                    181,
                 ],
             ]
         );

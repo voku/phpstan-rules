@@ -123,6 +123,10 @@ final class IfConditionHelper
         self::processNonEmptyStrings($type_1, $type_2, $cond, $errors);
 
         // -----------------------------------------------------------------------------------------
+        
+        self::processInsaneComparison($type_1, $type_2, $cond, $errors);
+
+        // -----------------------------------------------------------------------------------------
 
         return $errors;
     }
@@ -155,6 +159,24 @@ final class IfConditionHelper
                 $type_2 instanceof \PHPStan\Type\IntegerType
                 ||
                 $type_2 instanceof \PHPStan\Type\FloatType
+                ||
+                (
+                    (
+                        $type_2 instanceof \PHPStan\Type\UnionType
+                        &&
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
+                        &&
+                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
+                    )
+                    ||
+                    (
+                        $type_2 instanceof \PHPStan\Type\UnionType
+                        &&
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\FloatType
+                        &&
+                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
+                    )
+                )
             )
         ) {
             $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.')->line($cond->getAttribute('startLine'))->build();
@@ -189,6 +211,24 @@ final class IfConditionHelper
                 $type_2 instanceof \PHPStan\Type\IntegerType
                 ||
                 $type_2 instanceof \PHPStan\Type\FloatType
+                ||
+                (
+                    (
+                        $type_2 instanceof \PHPStan\Type\UnionType
+                        &&
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
+                        &&
+                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
+                    )
+                    ||
+                    (
+                        $type_2 instanceof \PHPStan\Type\UnionType
+                        &&
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\FloatType
+                        &&
+                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
+                    )
+                )
             )
         ) {
             $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use empty-string check for numeric values. e.g. `0 != \'\'` is not working with >= PHP 8.')->line($cond->getAttribute('startLine'))->build();
@@ -372,14 +412,17 @@ final class IfConditionHelper
         array               &$errors
     ): void
     {
-        if (!(
-            $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
-            &&
-            $type_1->getValue() === ''
-            &&
-            $type_2->isNonEmptyString()->yes()
-
-        )) {
+        if (
+            !(
+                $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
+                &&
+                $type_1->getValue() === ''
+                &&
+                $type_2
+                &&
+                $type_2->isNonEmptyString()->yes()
+            )
+        ) {
             return;
         }
 
@@ -398,6 +441,66 @@ final class IfConditionHelper
         ) {
             $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Non-empty string is always non-empty.')->line($cond->getAttribute('startLine'))->build();
         }
+    }
+
+    /**
+     * @param \PHPStan\Type\Type|null $type_1
+     * @param \PHPStan\Type\Type|null $type_2
+     * @param Node $cond
+     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     *
+     * @throws \PHPStan\ShouldNotHappenException
+     */
+    private static function processInsaneComparison(
+        ?\PHPStan\Type\Type $type_1,
+        ?\PHPStan\Type\Type $type_2,
+        Node                $cond,
+        array               &$errors
+    ): void
+    {
+        if (
+            !$cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+            &&
+            !$cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual
+            &&
+            !$cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
+            &&
+            !$cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
+        ) {
+            return;
+        }
+        
+        if (
+            $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
+            &&
+            $type_1->isNumericString()->no()
+            &&
+            (
+                $type_2 instanceof \PHPStan\Type\IntegerType
+                ||
+                $type_2 instanceof \PHPStan\Type\FloatType
+                ||
+                (
+                    (
+                        $type_2 instanceof \PHPStan\Type\UnionType
+                        &&
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
+                        &&
+                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
+                    )
+                    ||
+                    (
+                        $type_2 instanceof \PHPStan\Type\UnionType
+                        &&
+                        $type_2->getTypes()[0] instanceof \PHPStan\Type\FloatType
+                        &&
+                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
+                    )
+                )
+            )
+        ) {
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())))->line($cond->getAttribute('startLine'))->build();
+        }   
     }
 
     /**

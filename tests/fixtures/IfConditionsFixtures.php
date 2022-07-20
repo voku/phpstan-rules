@@ -164,3 +164,20 @@ $i = '';
 if ($i == 0) {
     // ...
 }
+$i = random_int(0, 1) ? 0 : null;
+if ($i == '') {
+    // ...
+}
+
+// impossible comparison
+$f = '0foo' . 1; // string concatenation with int is ok
+
+if (0 == '0foo') { // always false
+    // ...
+}
+if (0 === '0foo') { // always false
+    // ...
+}
+if ('0foo' != 1) { // always true
+    // ...
+}
