@@ -113,6 +113,10 @@ final class IfConditionRuleTest extends RuleTestCase
                     'Please do not use double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`.',
                     160,
                 ],
+                [
+                    'Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.',
+                    164, 
+                ],
             ]
         );
     }

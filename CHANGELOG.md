@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.9.0 (2022-07-20)
+- PHP8: check empty string checks on 0 values: https://3v4l.org/lBFHI
+
 ### 1.8.2 (2022-07-18)
 - fix for `count($a) === 0` instead of something like `if (!$a)`
 
