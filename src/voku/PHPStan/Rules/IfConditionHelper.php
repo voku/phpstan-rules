@@ -104,6 +104,10 @@ final class IfConditionHelper
 
         // -----------------------------------------------------------------------------------------
 
+        self::processEqualRules($type_1, $type_2, $cond, $errors);
+        
+        // -----------------------------------------------------------------------------------------
+
         self::processNotEqualRules($type_1, $type_2, $cond, $errors);
 
         // -----------------------------------------------------------------------------------------
@@ -131,6 +135,40 @@ final class IfConditionHelper
      *
      * @throws \PHPStan\ShouldNotHappenException
      */
+    private static function processEqualRules(
+        ?\PHPStan\Type\Type $type_1,
+        ?\PHPStan\Type\Type $type_2,
+        Node                $cond,
+        array               &$errors
+    ): void
+    {
+        if (!$cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal) {
+            return;
+        }
+
+        if (
+            $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
+            &&
+            $type_1->getValue() === ''
+            &&
+            (
+                $type_2 instanceof \PHPStan\Type\IntegerType
+                ||
+                $type_2 instanceof \PHPStan\Type\FloatType
+            )
+        ) {
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.')->line($cond->getAttribute('startLine'))->build();
+        }
+    }
+
+        /**
+     * @param \PHPStan\Type\Type|null $type_1
+     * @param \PHPStan\Type\Type|null $type_2
+     * @param Node $cond
+     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     *
+     * @throws \PHPStan\ShouldNotHappenException
+     */
     private static function processNotEqualRules(
         ?\PHPStan\Type\Type $type_1,
         ?\PHPStan\Type\Type $type_2,
@@ -140,6 +178,20 @@ final class IfConditionHelper
     {
         if (! $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual) {
             return;
+        }
+
+        if (
+            $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
+            &&
+            $type_1->getValue() === ''
+            &&
+            (
+                $type_2 instanceof \PHPStan\Type\IntegerType
+                ||
+                $type_2 instanceof \PHPStan\Type\FloatType
+            )
+        ) {
+            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use empty-string check for numeric values. e.g. `0 != \'\'` is not working with >= PHP 8.')->line($cond->getAttribute('startLine'))->build();
         }
 
         if (
