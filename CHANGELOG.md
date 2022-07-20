@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.10.0 (2022-07-21)
+- check possible insane comparisons. e.g. `0 == '0foo'`, the behavior was changed in PHP 8, https://3v4l.org/BJ6b8
+
 ### 1.9.0 (2022-07-20)
 - PHP8: check empty string checks on 0 values: https://3v4l.org/lBFHI
 
