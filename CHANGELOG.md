@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.0.0 (2022-07-22)
+- add a prefix for the error messages
+- check for more non-typical "if"-conditions
+
 ### 1.10.0 (2022-07-21)
 - check possible insane comparisons. e.g. `0 == '0foo'`, the behavior was changed in PHP 8, https://3v4l.org/BJ6b8
 
