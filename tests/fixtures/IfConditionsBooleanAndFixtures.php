@@ -32,3 +32,14 @@ if ($a !== null) {
 if ($b && $a !== null) {
     // ...
 }
+
+// Check for conditions without "if"
+function foooooo($a)
+{
+    // ...
+}
+foooooo($b && $a !== null);
+foooooo(0 && 1);
+$c = new \stdClass();
+foooooo($c && $a);
+foooooo($c);

@@ -48,14 +48,16 @@ final class IfConditionRule implements Rule
             $rightType, 
             $node, 
             $errors, 
-            $this->classesNotInIfConditions
+            $this->classesNotInIfConditions,
+            $node
         );
         $errors = IfConditionHelper::processNodeHelper(
             $rightType, 
             $leftType, 
             $node, 
             $errors, 
-            $this->classesNotInIfConditions
+            $this->classesNotInIfConditions,
+            $node
         );
 
         return $errors;

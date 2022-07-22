@@ -27,19 +27,19 @@ final class IfConditionBasicRuleTest extends RuleTestCase
             ],
             [
                 [
-                    'Use a function e.g. `count($foo) > 0` instead of `$foo`.',
+                    'If_: Use a function e.g. `count($foo) > 0` instead of `$foo`.',
                     7,
                 ],
                 [
-                    'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    'If_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     17
                 ],
                 [
-                    'Use a function e.g. `count($foo) > 0` instead of `$foo`.',
+                    'If_: Use a function e.g. `count($foo) > 0` instead of `$foo`.',
                     23
                 ],
                 [
-                    'Use a function e.g. `count($foo) === 0` instead of `!$foo`.',
+                    'If_: Use a function e.g. `count($foo) === 0` instead of `!$foo`.',
                     40
                 ]
             ]

@@ -19,7 +19,7 @@ final class IfConditionBooleanNotRuleTest extends RuleTestCase
         return new IfConditionBooleanNotRule([\stdClass::class]);
     }
 
-    public function testIfConditions(): void
+    public function testBooleanNotConditions(): void
     {
         $this->analyse(
             [
@@ -27,11 +27,11 @@ final class IfConditionBooleanNotRuleTest extends RuleTestCase
             ],
             [
                 [
-                    'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    'BooleanNot: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     7,
                 ],
                 [
-                    'Use a function e.g. `count($foo) === 0` instead of `!$foo`.',
+                    'BooleanNot: Use a function e.g. `count($foo) === 0` instead of `!$foo`.',
                     39
                 ]
             ]

@@ -27,15 +27,15 @@ final class ElseIfConditionBasicRuleTest extends RuleTestCase
             ],
             [
                 [
-                    'Use a function e.g. `count($foo) > 0` instead of `$foo`.',
+                    'ElseIf_: Use a function e.g. `count($foo) > 0` instead of `$foo`.',
                     14,
                 ],
                 [
-                    'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    'ElseIf_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     21
                 ],
                 [
-                    'Use a function e.g. `count($foo) === 0` instead of `!$foo`.',
+                    'ElseIf_: Use a function e.g. `count($foo) === 0` instead of `!$foo`.',
                     29,
                 ],
             ]

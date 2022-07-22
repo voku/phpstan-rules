@@ -49,7 +49,8 @@ final class ElseIfConditionBasicRule implements Rule
                 null,
                 $node->cond,
                 [],
-                $this->classesNotInIfConditions
+                $this->classesNotInIfConditions,
+                $node
             );
         }
         
@@ -62,7 +63,8 @@ final class ElseIfConditionBasicRule implements Rule
             null,
             $node->cond,
             [],
-            $this->classesNotInIfConditions
+            $this->classesNotInIfConditions,
+            $node
         );
     }
 }

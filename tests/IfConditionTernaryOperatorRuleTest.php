@@ -27,8 +27,12 @@ final class IfConditionTernaryOperatorRuleTest extends RuleTestCase
             ],
             [
                 [
-                    'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    'Ternary: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     7,
+                ],
+                [
+                    'Ternary: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    8,
                 ],
             ]
         );

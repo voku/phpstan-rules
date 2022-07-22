@@ -17,10 +17,10 @@ final class IfConditionHelper
      * @return array<int, \PHPStan\Rules\RuleError>
      */
     public static function processBooleanNodeHelper(
-        Node $cond,
+        Node  $cond,
         Scope $scope,
         array $classesNotInIfConditions,
-        ?Node $origNode = null
+        Node  $origNode
     ): array
     {
         // init
@@ -37,7 +37,14 @@ final class IfConditionHelper
             &&
             !property_exists($cond, 'right')
         ) {
-            $errors = self::processNodeHelper($condType, null, $origNode ?? $cond, $errors, $classesNotInIfConditions);
+            $errors = self::processNodeHelper(
+                $condType,
+                null,
+                $origNode,
+                $errors,
+                $classesNotInIfConditions,
+                $origNode
+            );
 
             return $errors;
         }
@@ -55,9 +62,23 @@ final class IfConditionHelper
         }
 
         // left <-> right
-        $errors = self::processNodeHelper($leftType, $rightType, $cond, $errors, $classesNotInIfConditions);
+        $errors = self::processNodeHelper(
+            $leftType,
+            $rightType,
+            $cond,
+            $errors,
+            $classesNotInIfConditions,
+            $origNode
+        );
         // right <-> left
-        $errors = self::processNodeHelper($rightType, $leftType, $cond, $errors, $classesNotInIfConditions);
+        $errors = self::processNodeHelper(
+            $rightType,
+            $leftType,
+            $cond,
+            $errors,
+            $classesNotInIfConditions,
+            $origNode
+        );
 
         return $errors;
     }
@@ -70,14 +91,14 @@ final class IfConditionHelper
      * @param array<int, class-string> $classesNotInIfConditions
      *
      * @return array<int, \PHPStan\Rules\RuleError>
-     * @throws \PHPStan\ShouldNotHappenException
      */
     public static function processNodeHelper(
         ?\PHPStan\Type\Type $type_1,
         ?\PHPStan\Type\Type $type_2,
-        Node $cond,
-        array $errors,
-        array $classesNotInIfConditions
+        Node                $cond,
+        array               $errors,
+        array               $classesNotInIfConditions,
+        Node                $origNode
     ): array
     {
 
@@ -86,45 +107,35 @@ final class IfConditionHelper
 
         // -----------------------------------------------------------------------------------------
 
-        self::processCheckOnArray($type_1, $cond, $errors);
+        self::processCheckOnArray($type_1, $cond, $errors, $origNode);
 
         // -----------------------------------------------------------------------------------------
 
-        self::processObjectMethodUsageForComparison($type_1, $cond, $errors, $classesNotInIfConditions);
+        self::processObjectMethodUsageForComparison($type_1, $cond, $errors, $classesNotInIfConditions, $origNode);
 
         // -----------------------------------------------------------------------------------------
 
-        if (
-            $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd
-            ||
-            $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanOr
-        ) {
-            return $errors;
-        }
+        self::processEqualRules($type_1, $type_2, $cond, $errors, $origNode);
 
         // -----------------------------------------------------------------------------------------
 
-        self::processEqualRules($type_1, $type_2, $cond, $errors);
-        
-        // -----------------------------------------------------------------------------------------
-
-        self::processNotEqualRules($type_1, $type_2, $cond, $errors);
+        self::processNotEqualRules($type_1, $type_2, $cond, $errors, $origNode);
 
         // -----------------------------------------------------------------------------------------
 
-        self::processBooleanComparison($type_1, $type_2, $cond, $errors);
+        self::processBooleanComparison($type_1, $type_2, $cond, $errors, $origNode);
 
         // -----------------------------------------------------------------------------------------
 
-        self::processObjectComparison($type_1, $type_2, $cond, $errors);
+        self::processObjectComparison($type_1, $type_2, $cond, $errors, $origNode);
 
         // -----------------------------------------------------------------------------------------
 
-        self::processNonEmptyStrings($type_1, $type_2, $cond, $errors);
+        self::processNonEmptyStrings($type_1, $type_2, $cond, $errors, $origNode);
 
         // -----------------------------------------------------------------------------------------
-        
-        self::processInsaneComparison($type_1, $type_2, $cond, $errors);
+
+        self::processInsaneComparison($type_1, $type_2, $cond, $errors, $origNode);
 
         // -----------------------------------------------------------------------------------------
 
@@ -136,14 +147,13 @@ final class IfConditionHelper
      * @param \PHPStan\Type\Type|null $type_2
      * @param Node $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
-     *
-     * @throws \PHPStan\ShouldNotHappenException
      */
     private static function processEqualRules(
         ?\PHPStan\Type\Type $type_1,
         ?\PHPStan\Type\Type $type_2,
         Node                $cond,
-        array               &$errors
+        array               &$errors,
+        Node                $origNode
     ): void
     {
         if (!$cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal) {
@@ -156,49 +166,30 @@ final class IfConditionHelper
             $type_1->getValue() === ''
             &&
             (
-                $type_2 instanceof \PHPStan\Type\IntegerType
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class)
                 ||
-                $type_2 instanceof \PHPStan\Type\FloatType
-                ||
-                (
-                    (
-                        $type_2 instanceof \PHPStan\Type\UnionType
-                        &&
-                        $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
-                        &&
-                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                    )
-                    ||
-                    (
-                        $type_2 instanceof \PHPStan\Type\UnionType
-                        &&
-                        $type_2->getTypes()[0] instanceof \PHPStan\Type\FloatType
-                        &&
-                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                    )
-                )
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class)
             )
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = self::buildErrorMessage($origNode, 'Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.', $cond->getAttribute('startLine'));
         }
     }
 
-        /**
+    /**
      * @param \PHPStan\Type\Type|null $type_1
      * @param \PHPStan\Type\Type|null $type_2
      * @param Node $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
-     *
-     * @throws \PHPStan\ShouldNotHappenException
      */
     private static function processNotEqualRules(
         ?\PHPStan\Type\Type $type_1,
         ?\PHPStan\Type\Type $type_2,
         Node                $cond,
-        array               &$errors
+        array               &$errors,
+        Node                $origNode
     ): void
     {
-        if (! $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual) {
+        if (!$cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual) {
             return;
         }
 
@@ -208,30 +199,12 @@ final class IfConditionHelper
             $type_1->getValue() === ''
             &&
             (
-                $type_2 instanceof \PHPStan\Type\IntegerType
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class)
                 ||
-                $type_2 instanceof \PHPStan\Type\FloatType
-                ||
-                (
-                    (
-                        $type_2 instanceof \PHPStan\Type\UnionType
-                        &&
-                        $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
-                        &&
-                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                    )
-                    ||
-                    (
-                        $type_2 instanceof \PHPStan\Type\UnionType
-                        &&
-                        $type_2->getTypes()[0] instanceof \PHPStan\Type\FloatType
-                        &&
-                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                    )
-                )
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class)
             )
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use empty-string check for numeric values. e.g. `0 != \'\'` is not working with >= PHP 8.')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = self::buildErrorMessage($origNode, 'Please do not use empty-string check for numeric values. e.g. `0 != \'\'` is not working with >= PHP 8.', $cond->getAttribute('startLine'));
         }
 
         if (
@@ -241,7 +214,7 @@ final class IfConditionHelper
             &&
             $type_2 instanceof \PHPStan\Type\StringType
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use double negative string conditions. e.g. `(string)$foo != \'\'` is the same as `(string)$foo`.')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = self::buildErrorMessage($origNode, 'Please do not use double negative string conditions. e.g. `(string)$foo != \'\'` is the same as `(string)$foo`.', $cond->getAttribute('startLine'));
         }
 
         if (
@@ -253,19 +226,9 @@ final class IfConditionHelper
                 ($type_1 instanceof \PHPStan\Type\Constant\ConstantBooleanType && $type_1->getValue() === false)
             )
             &&
-            (
-                $type_2 instanceof \PHPStan\Type\IntegerType
-                ||
-                (
-                    $type_2 instanceof \PHPStan\Type\UnionType
-                    &&
-                    $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
-                    &&
-                    $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                )
-            )
+            self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class)
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`.')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = self::buildErrorMessage($origNode, 'Please do not use double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`.', $cond->getAttribute('startLine'));
         }
 
         if (
@@ -277,19 +240,9 @@ final class IfConditionHelper
                 ($type_1 instanceof \PHPStan\Type\Constant\ConstantBooleanType && $type_1->getValue() === false)
             )
             &&
-            (
-                $type_2 instanceof \PHPStan\Type\BooleanType
-                ||
-                (
-                    $type_2 instanceof \PHPStan\Type\UnionType
-                    &&
-                    $type_2->getTypes()[0] instanceof \PHPStan\Type\BooleanType
-                    &&
-                    $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                )
-            )
+            self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\BooleanType::class)
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use double negative boolean conditions. e.g. `(bool)$foo != false` is the same as `(bool)$foo`.')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = self::buildErrorMessage($origNode, 'Please do not use double negative boolean conditions. e.g. `(bool)$foo != false` is the same as `(bool)$foo`.', $cond->getAttribute('startLine'));
         }
 
         // NULL checks are difficult and maybe unexpected, so that we should use strict check here
@@ -299,25 +252,9 @@ final class IfConditionHelper
             &&
             $type_1->getValue() === null
             &&
-            (
-                (
-                    $type_2 instanceof \PHPStan\Type\UnionType
-                    &&
-                    $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
-                    &&
-                    $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                )
-                ||
-                (
-                    $type_2 instanceof \PHPStan\Type\UnionType
-                    &&
-                    $type_2->getTypes()[0] instanceof \PHPStan\Type\StringType
-                    &&
-                    $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                )
-            )
+            $type_2 instanceof \PHPStan\Type\IntegerType
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Please do not use double negative null conditions. Use "!==" instead if needed.')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = self::buildErrorMessage($origNode, 'Please do not use double negative null conditions. Use "!==" instead if needed.', $cond->getAttribute('startLine'));
         }
     }
 
@@ -326,26 +263,25 @@ final class IfConditionHelper
      * @param \PHPStan\Type\Type|null $type_2
      * @param Node $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
-     *
-     * @throws \PHPStan\ShouldNotHappenException
      */
     private static function processBooleanComparison(
         ?\PHPStan\Type\Type $type_1,
         ?\PHPStan\Type\Type $type_2,
         Node                $cond,
-        array               &$errors
+        array               &$errors,
+        Node                $origNode
     ): void
     {
-        if (! $type_1 instanceof \PHPStan\Type\BooleanType) {
+        if (!$type_1 instanceof \PHPStan\Type\BooleanType) {
             return;
         }
 
         if ($type_2 instanceof \PHPStan\Type\Constant\ConstantIntegerType) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare boolean and integer.')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = self::buildErrorMessage($origNode, 'Do not compare boolean and integer.', $cond->getAttribute('startLine'));
         }
 
         if ($type_2 instanceof \PHPStan\Type\Constant\ConstantStringType) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Do not compare boolean and string.')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = self::buildErrorMessage($origNode, 'Do not compare boolean and string.', $cond->getAttribute('startLine'));
         }
     }
 
@@ -354,14 +290,13 @@ final class IfConditionHelper
      * @param \PHPStan\Type\Type|null $type_2
      * @param Node $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
-     *
-     * @throws \PHPStan\ShouldNotHappenException
      */
     private static function processObjectComparison(
         ?\PHPStan\Type\Type $type_1,
         ?\PHPStan\Type\Type $type_2,
         Node                $cond,
-        array               &$errors
+        array               &$errors,
+        Node                $origNode
     ): void
     {
         if (
@@ -370,11 +305,19 @@ final class IfConditionHelper
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
             ||
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\Coalesce
+            ||
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd
+            ||
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanOr
+            ||
+            $origNode instanceof \PHPStan\Node\BooleanAndNode
+            ||
+            $origNode instanceof \PHPStan\Node\BooleanOrNode
         ) {
             return;
         }
 
-        if (! self::isObjectOrNullType($type_1)) {
+        if (!self::isObjectOrNullType($type_1)) {
             return;
         }
 
@@ -390,11 +333,11 @@ final class IfConditionHelper
             return;
         }
 
-        $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(sprintf(
-            'Do not compare objects directly, %s and %s found.',
-            $type_1->describe(VerbosityLevel::value()),
-            $type_2->describe(VerbosityLevel::value())
-        ))->line($cond->getAttribute('startLine'))->build();
+        $errors[] = self::buildErrorMessage(
+            $origNode, 
+            sprintf('Do not compare objects directly, %s and %s found.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+            $cond->getAttribute('startLine')
+        );
     }
 
     /**
@@ -402,14 +345,13 @@ final class IfConditionHelper
      * @param \PHPStan\Type\Type|null $type_2
      * @param Node $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
-     *
-     * @throws \PHPStan\ShouldNotHappenException
      */
     private static function processNonEmptyStrings(
         ?\PHPStan\Type\Type $type_1,
         ?\PHPStan\Type\Type $type_2,
         Node                $cond,
-        array               &$errors
+        array               &$errors,
+        Node                $origNode
     ): void
     {
         if (
@@ -431,7 +373,7 @@ final class IfConditionHelper
             ||
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Non-empty string is never empty.')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = self::buildErrorMessage($origNode, 'Non-empty string is never empty.', $cond->getAttribute('startLine'));
         }
 
         if (
@@ -439,7 +381,7 @@ final class IfConditionHelper
             ||
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Non-empty string is always non-empty.')->line($cond->getAttribute('startLine'))->build();
+            $errors[] = self::buildErrorMessage($origNode, 'Non-empty string is always non-empty.', $cond->getAttribute('startLine'));
         }
     }
 
@@ -448,14 +390,13 @@ final class IfConditionHelper
      * @param \PHPStan\Type\Type|null $type_2
      * @param Node $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
-     *
-     * @throws \PHPStan\ShouldNotHappenException
      */
     private static function processInsaneComparison(
         ?\PHPStan\Type\Type $type_1,
         ?\PHPStan\Type\Type $type_2,
         Node                $cond,
-        array               &$errors
+        array               &$errors,
+        Node                $origNode
     ): void
     {
         if (
@@ -469,51 +410,200 @@ final class IfConditionHelper
         ) {
             return;
         }
-        
+
+        $possibleInsaneComparisonFound = false;
+
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+            &&
+            $type_1 instanceof \PHPStan\Type\ConstantScalarType
+            &&
+            $type_2 instanceof \PHPStan\Type\ConstantScalarType
+            &&
+            $type_1->getValue() != $type_2->getValue()
+        ) {
+            if ($possibleInsaneComparisonFound === false) {
+                $possibleInsaneComparisonFound = true;
+                $errors[] = self::buildErrorMessage(
+                    $origNode,
+                    sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                    $cond->getAttribute('startLine')
+                );
+            }
+        }
+
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual
+            &&
+            $type_1 instanceof \PHPStan\Type\ConstantScalarType
+            &&
+            $type_2 instanceof \PHPStan\Type\ConstantScalarType
+            &&
+            $type_1->getValue() == $type_2->getValue()
+        ) {
+            if ($possibleInsaneComparisonFound === false) {
+                $possibleInsaneComparisonFound = true;
+                $errors[] = self::buildErrorMessage(
+                    $origNode,
+                    sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                    $cond->getAttribute('startLine')
+                );
+            }
+        }
+
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
+            &&
+            $type_1 instanceof \PHPStan\Type\ConstantScalarType
+            &&
+            $type_2 instanceof \PHPStan\Type\ConstantScalarType
+            &&
+            $type_1->getValue() !== $type_2->getValue()
+        ) {
+            if ($possibleInsaneComparisonFound === false) {
+                $possibleInsaneComparisonFound = true;
+                $errors[] = self::buildErrorMessage(
+                    $origNode,
+                    sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                    $cond->getAttribute('startLine')
+                );
+            }
+        }
+
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
+            &&
+            $type_1 instanceof \PHPStan\Type\ConstantScalarType
+            &&
+            $type_2 instanceof \PHPStan\Type\ConstantScalarType
+            &&
+            $type_1->getValue() === $type_2->getValue()
+        ) {
+            if ($possibleInsaneComparisonFound === false) {
+                $possibleInsaneComparisonFound = true;
+                $errors[] = self::buildErrorMessage(
+                    $origNode,
+                    sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                    $cond->getAttribute('startLine')
+                );
+            }
+        }
+
+        if (
+            $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
+            &&
+            $type_1->isNumericString()->yes()
+            &&
+            (float)$type_1->getValue() === 0.0
+            &&
+            $type_2
+            &&
+            self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Constant\ConstantIntegerType::class)
+        ) {
+            if ($possibleInsaneComparisonFound === false) {
+                $possibleInsaneComparisonFound = true;
+                $errors[] = self::buildErrorMessage(
+                    $origNode,
+                    sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                    $cond->getAttribute('startLine')
+                );
+            }
+        }
+
         if (
             $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
             &&
             $type_1->isNumericString()->no()
             &&
+            $type_2
+            &&
             (
-                $type_2 instanceof \PHPStan\Type\IntegerType
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class)
                 ||
-                $type_2 instanceof \PHPStan\Type\FloatType
-                ||
-                (
-                    (
-                        $type_2 instanceof \PHPStan\Type\UnionType
-                        &&
-                        $type_2->getTypes()[0] instanceof \PHPStan\Type\IntegerType
-                        &&
-                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                    )
-                    ||
-                    (
-                        $type_2 instanceof \PHPStan\Type\UnionType
-                        &&
-                        $type_2->getTypes()[0] instanceof \PHPStan\Type\FloatType
-                        &&
-                        $type_2->getTypes()[1] instanceof \PHPStan\Type\NullType
-                    )
-                )
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class)
             )
         ) {
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())))->line($cond->getAttribute('startLine'))->build();
-        }   
+            if ($possibleInsaneComparisonFound === false) {
+                $possibleInsaneComparisonFound = true;
+                $errors[] = self::buildErrorMessage(
+                    $origNode,
+                    sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                    $cond->getAttribute('startLine')
+                );
+            }
+        }
+
+        if (
+            (
+                $type_1 instanceof \PHPStan\Type\ConstantScalarType
+                &&
+                $type_1->getValue() !== null
+                &&
+                \filter_var($type_1->getValue(), \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE) === null
+                &&
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\BooleanType::class)
+            )
+            ||
+            (
+                $type_1 instanceof \PHPStan\Type\ConstantScalarType
+                &&
+                $type_1->getValue() !== null
+                &&
+                \filter_var($type_1->getValue(), \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE) === null
+                &&
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class)
+            )
+            ||
+            (
+                $type_1 instanceof \PHPStan\Type\ConstantScalarType
+                &&
+                $type_1->getValue() !== null
+                &&
+                \filter_var($type_1->getValue(), \FILTER_VALIDATE_FLOAT, \FILTER_NULL_ON_FAILURE) === null
+                &&
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class)
+            )
+        ) {
+            if ($possibleInsaneComparisonFound === false) {
+                $possibleInsaneComparisonFound = true;
+                $errors[] = self::buildErrorMessage(
+                    $origNode, 
+                    sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                    $cond->getAttribute('startLine')
+                );
+            }
+        }
+
+        if (
+            $type_1 instanceof \PHPStan\Type\ConstantScalarType
+            &&
+            $type_1->getValue() === null
+            &&
+            !($type_2 instanceof \PHPStan\Type\MixedType)
+            &&
+            $type_2->isSuperTypeOf(new \PHPStan\Type\NullType())->no()
+        ) {
+            if ($possibleInsaneComparisonFound === false) {
+                $errors[] = self::buildErrorMessage(
+                    $origNode, 
+                    sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                    $cond->getAttribute('startLine')
+                );
+            }
+        }
+
     }
 
     /**
      * @param \PHPStan\Type\Type|null $type_1
      * @param Node $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
-     *
-     * @throws \PHPStan\ShouldNotHappenException
      */
     private static function processCheckOnArray(
         ?\PHPStan\Type\Type $type_1,
         Node                $cond,
-        array               &$errors
+        array               &$errors,
+        Node $origNode
     ): void
     {
         if (
@@ -527,20 +617,20 @@ final class IfConditionHelper
         if ($type_1 instanceof \PHPStan\Type\UnionType) {
             $type_1 = $type_1->generalize(\PHPStan\Type\GeneralizePrecision::lessSpecific());
         }
-        
+
         if ($type_1 instanceof \PHPStan\Type\Accessory\NonEmptyArrayType) {
-          
-            $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Non-empty array is never empty.')->line($cond->getAttribute('startLine'))->build();
-       
+
+            $errors[] = self::buildErrorMessage($origNode, 'Non-empty array is never empty.', $cond->getAttribute('startLine'));
+
         } elseif ($type_1 instanceof \PHPStan\Type\ArrayType) {
 
             if ($cond instanceof Node\Expr\BooleanNot) {
-                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a function e.g. `count($foo) === 0` instead of `!$foo`.')->line($cond->getAttribute('startLine'))->build();
+                $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) === 0` instead of `!$foo`.', $cond->getAttribute('startLine'));
             } else {
-                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a function e.g. `count($foo) > 0` instead of `$foo`.')->line($cond->getAttribute('startLine'))->build();
+                $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) > 0` instead of `$foo`.', $cond->getAttribute('startLine'));
             }
-            
-         }
+
+        }
     }
 
     /**
@@ -548,14 +638,13 @@ final class IfConditionHelper
      * @param Node $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
      * @param array<int, class-string> $classesNotInIfConditions
-     *
-     * @throws \PHPStan\ShouldNotHappenException
      */
     private static function processObjectMethodUsageForComparison(
         ?\PHPStan\Type\Type $type_1,
         Node                $cond,
         array               &$errors,
-        array               $classesNotInIfConditions
+        array               $classesNotInIfConditions,
+        Node                $origNode
     ): void
     {
         foreach ($classesNotInIfConditions as $classesNotInIfCondition) {
@@ -564,9 +653,45 @@ final class IfConditionHelper
                 &&
                 \is_a($type_1->getClassName(), $classesNotInIfCondition, true)
             ) {
-                $errors[] = \PHPStan\Rules\RuleErrorBuilder::message('Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.')->line($cond->getAttribute('startLine'))->build();
+                $errors[] = self::buildErrorMessage($origNode, 'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.', $cond->getAttribute('startLine'));
             }
         }
+    }
+
+    /**
+     * @param class-string<\PHPStan\Type\Type> $typeClassName
+     */
+    private static function isPhpStanTypeMaybeWithUnionNullable(?\PHPStan\Type\Type $type, $typeClassName): bool
+    {
+        if ($type === null) {
+            return false;
+        }
+
+        if (
+            $type instanceof $typeClassName
+            ||
+            (
+                $type instanceof \PHPStan\Type\UnionType
+                &&
+                (
+                    (
+                        $type->getTypes()[0] instanceof $typeClassName
+                        &&
+                        $type->getTypes()[1] instanceof \PHPStan\Type\NullType
+                    )
+                    ||
+                    (
+                        $type->getTypes()[0] instanceof \PHPStan\Type\NullType
+                        &&
+                        $type->getTypes()[1] instanceof $typeClassName
+                    )
+                )
+            )
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     private static function isObjectOrNullType(?\PHPStan\Type\Type $type): bool
@@ -581,18 +706,35 @@ final class IfConditionHelper
             return true;
         }
 
-        if (! $type instanceof \PHPStan\Type\UnionType) {
+        if (!$type instanceof \PHPStan\Type\UnionType) {
             return false;
         }
 
         $return = true;
         foreach ($type->getTypes() as $typeFromUnion) {
             $return = self::isObjectOrNullType($typeFromUnion);
-            if (! $return) {
+            if (!$return) {
                 break;
             }
         }
 
         return $return;
+    }
+
+    private static function buildErrorMessage(
+        Node   $origNode,
+        string $errorMessage,
+        int    $line
+    ): \PHPStan\Rules\RuleError
+    {
+        $origNodeClassName = \get_class($origNode);
+        $pos = \strrpos($origNodeClassName, '\\');
+        if ($pos === false) {
+            $origNodeClassNameSimple = $origNodeClassName;
+        } else {
+            $origNodeClassNameSimple = \substr($origNodeClassName, $pos + 1);
+        }
+        
+        return \PHPStan\Rules\RuleErrorBuilder::message($origNodeClassNameSimple . ': ' . $errorMessage)->line($line)->build();
     }
 }

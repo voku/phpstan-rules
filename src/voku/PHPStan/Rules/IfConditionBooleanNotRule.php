@@ -39,6 +39,11 @@ final class IfConditionBooleanNotRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        return IfConditionHelper::processBooleanNodeHelper($node->expr, $scope, $this->classesNotInIfConditions, $node);
+        return IfConditionHelper::processBooleanNodeHelper(
+            $node->expr, 
+            $scope, 
+            $this->classesNotInIfConditions, 
+            $node
+        );
     }
 }

@@ -18,7 +18,7 @@ final class IfConditionBooleanAndRuleTest extends RuleTestCase
         return new IfConditionBooleanAndRule([\stdClass::class]);
     }
 
-    public function testIfConditions(): void
+    public function testBooleanAndConditions(): void
     {
         $this->analyse(
             [
@@ -26,9 +26,21 @@ final class IfConditionBooleanAndRuleTest extends RuleTestCase
             ],
             [
                 [
-                    'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    'BooleanAndNode: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     8,
                 ],
+                [
+                    'BooleanAndNode: Do not compare boolean and integer.',
+                    20
+                ],
+                [
+                    'BooleanAndNode: Do not compare boolean and integer.',
+                    23
+                ],
+                [
+                    'BooleanAndNode: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    44
+                ]
             ]
         );
     }
