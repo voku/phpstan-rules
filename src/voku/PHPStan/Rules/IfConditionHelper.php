@@ -399,6 +399,23 @@ final class IfConditionHelper
         Node                $origNode
     ): void
     {
+        // init
+        $possibleInsaneComparisonFound = false;
+        
+        if ($cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd) {
+            if (
+                $type_2 instanceof \PHPStan\Type\ConstantScalarType
+                &&
+                !$type_2->getValue()
+            ) {
+                $errors[] = self::buildErrorMessage(
+                    $origNode,
+                    sprintf('Condition between %s and %s are always false.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                    $cond->getAttribute('startLine')
+                );
+            }
+        }
+        
         if (
             !$cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
             &&
@@ -410,8 +427,6 @@ final class IfConditionHelper
         ) {
             return;
         }
-
-        $possibleInsaneComparisonFound = false;
 
         if (
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
@@ -661,7 +676,7 @@ final class IfConditionHelper
     /**
      * @param class-string<\PHPStan\Type\Type> $typeClassName
      */
-    private static function isPhpStanTypeMaybeWithUnionNullable(?\PHPStan\Type\Type $type, $typeClassName): bool
+    public static function isPhpStanTypeMaybeWithUnionNullable(?\PHPStan\Type\Type $type, $typeClassName): bool
     {
         if ($type === null) {
             return false;

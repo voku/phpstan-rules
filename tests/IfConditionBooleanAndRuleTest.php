@@ -38,6 +38,14 @@ final class IfConditionBooleanAndRuleTest extends RuleTestCase
                     23
                 ],
                 [
+                    'BooleanAndNode: Condition between SplFixedArray<mixed>|null and false are always false.',
+                    26
+                ],
+                [
+                    'BooleanAndNode: Condition between 1 and 0 are always false.',
+                    42
+                ],
+                [
                     'BooleanAndNode: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     44
                 ]

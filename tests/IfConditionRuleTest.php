@@ -109,6 +109,22 @@ final class IfConditionRuleTest extends RuleTestCase
                     'BooleanAnd: Do not compare boolean and integer.',
                     122,
                 ],
+                [
+                    'BooleanAnd: Condition between SplFixedArray<mixed>|null and false are always false.',
+                    125
+                ],
+                [
+                    'BooleanAnd: Condition between float|int|numeric-string and \'0\' are always false.',
+                    148
+                ],
+                [
+                    'BooleanAnd: Condition between float|int|numeric-string and \'\' are always false.',
+                    151
+                ],
+                [
+                    'BooleanAnd: Condition between float|int|numeric-string and false are always false.',
+                    154
+                ],
             ]
         );
     }

@@ -50,8 +50,7 @@ This helper is used by different "condition"-rules: if - and - or - not - ternar
   - https://3v4l.org/lBFHI
 - check possible insane comparisons. e.g. `0 == '0foo'`, the behavior was changed in PHP 8
   - https://3v4l.org/BJ6b8
-- check insane comparisons. e.g. `0 == '0'` or `0 === '0'`
-  - https://3v4l.org/BJ6b8
+- check insane comparisons. e.g. `0 === '0'` or `false && true`
 - check non-empty string is never empty
 - check non-empty string is always empty
 - check non-empty array is never empty
@@ -72,6 +71,12 @@ parameters:
             AbstractValueObject
         ]
 ```
+
+### ExtendedBinaryOpRule
+
+This rule will check "+", "*", "/", "-", ... (operators) and "." (concatenation) for compatible types. 
+
+It's included in the default `rules.neon` so that you don't need to add it manually.
 
 ### DisallowedCallMethodOnNull
 

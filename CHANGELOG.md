@@ -1,5 +1,9 @@
 # Changelog
 
+### 3.0.0 (2022-07-29)
+- check more insane comparisons e.g. `false && true`
+- add "ExtendedBinaryOpRule": This rule will check "+", "*", "/", "-", ... (operators) and "." (concatenation) for compatible types.
+
 ### 2.0.0 (2022-07-22)
 - add a prefix for the error messages
 - check for more non-typical "if"-conditions

@@ -9,6 +9,11 @@ parametersSchema:
 
 services:
 	-
+		class: voku\PHPStan\Rules\ExtendedOpRule
+		tags:
+			- phpstan.rules.rule
+	
+	-
 		class: voku\PHPStan\Rules\IfConditionBooleanAndRule
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
