@@ -9,7 +9,7 @@ parametersSchema:
 
 services:
 	-
-		class: voku\PHPStan\Rules\ExtendedOpRule
+		class: voku\PHPStan\Rules\ExtendedBinaryOpRule
 		tags:
 			- phpstan.rules.rule
 	
