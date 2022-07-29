@@ -38,7 +38,7 @@ This helper is used by different "condition"-rules: if - and - or - not - ternar
 
 :bulb: We use this "hack" (helper) to run the check for all kind of conditions.
 
-- double negative string conditions. e.g. `(string)$foo != \'\'` is the same as `(string)$foo`
+- double negative string conditions. e.g. `(string)$foo != ''` is the same as `(string)$foo`
   - https://3v4l.org/oDMie
 - double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`
   - https://3v4l.org/OWhrc
