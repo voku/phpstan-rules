@@ -1,13 +1,22 @@
 parameters:
 	voku:
 		classesNotInIfConditions: []
+		classesForCheckStringToIntCast: []
 
 parametersSchema:
 	voku: structure([
 		classesNotInIfConditions: listOf(string())
+		classesForCheckStringToIntCast: listOf(string())
 	])
 
 services:
+	-
+		class: voku\PHPStan\Rules\WrongCastRule
+		arguments:
+			classesForCheckStringToIntCast: %voku.classesForCheckStringToIntCast%
+		tags:
+			- phpstan.rules.rule
+	
 	-
 		class: voku\PHPStan\Rules\ExtendedBinaryOpRule
 		tags:
