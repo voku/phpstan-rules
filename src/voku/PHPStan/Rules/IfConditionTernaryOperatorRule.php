@@ -6,6 +6,7 @@ namespace voku\PHPStan\Rules;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 
 /**
@@ -20,10 +21,17 @@ final class IfConditionTernaryOperatorRule implements Rule
     private $classesNotInIfConditions;
 
     /**
+     * @var null|ReflectionProvider
+     */
+    private $reflectionProvider;
+
+    /**
      * @param array<int, class-string> $classesNotInIfConditions
      */
-    public function __construct(array $classesNotInIfConditions)
+    public function __construct(array $classesNotInIfConditions, ?ReflectionProvider $reflectionProvider = null)
     {
+        $this->reflectionProvider = $reflectionProvider;
+        
         $this->classesNotInIfConditions = $classesNotInIfConditions;
     }
 
@@ -45,7 +53,8 @@ final class IfConditionTernaryOperatorRule implements Rule
             $node, 
             [], 
             $this->classesNotInIfConditions,
-            $node
+            $node,
+            $this->reflectionProvider
         );
     }
 }

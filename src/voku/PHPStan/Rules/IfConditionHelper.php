@@ -6,6 +6,9 @@ namespace voku\PHPStan\Rules;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Broker\Broker;
+use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\TypeUtils;
 use PHPStan\Type\VerbosityLevel;
 
 final class IfConditionHelper
@@ -20,7 +23,8 @@ final class IfConditionHelper
         Node  $cond,
         Scope $scope,
         array $classesNotInIfConditions,
-        Node  $origNode
+        Node  $origNode,
+        ?ReflectionProvider $reflectionProvider = null
     ): array
     {
         // init
@@ -68,7 +72,8 @@ final class IfConditionHelper
             $cond,
             $errors,
             $classesNotInIfConditions,
-            $origNode
+            $origNode,
+            $reflectionProvider
         );
         // right <-> left
         $errors = self::processNodeHelper(
@@ -77,7 +82,8 @@ final class IfConditionHelper
             $cond,
             $errors,
             $classesNotInIfConditions,
-            $origNode
+            $origNode,
+            $reflectionProvider
         );
 
         return $errors;
@@ -98,7 +104,8 @@ final class IfConditionHelper
         Node                $cond,
         array               $errors,
         array               $classesNotInIfConditions,
-        Node                $origNode
+        Node                $origNode,
+        ?ReflectionProvider $reflectionProvider = null
     ): array
     {
 
@@ -127,7 +134,7 @@ final class IfConditionHelper
 
         // -----------------------------------------------------------------------------------------
 
-        self::processObjectComparison($type_1, $type_2, $cond, $errors, $origNode);
+        self::processObjectComparison($type_1, $type_2, $cond, $errors, $origNode, $reflectionProvider);
 
         // -----------------------------------------------------------------------------------------
 
@@ -296,7 +303,8 @@ final class IfConditionHelper
         ?\PHPStan\Type\Type $type_2,
         Node                $cond,
         array               &$errors,
-        Node                $origNode
+        Node                $origNode,
+        ?ReflectionProvider $reflectionProvider = null
     ): void
     {
         if (
@@ -332,12 +340,46 @@ final class IfConditionHelper
         if ($type_1->equals($type_2)) {
             return;
         }
+        
+        $errorFound = false;
+        if (
+            (
+                $cond instanceof \PhpParser\Node\Expr\BinaryOp\Concat
+                ||
+                $cond instanceof \PhpParser\Node\Expr\AssignOp\Concat
+            )
+            &&
+            $reflectionProvider
+        ) {
+            $referencedClasses = TypeUtils::getDirectClassNames($type_1);
+            
+            foreach ($referencedClasses as $referencedClass) {
+                try {
+                    $classReflection = $reflectionProvider->getClass($referencedClass);
+                    $classReflection->getNativeMethod('__toString');
 
-        $errors[] = self::buildErrorMessage(
-            $origNode, 
-            sprintf('Do not compare objects directly, %s and %s found.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-            $cond->getAttribute('startLine')
-        );
+                    $errors[] = self::buildErrorMessage(
+                        $origNode,
+                        sprintf('Do not cast objects magically, please use `__toString` here, %s and %s found.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                        $cond->getAttribute('startLine')
+                    );
+
+                    $errorFound = true;
+                } catch (\PHPStan\Broker\ClassNotFoundException $e) {
+                    // Other rules will notify if the class is not found
+                } catch (\PHPStan\Reflection\MissingMethodFromReflectionException $e) {
+                    // Other rules will notify if the method is not found
+                }
+            }
+        } 
+        
+        if ($errorFound === false) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Do not compare objects directly, %s and %s found.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+        }
     }
 
     /**
@@ -402,18 +444,18 @@ final class IfConditionHelper
         // init
         $possibleInsaneComparisonFound = false;
         
-        if ($cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd) {
-            if (
-                $type_2 instanceof \PHPStan\Type\ConstantScalarType
-                &&
-                !$type_2->getValue()
-            ) {
-                $errors[] = self::buildErrorMessage(
-                    $origNode,
-                    sprintf('Condition between %s and %s are always false.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                    $cond->getAttribute('startLine')
-                );
-            }
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd 
+            && 
+            $type_2 instanceof \PHPStan\Type\ConstantScalarType
+            &&
+            !$type_2->getValue()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Condition between %s and %s are always false.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
         }
         
         if (
@@ -437,14 +479,13 @@ final class IfConditionHelper
             &&
             $type_1->getValue() != $type_2->getValue()
         ) {
-            if ($possibleInsaneComparisonFound === false) {
-                $possibleInsaneComparisonFound = true;
-                $errors[] = self::buildErrorMessage(
-                    $origNode,
-                    sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                    $cond->getAttribute('startLine')
-                );
-            }
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+            
+            return;
         }
 
         if (
@@ -456,14 +497,13 @@ final class IfConditionHelper
             &&
             $type_1->getValue() == $type_2->getValue()
         ) {
-            if ($possibleInsaneComparisonFound === false) {
-                $possibleInsaneComparisonFound = true;
-                $errors[] = self::buildErrorMessage(
-                    $origNode,
-                    sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                    $cond->getAttribute('startLine')
-                );
-            }
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+            
+            return;
         }
 
         if (
@@ -475,14 +515,13 @@ final class IfConditionHelper
             &&
             $type_1->getValue() !== $type_2->getValue()
         ) {
-            if ($possibleInsaneComparisonFound === false) {
-                $possibleInsaneComparisonFound = true;
-                $errors[] = self::buildErrorMessage(
-                    $origNode,
-                    sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                    $cond->getAttribute('startLine')
-                );
-            }
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+            
+            return;
         }
 
         if (
@@ -494,14 +533,13 @@ final class IfConditionHelper
             &&
             $type_1->getValue() === $type_2->getValue()
         ) {
-            if ($possibleInsaneComparisonFound === false) {
-                $possibleInsaneComparisonFound = true;
-                $errors[] = self::buildErrorMessage(
-                    $origNode,
-                    sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                    $cond->getAttribute('startLine')
-                );
-            }
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+            
+            return;
         }
 
         if (
@@ -515,14 +553,13 @@ final class IfConditionHelper
             &&
             self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Constant\ConstantIntegerType::class)
         ) {
-            if ($possibleInsaneComparisonFound === false) {
-                $possibleInsaneComparisonFound = true;
-                $errors[] = self::buildErrorMessage(
-                    $origNode,
-                    sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                    $cond->getAttribute('startLine')
-                );
-            }
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+            
+            return;
         }
 
         if (
@@ -538,14 +575,13 @@ final class IfConditionHelper
                 self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class)
             )
         ) {
-            if ($possibleInsaneComparisonFound === false) {
-                $possibleInsaneComparisonFound = true;
-                $errors[] = self::buildErrorMessage(
-                    $origNode,
-                    sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                    $cond->getAttribute('startLine')
-                );
-            }
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+            
+            return;
         }
 
         if (
@@ -579,14 +615,13 @@ final class IfConditionHelper
                 self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class)
             )
         ) {
-            if ($possibleInsaneComparisonFound === false) {
-                $possibleInsaneComparisonFound = true;
-                $errors[] = self::buildErrorMessage(
-                    $origNode, 
-                    sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                    $cond->getAttribute('startLine')
-                );
-            }
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+            
+            return;
         }
 
         if (
@@ -598,13 +633,11 @@ final class IfConditionHelper
             &&
             $type_2->isSuperTypeOf(new \PHPStan\Type\NullType())->no()
         ) {
-            if ($possibleInsaneComparisonFound === false) {
-                $errors[] = self::buildErrorMessage(
-                    $origNode, 
-                    sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                    $cond->getAttribute('startLine')
-                );
-            }
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Possible insane comparison between %s and %s', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
         }
 
     }
@@ -625,6 +658,8 @@ final class IfConditionHelper
             $cond instanceof \PhpParser\Node\Expr\Ternary
             ||
             $cond instanceof \PhpParser\Node\Expr\BinaryOp
+            ||
+            $cond instanceof \PhpParser\Node\Expr\AssignOp
         ) {
             return;
         }

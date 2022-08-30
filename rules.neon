@@ -17,6 +17,11 @@ services:
 		tags:
 			- phpstan.rules.rule
 	
+	- 
+		class: voku\PHPStan\Rules\ExtendedAssignOpRule
+		tags:
+			- phpstan.rules.rule		
+	
 	-
 		class: voku\PHPStan\Rules\ExtendedBinaryOpRule
 		tags:

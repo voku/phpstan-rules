@@ -15,7 +15,7 @@ final class IfConditionRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        return new IfConditionRule([\stdClass::class]);
+        return new IfConditionRule([\stdClass::class], $this->createReflectionProvider());
     }
 
     public function testIfConditions(): void
@@ -124,6 +124,10 @@ final class IfConditionRuleTest extends RuleTestCase
                 [
                     'BooleanAnd: Condition between float|int|numeric-string and false are always false.',
                     154
+                ],
+                [
+                    'Concat: Do not cast objects magically, please use `__toString` here, voku\PHPStan\Rules\Test\fixtures\MyId and \'My favorite…\' found.',
+                    162
                 ],
             ]
         );

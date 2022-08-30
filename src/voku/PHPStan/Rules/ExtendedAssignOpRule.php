@@ -6,6 +6,7 @@ namespace voku\PHPStan\Rules;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ErrorType;
@@ -15,67 +16,80 @@ use function sprintf;
 /**
  * @implements Rule<Node\Expr>
  */
-class ExtendedBinaryOpRule implements Rule
+class ExtendedAssignOpRule implements Rule
 {
+    /**
+     * @var ReflectionProvider
+     */
+    private $reflectionProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
+    
     public function getNodeType(): string
     {
-        return Node\Expr\BinaryOp::class;
+        return Node\Expr\AssignOp::class;
     }
 
     /**
-     * @param Node\Expr\BinaryOp $node
-     *
+     * @param Node\Expr\AssignOp $node
+     * 
      * @return array<int, \PHPStan\Rules\RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
         // init
         $errors = [];
-
+        
         if (
-            \property_exists($node, 'left')
+            \property_exists($node, 'var')
             &&
-            \property_exists($node, 'right')
+            \property_exists($node, 'expr')
         ) {
-            $leftType = $scope->getType($node->left);
-            $rightType = $scope->getType($node->right);
+            $leftType = $scope->getType($node->var);
+            $rightType = $scope->getType($node->expr);
 
             // DEBUG
             //var_dump($leftType, $rightType);
 
-            $this->checkErrors($node, $leftType, $rightType, $errors);
-            $this->checkErrors($node, $rightType, $leftType, $errors);
+            $errors = IfConditionHelper::processNodeHelper(
+                $leftType,
+                $rightType,
+                $node,
+                $errors,
+                [],
+                $node,
+                $this->reflectionProvider
+            );
+            $errors = IfConditionHelper::processNodeHelper(
+                $rightType,
+                $leftType,
+                $node,
+                $errors,
+                [],
+                $node,
+                $this->reflectionProvider
+            );
+
+            return $errors;
         }
 
         return $errors;
     }
 
     /**
-     * @param Node\Expr\BinaryOp $node
-     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     * @param Node\Expr\AssignOp $node
+     * @param array<int, \PHPStan\Rules\RuleError>  $errors
      */
     private function checkErrors(
         Node\Expr          $node,
         \PHPStan\Type\Type $type_1,
-        \PHPStan\Type\Type $type_2,
+        \PHPStan\Type\Type $type_2, 
         array              &$errors
     ): void
     {
-        // if contains are checked separately
-        if (
-            $node instanceof \PhpParser\Node\Expr\BinaryOp\Identical
-            ||
-            $node instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
-            ||
-            $node instanceof \PhpParser\Node\Expr\BinaryOp\Coalesce
-            ||
-            $node instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd
-            ||
-            $node instanceof \PhpParser\Node\Expr\BinaryOp\BooleanOr
-        ) {
-            return;
-        }
-
         if (
             $type_1 instanceof \PHPStan\Type\StringType
             &&
@@ -90,11 +104,7 @@ class ExtendedBinaryOpRule implements Rule
             // == and != are allowed only with string compatible types
             if (
                 (
-                    $node instanceof Node\Expr\BinaryOp\Concat
-                    ||
-                    $node instanceof Node\Expr\BinaryOp\Equal
-                    ||
-                    $node instanceof Node\Expr\BinaryOp\NotEqual
+                    $node instanceof Node\Expr\AssignOp\Concat
                 )
                 &&
                 !(
@@ -107,7 +117,7 @@ class ExtendedBinaryOpRule implements Rule
             ) {
                 return;
             }
-
+            
             $errors[] = RuleErrorBuilder::message(
                 sprintf(
                     'string (%s) in combination with non-string (%s) is not allowed.',

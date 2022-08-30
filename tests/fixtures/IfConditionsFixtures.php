@@ -154,3 +154,10 @@ if ($a && '') {
 if ($a && false) {
     // ...
 }
+
+// check for "__toString()" usage
+function doStuff(): string {
+    $id = new MyId('donut');
+
+    return 'My favorite identifier is ' . $id;
+}
