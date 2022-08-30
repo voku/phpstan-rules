@@ -19,7 +19,7 @@ $ composer require --dev voku/phpstan-rules
 
 ## Usage
 
-All of the [rules](https://github.com/voku/phpstan-rules#rules) provided (and used) by this library are included in [`rules.neon`](rules.neon).
+All the [rules](https://github.com/voku/phpstan-rules#rules) provided (and used) by this library are included in [`rules.neon`](rules.neon).
 
 When you are using [`phpstan/extension-installer`](https://github.com/phpstan/extension-installer), `rules.neon` will be automatically included.
 
@@ -55,6 +55,7 @@ This helper is used by different "condition"-rules: if - and - or - not - ternar
 - check non-empty string is always empty
 - check non-empty array is never empty
 - do not compare objects with another type
+- do not use magic string-concat for objects with "__toString()"  
 
 #### Configuration
 
