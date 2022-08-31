@@ -138,7 +138,7 @@ class ExtendedBinaryOpRule implements Rule
             &&
             !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Accessory\NonEmptyArrayType::class, false)
             &&
-            $type_2->describe(VerbosityLevel::typeOnly()) !== 'array' // INFO: hack for non-empty-array
+            \strpos($type_2->describe(VerbosityLevel::typeOnly()), 'non-empty-array') !== 0 // INFO: hack for non-empty-array
         ) {
             $errors[] = IfConditionHelper::buildErrorMessage(
                 $node,

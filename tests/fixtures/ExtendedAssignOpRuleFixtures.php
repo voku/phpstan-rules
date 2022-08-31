@@ -108,6 +108,10 @@ function lall3(string $a, int $b): string
  */
 function lall_non_empty(array $a): string
 {
+    if (count($a) > 0) {
+        $a += [];
+    }
+    
     $a['foo'] = 1;
 
     $a += ['bar' => 3];
@@ -119,11 +123,15 @@ function lall_non_empty(array $a): string
  */
 function lall_non_empty_v3(array $a, array $b): array
 {
-    $c = $a + $b;
+    if (count($a) > 0) {
+        $c = $a + $b;
+    } else {
+        $c = $b;
+    }
     
-    $a += $c;
+    $b += $c + $a;
     
-    return $a;
+    return $b;
 }
 
 function lall_non_empty_v2(): string
