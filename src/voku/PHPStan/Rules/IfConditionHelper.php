@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\TypeUtils;
 use PHPStan\Type\VerbosityLevel;
 
@@ -551,7 +552,7 @@ final class IfConditionHelper
             &&
             $type_2
             &&
-            self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Constant\ConstantIntegerType::class)
+            self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Constant\ConstantIntegerType::class, false)
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
@@ -570,9 +571,9 @@ final class IfConditionHelper
             $type_2
             &&
             (
-                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class)
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class, false)
                 ||
-                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class)
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class, false)
             )
         ) {
             $errors[] = self::buildErrorMessage(
@@ -592,7 +593,7 @@ final class IfConditionHelper
                 &&
                 \filter_var($type_1->getValue(), \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE) === null
                 &&
-                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\BooleanType::class)
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\BooleanType::class, false)
             )
             ||
             (
@@ -602,7 +603,7 @@ final class IfConditionHelper
                 &&
                 \filter_var($type_1->getValue(), \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE) === null
                 &&
-                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class)
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class, false)
             )
             ||
             (
@@ -612,7 +613,7 @@ final class IfConditionHelper
                 &&
                 \filter_var($type_1->getValue(), \FILTER_VALIDATE_FLOAT, \FILTER_NULL_ON_FAILURE) === null
                 &&
-                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class)
+                self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class, false)
             )
         ) {
             $errors[] = self::buildErrorMessage(
@@ -711,12 +712,20 @@ final class IfConditionHelper
     /**
      * @param class-string<\PHPStan\Type\Type> $typeClassName
      */
-    public static function isPhpStanTypeMaybeWithUnionNullable(?\PHPStan\Type\Type $type, $typeClassName): bool
+    public static function isPhpStanTypeMaybeWithUnionNullable(
+        ?\PHPStan\Type\Type $type, 
+        $typeClassName,
+        bool $useGeneralizeLessSpecific = true
+    ): bool
     {
         if ($type === null) {
             return false;
         }
-
+        
+        if ($useGeneralizeLessSpecific) {
+            $type = $type->generalize(GeneralizePrecision::lessSpecific());
+        }
+        
         if (
             $type instanceof $typeClassName
             ||
@@ -771,7 +780,7 @@ final class IfConditionHelper
         return $return;
     }
 
-    private static function buildErrorMessage(
+    public static function buildErrorMessage(
         Node   $origNode,
         string $errorMessage,
         int    $line

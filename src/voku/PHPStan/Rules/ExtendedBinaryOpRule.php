@@ -42,9 +42,12 @@ class ExtendedBinaryOpRule implements Rule
 
             // DEBUG
             //var_dump($leftType, $rightType);
-
-            $this->checkErrors($node, $leftType, $rightType, $errors);
-            $this->checkErrors($node, $rightType, $leftType, $errors);
+            
+            $errorsFound = false;
+            $this->checkErrors($node, $leftType, $rightType, $errors, $errorsFound);
+            if ($errorsFound === false) {
+                $this->checkErrors($node, $rightType, $leftType, $errors, $errorsFound);
+            }
         }
 
         return $errors;
@@ -58,7 +61,8 @@ class ExtendedBinaryOpRule implements Rule
         Node\Expr          $node,
         \PHPStan\Type\Type $type_1,
         \PHPStan\Type\Type $type_2,
-        array              &$errors
+        array              &$errors,
+        bool               &$errorsFound
     ): void
     {
         // if contains are checked separately
@@ -108,13 +112,45 @@ class ExtendedBinaryOpRule implements Rule
                 return;
             }
 
-            $errors[] = RuleErrorBuilder::message(
+            $errors[] = IfConditionHelper::buildErrorMessage(
+                $node,
                 sprintf(
                     'string (%s) in combination with non-string (%s) is not allowed.',
                     $type_1->describe(VerbosityLevel::value()),
                     $type_2->describe(VerbosityLevel::value())
-                )
-            )->line($node->getStartLine())->build();
+                ),
+                $node->getStartLine()
+            );
+
+            $errorsFound = true;
+            
+            return;
+        }
+
+        if (
+            $type_1 instanceof \PHPStan\Type\ArrayType
+            &&
+            !($type_2 instanceof \PHPStan\Type\MixedType)
+            &&
+            !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\ArrayType::class)
+            &&
+            !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Constant\ConstantArrayType::class, false)
+            &&
+            !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Accessory\NonEmptyArrayType::class, false)
+            &&
+            $type_2->describe(VerbosityLevel::typeOnly()) !== 'array' // INFO: hack for non-empty-array
+        ) {
+            $errors[] = IfConditionHelper::buildErrorMessage(
+                $node,
+                sprintf(
+                    'array (%s) in combination with non-array (%s) is not allowed.',
+                    $type_1->describe(VerbosityLevel::value()),
+                    $type_2->describe(VerbosityLevel::value())
+                ),
+                $node->getStartLine()
+            );
+
+            $errorsFound = true;
         }
     }
 }

@@ -6,18 +6,43 @@
 
 use voku\PHPStan\Rules\Test\fixtures\MyId;
 
-echo "Hello World!" + 6;
+$a = "Hello World!";
+$a += 6;
 
-echo "Hello World!" + [];
+$a = "Hello World!";
+$a += [];
 
-echo "Hello World!" * (new stdClass());
+$a = "Hello World!";
+$a .= (new stdClass());
+
+$a = [0 => 'foo'];
+$a += [];
+
+/**
+ * @param array{lall: int} $a
+ */
+function lall_non_empty_error(array $a): string
+{
+    $a['foo'] = 1;
+    
+    $a += 'foo';
+}
 
 function lall_error(int $a): string
 {
-    if ($a == '') {
-        // ...
-    }
+    $a += 'foo';
 }
+
+// check for "__toString()" usage
+function doStuff_v2(): string {
+    $id = new MyId('donut');
+
+    $return = 'My favorite identifier is ';
+    $return .= $id;
+
+    return $return;
+}
+
 
 
 // ----------------------------------------------------
@@ -78,12 +103,33 @@ function lall3(string $a, int $b): string
     }
 }
 
-// check for "__toString()" usage
-function doStuff_v2(): string {
-    $id = new MyId('donut');
+/**
+ * @param array{lall: int} $a
+ */
+function lall_non_empty(array $a): string
+{
+    $a['foo'] = 1;
 
-    $return = 'My favorite identifier is ';
-    $return .= $id;
+    $a += ['bar' => 3];
+}
 
-    return $return;
+/**
+ * @param array<array-key, mixed> $a
+ * @param array<array-key, mixed> $b
+ */
+function lall_non_empty_v3(array $a, array $b): array
+{
+    $c = $a + $b;
+    
+    $a += $c;
+    
+    return $a;
+}
+
+function lall_non_empty_v2(): string
+{
+    $a = [];
+    $a['foo'] = 1;
+
+    $a += ['bar' => 3];
 }
