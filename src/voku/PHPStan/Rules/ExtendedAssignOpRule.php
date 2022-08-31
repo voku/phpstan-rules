@@ -149,7 +149,7 @@ class ExtendedAssignOpRule implements Rule
             &&
             !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Accessory\NonEmptyArrayType::class, false)
             &&
-            \strpos($type_2->describe(VerbosityLevel::typeOnly()), 'non-empty-array') !== 0
+            \strpos($type_2->describe(VerbosityLevel::typeOnly()), 'non-empty-array') !== false
         ) {
             $errors[] = IfConditionHelper::buildErrorMessage(
                 $node,
