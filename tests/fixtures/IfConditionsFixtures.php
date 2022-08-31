@@ -161,3 +161,17 @@ function doStuff(): string {
 
     return 'My favorite identifier is ' . $id;
 }
+
+/**
+ * @param int $permission
+ *
+ * @phpstan-param FooConst::USER_PERMISSION_* $permission
+ */
+function hasPermissions($permission): bool
+{
+    if ($permission != FooConst::USER_PERMISSION_NONE) {
+        return true;
+    }
+
+    return false;
+}

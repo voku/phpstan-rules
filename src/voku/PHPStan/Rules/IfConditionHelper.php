@@ -234,7 +234,7 @@ final class IfConditionHelper
                 ($type_1 instanceof \PHPStan\Type\Constant\ConstantBooleanType && $type_1->getValue() === false)
             )
             &&
-            self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class)
+            self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class, false)
         ) {
             $errors[] = self::buildErrorMessage($origNode, 'Please do not use double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`.', $cond->getAttribute('startLine'));
         }
