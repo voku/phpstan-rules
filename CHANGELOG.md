@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.1 (2022-08-31)
+- fix for "double negative integer conditions"
+
 ### 3.1.0 (2022-08-31)
 - check array vs. non-array usage 
 - add new error message: "Do not cast objects magically, please use `__toString` here ..."
