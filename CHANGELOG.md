@@ -1,5 +1,9 @@
 # Changelog
 
+### 3.1.0 (2022-08-31)
+- check array vs. non-array usage 
+- add new error message: "Do not cast objects magically, please use `__toString` here ..."
+
 ### 3.0.0 (2022-07-29)
 - check more insane comparisons e.g. `false && true`
 - add "ExtendedBinaryOpRule": This rule will check "+", "*", "/", "-", ... (operators) and "." (concatenation) for compatible types.
