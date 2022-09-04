@@ -158,6 +158,20 @@ final class IfConditionRuleTest extends RuleTestCase
     /**
      * @requires PHP 8.0
      */
+    public function issue26(): void
+    {
+        $this->analyse(
+            [
+                __DIR__ . '/fixtures/AFoo.php',
+            ],
+            [
+            ]
+        );
+    }
+    
+    /**
+     * @requires PHP 8.0
+     */
     public function testIfConditions80(): void
     {
         $this->analyse(
