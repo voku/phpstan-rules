@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.2 (2022-09-05)
+- "Do not compare objects directly" -> but allow compare with interfaces
+
 ### 3.1.1 (2022-08-31)
 - fix for "double negative integer conditions"
 
