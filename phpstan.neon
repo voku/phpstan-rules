@@ -4,3 +4,4 @@ parameters:
     level: 8
     paths:
         - %currentWorkingDirectory%/src/
+        - %currentWorkingDirectory%/tests/fixtures/special/

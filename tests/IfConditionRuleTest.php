@@ -94,10 +94,6 @@ final class IfConditionRuleTest extends RuleTestCase
                     87,
                 ],
                 [
-                    'Smaller: Do not compare objects directly, DateTimeImmutable|null and DateTimeImmutable found.',
-                    97,
-                ],
-                [
                     'Smaller: Do not compare objects directly, DateTimeImmutable and DateTimeImmutable|null found.',
                     97,
                 ],
@@ -147,24 +143,6 @@ final class IfConditionRuleTest extends RuleTestCase
                     'Greater: Do not compare objects directly, voku\PHPStan\Rules\Test\fixtures\BulbOn::ON and voku\PHPStan\Rules\Test\fixtures\BulbOn::OFF|voku\PHPStan\Rules\Test\fixtures\BulbOn::ON found.',
                     12
                 ],
-                [
-                    'Greater: Do not compare objects directly, voku\PHPStan\Rules\Test\fixtures\BulbOn::OFF|voku\PHPStan\Rules\Test\fixtures\BulbOn::ON and voku\PHPStan\Rules\Test\fixtures\BulbOn::ON found.',
-                    12
-                ],
-            ]
-        );
-    }
-
-    /**
-     * @requires PHP 8.0
-     */
-    public function issue26(): void
-    {
-        $this->analyse(
-            [
-                __DIR__ . '/fixtures/AFoo.php',
-            ],
-            [
             ]
         );
     }

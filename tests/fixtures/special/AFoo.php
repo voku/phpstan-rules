@@ -1,6 +1,6 @@
 <?php
 
-namespace voku\PHPStan\Rules\Test\fixtures;
+namespace voku\PHPStan\Rules\Test\fixtures\special;
 
 class AFoo
 {
@@ -9,5 +9,10 @@ class AFoo
     ) 
     {
         $this->var ??= new ACoalesceClass();
+    }
+
+    public function myMethod(): void
+    {
+        $this->var ??= new ACoalesceClassChild();
     }
 }

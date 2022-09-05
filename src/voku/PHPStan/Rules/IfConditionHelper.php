@@ -6,7 +6,6 @@ namespace voku\PHPStan\Rules;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\TypeUtils;
@@ -326,6 +325,10 @@ final class IfConditionHelper
             return;
         }
 
+        if (!$type_1 || !$type_2) {
+            return;
+        }
+
         if (!self::isObjectOrNullType($type_1)) {
             return;
         }
@@ -334,42 +337,7 @@ final class IfConditionHelper
             return;
         }
 
-        if (!$type_2) {
-            return;
-        }
-
-        if ($type_1->equals($type_2)) {
-            return;
-        }
-
-        // allow compare with interfaces
-        $errorsFound = [];
-        $type_1_classes = $type_1->getReferencedClasses();
-        $type_2_classes = $type_2->getReferencedClasses();
-        foreach ($type_1_classes as $type_1_class) {
-            foreach ($type_2_classes as $type_2_class) {
-                if (
-                    !\interface_exists($type_1_class, false)
-                    &&
-                    !\interface_exists($type_2_class, false)
-                ) {
-                    $errorsFound[] = true;
-                } elseif (
-                    \is_a($type_1_class, $type_2_class, true) === false
-                    &&
-                    \is_a($type_2_class, $type_1_class, true) === false
-                ) {
-                    $errorsFound[] = true;
-                }
-            }
-        }
-        if (
-            $type_1_classes !== []
-            &&
-            $type_2_classes !== []
-            &&
-            $errorsFound === []
-        ) {
+        if ($type_1->accepts($type_2, true)->yes()) {
             return;
         }
         
@@ -473,12 +441,11 @@ final class IfConditionHelper
         Node                $origNode
     ): void
     {
-        // init
-        $possibleInsaneComparisonFound = false;
-        
         if (
-            $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd 
-            && 
+            $type_1
+            &&
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd
+            &&
             $type_2 instanceof \PHPStan\Type\ConstantScalarType
             &&
             !$type_2->getValue()
@@ -624,6 +591,8 @@ final class IfConditionHelper
                 &&
                 \filter_var($type_1->getValue(), \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE) === null
                 &&
+                $type_2
+                &&
                 self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\BooleanType::class, false)
             )
             ||
@@ -634,6 +603,8 @@ final class IfConditionHelper
                 &&
                 \filter_var($type_1->getValue(), \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE) === null
                 &&
+                $type_2
+                &&
                 self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class, false)
             )
             ||
@@ -643,6 +614,8 @@ final class IfConditionHelper
                 $type_1->getValue() !== null
                 &&
                 \filter_var($type_1->getValue(), \FILTER_VALIDATE_FLOAT, \FILTER_NULL_ON_FAILURE) === null
+                &&
+                $type_2
                 &&
                 self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\FloatType::class, false)
             )
@@ -660,6 +633,8 @@ final class IfConditionHelper
             $type_1 instanceof \PHPStan\Type\ConstantScalarType
             &&
             $type_1->getValue() === null
+            &&
+            $type_2
             &&
             !($type_2 instanceof \PHPStan\Type\MixedType)
             &&
