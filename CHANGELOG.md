@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.3 (2022-09-05)
+- "Do not compare objects directly" -> but allow compare with interfaces / extends v2
+
 ### 3.1.2 (2022-09-05)
 - "Do not compare objects directly" -> but allow compare with interfaces
 
