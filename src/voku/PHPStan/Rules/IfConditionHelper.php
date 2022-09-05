@@ -342,36 +342,36 @@ final class IfConditionHelper
             return;
         }
 
-        // allow compare with interfaces
-        $errorsFound = [];
-        $type_1_classes = $type_1->getReferencedClasses();
-        $type_2_classes = $type_2->getReferencedClasses();
-        foreach ($type_1_classes as $type_1_class) {
-            foreach ($type_2_classes as $type_2_class) {
-                if (
-                    !\interface_exists($type_1_class, false)
-                    &&
-                    !\interface_exists($type_2_class, false)
-                ) {
-                    $errorsFound[] = true;
-                } elseif (
-                    \is_a($type_1_class, $type_2_class, true) === false
-                    &&
-                    \is_a($type_2_class, $type_1_class, true) === false
-                ) {
-                    $errorsFound[] = true;
-                }
-            }
-        }
-        if (
-            $type_1_classes !== []
-            &&
-            $type_2_classes !== []
-            &&
-            $errorsFound === []
-        ) {
-            return;
-        }
+//        // allow compare with interfaces
+//        $errorsFound = [];
+//        $type_1_classes = $type_1->getReferencedClasses();
+//        $type_2_classes = $type_2->getReferencedClasses();
+//        foreach ($type_1_classes as $type_1_class) {
+//            foreach ($type_2_classes as $type_2_class) {
+//                if (
+//                    !\interface_exists($type_1_class, false)
+//                    &&
+//                    !\interface_exists($type_2_class, false)
+//                ) {
+//                    $errorsFound[] = true;
+//                } elseif (
+//                    \is_a($type_1_class, $type_2_class, true) === false
+//                    &&
+//                    \is_a($type_2_class, $type_1_class, true) === false
+//                ) {
+//                    $errorsFound[] = true;
+//                }
+//            }
+//        }
+//        if (
+//            $type_1_classes !== []
+//            &&
+//            $type_2_classes !== []
+//            &&
+//            $errorsFound === []
+//        ) {
+//            return;
+//        }
         
         $errorFound = false;
         if (

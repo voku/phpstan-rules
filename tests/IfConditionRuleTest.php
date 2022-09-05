@@ -158,7 +158,7 @@ final class IfConditionRuleTest extends RuleTestCase
     /**
      * @requires PHP 8.0
      */
-    public function issue26(): void
+    public function testIssue26(): void
     {
         $this->analyse(
             [
