@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.4 (2022-11-21)
+- fix for PhpStan >= 1.9.x
+
 ### 3.1.3 (2022-09-05)
 - "Do not compare objects directly" -> but allow compare with interfaces / extends v2
 
