@@ -219,7 +219,9 @@ final class IfConditionHelper
             &&
             $type_1->getValue() === ''
             &&
-            $type_2 instanceof \PHPStan\Type\StringType
+            $type_2
+            &&
+            $type_2->isString()->yes()
         ) {
             $errors[] = self::buildErrorMessage($origNode, 'Please do not use double negative string conditions. e.g. `(string)$foo != \'\'` is the same as `(string)$foo`.', $cond->getAttribute('startLine'));
         }
@@ -279,7 +281,11 @@ final class IfConditionHelper
         Node                $origNode
     ): void
     {
-        if (!$type_1 instanceof \PHPStan\Type\BooleanType) {
+        if (!$type_1) {
+            return;
+        } 
+        
+        if ($type_1->isBoolean()->no()) {
             return;
         }
 
@@ -333,7 +339,7 @@ final class IfConditionHelper
             return;
         }
 
-        if ($type_1 instanceof \PHPStan\Type\NullType) {
+        if ($type_1->isNull()->yes()) {
             return;
         }
 
@@ -674,19 +680,13 @@ final class IfConditionHelper
         if ($type_1 instanceof \PHPStan\Type\UnionType) {
             $type_1 = $type_1->generalize(\PHPStan\Type\GeneralizePrecision::lessSpecific());
         }
-
-        if ($type_1 instanceof \PHPStan\Type\Accessory\NonEmptyArrayType) {
-
-            $errors[] = self::buildErrorMessage($origNode, 'Non-empty array is never empty.', $cond->getAttribute('startLine'));
-
-        } elseif ($type_1 instanceof \PHPStan\Type\ArrayType) {
-
-            if ($cond instanceof Node\Expr\BooleanNot) {
-                $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) === 0` instead of `!$foo`.', $cond->getAttribute('startLine'));
-            } else {
-                $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) > 0` instead of `$foo`.', $cond->getAttribute('startLine'));
+        
+        if ($type_1 instanceof \PHPStan\Type\IntersectionType) {
+            foreach ($type_1->getArrays() as $type_1_inner) {
+                $errors = self::checkOnArrayInner($type_1_inner, $origNode, $cond, $errors);
             }
-
+        } else {
+            $errors = self::checkOnArrayInner($type_1, $origNode, $cond, $errors);
         }
     }
 
@@ -801,5 +801,35 @@ final class IfConditionHelper
         }
         
         return \PHPStan\Rules\RuleErrorBuilder::message($origNodeClassNameSimple . ': ' . $errorMessage)->line($line)->build();
+    }
+
+    /**
+     * @param \PHPStan\Type\Type|null $type_1
+     * @param Node $origNode
+     * @param Node $cond
+     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     * @return array<int, \PHPStan\Rules\RuleError>
+     */
+    private static function checkOnArrayInner(?\PHPStan\Type\Type $type_1, Node $origNode, Node $cond, array $errors): array
+    {
+        if (!$type_1) {
+            return $errors;
+        }
+        
+        if ($type_1 instanceof \PHPStan\Type\Accessory\NonEmptyArrayType) {
+
+            $errors[] = self::buildErrorMessage($origNode, 'Non-empty array is never empty.', $cond->getAttribute('startLine'));
+
+        } elseif ($type_1->isArray()->yes()) {
+
+            if ($cond instanceof Node\Expr\BooleanNot) {
+                $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) === 0` instead of `!$foo`.', $cond->getAttribute('startLine'));
+            } else {
+                $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) > 0` instead of `$foo`.', $cond->getAttribute('startLine'));
+            }
+
+        }
+        
+        return $errors;
     }
 }
