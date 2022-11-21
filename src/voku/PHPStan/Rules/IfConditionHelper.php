@@ -285,7 +285,7 @@ final class IfConditionHelper
             return;
         } 
         
-        if ($type_1->isBoolean()->no()) {
+        if (!$type_1->isBoolean()->yes()) {
             return;
         }
 
