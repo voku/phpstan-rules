@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.5 (2022-11-21)
+- fix for PhpStan >= 1.9.x (v2)
+
 ### 3.1.4 (2022-11-21)
 - fix for PhpStan >= 1.9.x
 
