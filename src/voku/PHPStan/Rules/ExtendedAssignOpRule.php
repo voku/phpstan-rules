@@ -19,13 +19,26 @@ use function sprintf;
 class ExtendedAssignOpRule implements Rule
 {
     /**
+     * @var bool
+     */
+    private $checkForAssignments;
+    
+    /**
      * @var ReflectionProvider
      */
     private $reflectionProvider;
 
-    public function __construct(ReflectionProvider $reflectionProvider)
+    public function __construct(
+        ReflectionProvider $reflectionProvider,
+        bool $checkForAssignments = false,
+        bool $checkYodaConditions = false
+    )
     {
         $this->reflectionProvider = $reflectionProvider;
+        
+        $this->checkForAssignments = $checkForAssignments;
+        
+        $this->checkYodaConditions = $checkYodaConditions;
     }
 
     public function getNodeType(): string
@@ -61,7 +74,9 @@ class ExtendedAssignOpRule implements Rule
                 $errors,
                 [],
                 $node,
-                $this->reflectionProvider
+                $this->reflectionProvider,
+                $this->checkForAssignments,
+                $this->checkYodaConditions
             );
             $errors = IfConditionHelper::processNodeHelper(
                 $rightType,
@@ -70,7 +85,9 @@ class ExtendedAssignOpRule implements Rule
                 $errors,
                 [],
                 $node,
-                $this->reflectionProvider
+                $this->reflectionProvider,
+                false,
+                false
             );
 
             $errorsFound = false;

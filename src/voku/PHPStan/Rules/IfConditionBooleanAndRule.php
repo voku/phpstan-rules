@@ -21,6 +21,16 @@ final class IfConditionBooleanAndRule implements Rule
     private $classesNotInIfConditions;
 
     /**
+     * @var bool
+     */
+    private $checkForAssignments;
+
+    /**
+     * @var bool
+     */
+    private $checkYodaConditions;
+
+    /**
      * @var null|ReflectionProvider
      */
     private $reflectionProvider;
@@ -28,11 +38,20 @@ final class IfConditionBooleanAndRule implements Rule
     /**
      * @param array<int, class-string> $classesNotInIfConditions
      */
-    public function __construct(array $classesNotInIfConditions, ?ReflectionProvider $reflectionProvider = null)
+    public function __construct(
+        array $classesNotInIfConditions,
+        ?ReflectionProvider $reflectionProvider = null,
+        bool $checkForAssignments = false,
+        bool $checkYodaConditions = false
+    )
     {
         $this->reflectionProvider = $reflectionProvider;
 
         $this->classesNotInIfConditions = $classesNotInIfConditions;
+
+        $this->checkForAssignments = $checkForAssignments;
+        
+        $this->checkYodaConditions = $checkYodaConditions;
     }
 
     public function getNodeType(): string
@@ -50,11 +69,13 @@ final class IfConditionBooleanAndRule implements Rule
         $cond = $node->getOriginalNode();
         
         $errors = IfConditionHelper::processBooleanNodeHelper(
-            $cond, 
-            $scope, 
+            $cond,
+            $scope,
             $this->classesNotInIfConditions,
             $node,
-            $this->reflectionProvider
+            $this->reflectionProvider,
+            $this->checkForAssignments,
+            $this->checkYodaConditions
         );
 
         return $errors;

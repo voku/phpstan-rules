@@ -175,3 +175,11 @@ function hasPermissions($permission): bool
 
     return false;
 }
+
+// check assignment in condition
+if (1 === 1 && $b = rand(0, 1)) {
+    // ...
+}
+while (1 === 1 && $a = rand(0,1)) {
+    // ...
+}

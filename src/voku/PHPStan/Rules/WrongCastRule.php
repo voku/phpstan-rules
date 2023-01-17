@@ -42,7 +42,7 @@ class WrongCastRule implements Rule
 
     /**
      * @param Cast $node
-     * 
+     *
      * @return RuleError[]
      */
     public function processNode(Node $node, Scope $scope): array

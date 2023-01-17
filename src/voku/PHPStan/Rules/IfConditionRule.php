@@ -21,6 +21,16 @@ final class IfConditionRule implements Rule
     private $classesNotInIfConditions;
 
     /**
+     * @var bool
+     */
+    private $checkForAssignments;
+
+    /**
+     * @var bool
+     */
+    private $checkYodaConditions;
+
+    /**
      * @var null|ReflectionProvider
      */
     private $reflectionProvider;
@@ -28,11 +38,20 @@ final class IfConditionRule implements Rule
     /**
      * @param array<int, class-string> $classesNotInIfConditions
      */
-    public function __construct(array $classesNotInIfConditions = [], ?ReflectionProvider $reflectionProvider = null)
+    public function __construct(
+        array $classesNotInIfConditions = [],
+        ?ReflectionProvider $reflectionProvider = null,
+        bool                $checkForAssignments = false,
+        bool                $checkYodaConditions = false
+    )
     {
         $this->reflectionProvider = $reflectionProvider;
         
         $this->classesNotInIfConditions = $classesNotInIfConditions;
+        
+        $this->checkForAssignments = $checkForAssignments;
+        
+        $this->checkYodaConditions = $checkYodaConditions;
     }
 
     public function getNodeType(): string
@@ -52,22 +71,26 @@ final class IfConditionRule implements Rule
 
         $errors = [];
         $errors = IfConditionHelper::processNodeHelper(
-            $leftType, 
-            $rightType, 
-            $node, 
-            $errors, 
+            $leftType,
+            $rightType,
+            $node,
+            $errors,
             $this->classesNotInIfConditions,
             $node,
-            $this->reflectionProvider
+            $this->reflectionProvider,
+            $this->checkForAssignments,
+            $this->checkYodaConditions
         );
         $errors = IfConditionHelper::processNodeHelper(
-            $rightType, 
-            $leftType, 
-            $node, 
-            $errors, 
+            $rightType,
+            $leftType,
+            $node,
+            $errors,
             $this->classesNotInIfConditions,
             $node,
-            $this->reflectionProvider
+            $this->reflectionProvider,
+            false,
+            false
         );
 
         return $errors;

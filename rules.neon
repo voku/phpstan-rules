@@ -2,11 +2,15 @@ parameters:
 	voku:
 		classesNotInIfConditions: []
 		classesForCheckStringToIntCast: []
+		checkForAssignments: false
+		checkYodaConditions: false
 
 parametersSchema:
 	voku: structure([
 		classesNotInIfConditions: listOf(string())
 		classesForCheckStringToIntCast: listOf(string())
+		checkForAssignments: bool
+		checkYodaConditions: bool
 	])
 
 services:

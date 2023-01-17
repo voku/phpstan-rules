@@ -15,7 +15,7 @@ final class IfConditionRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        return new IfConditionRule([\stdClass::class], $this->createReflectionProvider());
+        return new IfConditionRule([\stdClass::class], $this->createReflectionProvider(), true, true);
     }
 
     public function testIfConditions(): void
@@ -124,6 +124,14 @@ final class IfConditionRuleTest extends RuleTestCase
                 [
                     'Concat: Do not cast objects magically, please use `__toString` here, voku\PHPStan\Rules\Test\fixtures\MyId and \'My favorite…\' found.',
                     162
+                ],
+                [
+                    'BooleanAnd: Assignment is not allowed here.',
+                    180
+                ],
+                [
+                    'BooleanAnd: Assignment is not allowed here.',
+                    183
                 ],
             ]
         );
@@ -250,8 +258,24 @@ final class IfConditionRuleTest extends RuleTestCase
                     43,
                 ],
                 [
+                    'Equal: Yoda condition is not allowed here.',
+                    51,
+                ],
+                [
+                    'Equal: Yoda condition is not allowed here.',
+                    55,
+                ],
+                [
                     'Equal: Possible insane comparison between \'0.000\' and 3|null',
                     55,
+                ],
+                [
+                    'Equal: Yoda condition is not allowed here.',
+                    59,
+                ],
+                [
+                    'Equal: Yoda condition is not allowed here.',
+                    63,
                 ],
                 [
                     'Equal: Possible insane comparison between null and 0|3',

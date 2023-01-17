@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace voku\PHPStan\Rules;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\BinaryOp;
+use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Scalar\MagicConst;
+use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\GeneralizePrecision;
@@ -24,12 +29,14 @@ final class IfConditionHelper
         Scope $scope,
         array $classesNotInIfConditions,
         Node  $origNode,
-        ?ReflectionProvider $reflectionProvider = null
+        ?ReflectionProvider $reflectionProvider = null,
+        bool $checkForAssignments = false,
+        bool $checkYodaConditions = false
     ): array
     {
         // init
         $errors = [];
-
+        
         // ignore mixed types
         $condType = $scope->getType($cond);
         if ($condType instanceof \PHPStan\Type\MixedType) {
@@ -73,7 +80,9 @@ final class IfConditionHelper
             $errors,
             $classesNotInIfConditions,
             $origNode,
-            $reflectionProvider
+            $reflectionProvider,
+            $checkForAssignments,
+            $checkYodaConditions
         );
         // right <-> left
         $errors = self::processNodeHelper(
@@ -83,7 +92,9 @@ final class IfConditionHelper
             $errors,
             $classesNotInIfConditions,
             $origNode,
-            $reflectionProvider
+            $reflectionProvider,
+            false,
+            false
         );
 
         return $errors;
@@ -105,13 +116,23 @@ final class IfConditionHelper
         array               $errors,
         array               $classesNotInIfConditions,
         Node                $origNode,
-        ?ReflectionProvider $reflectionProvider = null
+        ?ReflectionProvider $reflectionProvider = null,
+        bool                $checkForAssignments = false,
+        bool                $checkYodaConditions = false
     ): array
     {
-
+        static $nodeFinder = null;
+        if ($nodeFinder === null) {
+            $nodeFinder = new NodeFinder();
+        }
+        
         // DEBUG
         //var_dump(get_class($type_1), get_class($cond), get_class($type_2));
 
+        // -----------------------------------------------------------------------------------------
+
+        self::processNonTypeChecks($cond, $errors, $origNode, $nodeFinder, $checkForAssignments, $checkYodaConditions);
+        
         // -----------------------------------------------------------------------------------------
 
         self::processCheckOnArray($type_1, $cond, $errors, $origNode);
@@ -283,7 +304,7 @@ final class IfConditionHelper
     {
         if (!$type_1) {
             return;
-        } 
+        }
         
         if (!$type_1->isBoolean()->yes()) {
             return;
@@ -377,7 +398,7 @@ final class IfConditionHelper
                     // Other rules will notify if the method is not found
                 }
             }
-        } 
+        }
         
         if ($errorFound === false) {
             $errors[] = self::buildErrorMessage(
@@ -691,6 +712,60 @@ final class IfConditionHelper
     }
 
     /**
+     * @param \PHPStan\Type\Type|null              $type_1
+     * @param Node                                 $cond
+     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     */
+    private static function processNonTypeChecks(
+        Node                $cond,
+        array               &$errors,
+        Node                $origNode,
+        NodeFinder          $nodeFinder,
+        bool                $checkForAssignments,
+        bool                $checkYodaConditions
+    ): void
+    {
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Concat
+            ||
+            $cond instanceof \PhpParser\Node\Expr\AssignOp\Concat
+        ) {
+            return;
+        }
+        
+        if ($checkForAssignments) {
+            $assignNode = $nodeFinder->findFirstInstanceOf($cond, Assign::class);
+            if ($assignNode instanceof Assign) {
+                $errors[] = self::buildErrorMessage($origNode, 'Assignment is not allowed here.', $cond->getAttribute('startLine'));
+            }
+        }
+
+        if ($checkYodaConditions) {
+            $nodes = $nodeFinder->findInstanceOf($cond, BinaryOp::class);
+
+            foreach ($nodes as $expr) {
+                assert($expr instanceof BinaryOp);
+
+                if ($expr->left instanceof MagicConst) {
+                    continue;
+                }
+
+                if (
+                    $expr->right instanceof Node\Expr\Variable
+                    &&
+                    (
+                        $expr->left instanceof ConstFetch  // ConstFetch: true, false, null
+                        ||
+                        $expr->left instanceof Node\Scalar // Scalar: string, bool, int, etc.
+                    )
+                ) {
+                    $errors[] = self::buildErrorMessage($origNode, 'Yoda condition is not allowed here.', $cond->getAttribute('startLine'));
+                }
+            }
+        }
+    }
+
+    /**
      * @param \PHPStan\Type\Type|null $type_1
      * @param Node $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
@@ -719,7 +794,7 @@ final class IfConditionHelper
      * @param class-string<\PHPStan\Type\Type> $typeClassName
      */
     public static function isPhpStanTypeMaybeWithUnionNullable(
-        ?\PHPStan\Type\Type $type, 
+        ?\PHPStan\Type\Type $type,
         $typeClassName,
         bool $useGeneralizeLessSpecific = true
     ): bool

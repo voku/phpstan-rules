@@ -55,7 +55,9 @@ This helper is used by different "condition"-rules: if - and - or - not - ternar
 - check non-empty string is always empty
 - check non-empty array is never empty
 - do not compare objects with another type
-- do not use magic string-concat for objects with "__toString()"  
+- do not use magic string-concat for objects with "__toString()"
+- do not allow assignments. e.g. `if ($a = 0)` (see "checkForAssignments")
+- do not allow Yoda conditions. e.g. `ìf (0 == $a)` (see "checkYodaConditions")
 
 #### Configuration
 
@@ -71,6 +73,22 @@ parameters:
         classesNotInIfConditions: [
             AbstractValueObject
         ]
+```
+
+If you want to check assignments e.g. in "if"-conditions you can use this:
+
+```neon
+parameters:
+    voku:
+        checkForAssignments: true
+```
+
+If you want to check Yoda conditions can use this:
+
+```neon
+parameters:
+    voku:
+        checkYodaConditions: true
 ```
 
 ### ExtendedBinaryOpRule
