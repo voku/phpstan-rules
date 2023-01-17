@@ -9,8 +9,8 @@ parametersSchema:
 	voku: structure([
 		classesNotInIfConditions: listOf(string())
 		classesForCheckStringToIntCast: listOf(string())
-		checkForAssignments: bool
-		checkYodaConditions: bool
+		checkForAssignments: bool()
+		checkYodaConditions: bool()
 	])
 
 services:
