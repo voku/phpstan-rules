@@ -1,5 +1,9 @@
 # Changelog
 
+### 3.1.6 (2023-01-17)
+- add check for "assignments" 
+- add check for "Yoda conditions"
+
 ### 3.1.5 (2022-11-21)
 - fix for PhpStan >= 1.9.x (v2)
 
