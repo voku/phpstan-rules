@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.7 (2023-01-17)
+- "rules.neon" -> fix typo only
+
 ### 3.1.6 (2023-01-17)
 - add check for "assignments" 
 - add check for "Yoda conditions"
