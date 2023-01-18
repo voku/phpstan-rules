@@ -736,11 +736,28 @@ final class IfConditionHelper
         if ($checkForAssignments) {
             $assignNode = $nodeFinder->findFirstInstanceOf($cond, Assign::class);
             if ($assignNode instanceof Assign) {
-                $errors[] = self::buildErrorMessage($origNode, 'Assignment is not allowed here.', $cond->getAttribute('startLine'));
+                $errors[] = self::buildErrorMessage($origNode, 'Assignment is not allowed here.', $assignNode->getAttribute('startLine'));
             }
         }
 
-        if ($checkYodaConditions) {
+        if (
+            $checkYodaConditions
+            &&
+            (
+                $cond instanceof \PhpParser\Node\Expr\BinaryOp\Greater
+                ||
+                $cond instanceof \PhpParser\Node\Expr\BinaryOp\GreaterOrEqual
+                ||
+                $cond instanceof \PhpParser\Node\Expr\BinaryOp\Smaller
+                ||
+                $cond instanceof \PhpParser\Node\Expr\BinaryOp\SmallerOrEqual
+                ||
+                $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+                ||
+                $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
+            )
+        ) {
+            
             $nodes = $nodeFinder->findInstanceOf($cond, BinaryOp::class);
 
             foreach ($nodes as $expr) {
@@ -763,7 +780,7 @@ final class IfConditionHelper
                         $expr->left instanceof Node\Scalar // Scalar: string, bool, int, etc.
                     )
                 ) {
-                    $errors[] = self::buildErrorMessage($origNode, 'Yoda condition is not allowed here.', $cond->getAttribute('startLine'));
+                    $errors[] = self::buildErrorMessage($origNode, 'Yoda condition is not allowed here.', $expr->getAttribute('startLine'));
                 }
             }
         }
