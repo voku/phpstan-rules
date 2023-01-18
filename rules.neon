@@ -23,6 +23,9 @@ services:
 	
 	- 
 		class: voku\PHPStan\Rules\ExtendedAssignOpRule
+		arguments:
+			checkYodaConditions: %voku.checkYodaConditions%
+			checkForAssignments: %voku.checkForAssignments%
 		tags:
 			- phpstan.rules.rule		
 	
@@ -35,6 +38,8 @@ services:
 		class: voku\PHPStan\Rules\IfConditionBooleanAndRule
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
+			checkYodaConditions: %voku.checkYodaConditions%
+			checkForAssignments: %voku.checkForAssignments%
 		tags:
 			- phpstan.rules.rule
 
@@ -42,6 +47,8 @@ services:
 		class: voku\PHPStan\Rules\IfConditionBooleanNotRule
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
+			checkYodaConditions: %voku.checkYodaConditions%
+			checkForAssignments: %voku.checkForAssignments%
 		tags:
 			- phpstan.rules.rule
 
@@ -49,6 +56,8 @@ services:
 		class: voku\PHPStan\Rules\IfConditionBooleanOrRule
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
+			checkYodaConditions: %voku.checkYodaConditions%
+			checkForAssignments: %voku.checkForAssignments%
 		tags:
 			- phpstan.rules.rule
 
@@ -56,6 +65,8 @@ services:
 		class: voku\PHPStan\Rules\IfConditionRule
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
+			checkYodaConditions: %voku.checkYodaConditions%
+			checkForAssignments: %voku.checkForAssignments%
 		tags:
 			- phpstan.rules.rule
 			
@@ -63,6 +74,8 @@ services:
 		class: voku\PHPStan\Rules\IfConditionBasicRule
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
+			checkYodaConditions: %voku.checkYodaConditions%
+			checkForAssignments: %voku.checkForAssignments%
 		tags:
 			- phpstan.rules.rule
 
@@ -70,6 +83,8 @@ services:
 		class: voku\PHPStan\Rules\ElseIfConditionBasicRule
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
+			checkYodaConditions: %voku.checkYodaConditions%
+			checkForAssignments: %voku.checkForAssignments%
 		tags:
 			- phpstan.rules.rule
 
@@ -77,5 +92,7 @@ services:
 		class: voku\PHPStan\Rules\IfConditionTernaryOperatorRule
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
+			checkYodaConditions: %voku.checkYodaConditions%
+			checkForAssignments: %voku.checkForAssignments%
 		tags:
 			- phpstan.rules.rule

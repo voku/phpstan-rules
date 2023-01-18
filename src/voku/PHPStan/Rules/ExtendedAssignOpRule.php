@@ -22,6 +22,11 @@ class ExtendedAssignOpRule implements Rule
      * @var bool
      */
     private $checkForAssignments;
+
+    /**
+     * @var bool
+     */
+    private $checkYodaConditions;
     
     /**
      * @var ReflectionProvider
