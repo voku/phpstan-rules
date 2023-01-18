@@ -92,7 +92,6 @@ services:
 		class: voku\PHPStan\Rules\IfConditionTernaryOperatorRule
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
-			checkYodaConditions: %voku.checkYodaConditions%
 			checkForAssignments: %voku.checkForAssignments%
 		tags:
 			- phpstan.rules.rule

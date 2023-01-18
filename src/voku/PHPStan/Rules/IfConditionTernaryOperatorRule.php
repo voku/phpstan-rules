@@ -26,11 +26,6 @@ final class IfConditionTernaryOperatorRule implements Rule
     private $checkForAssignments;
 
     /**
-     * @var bool
-     */
-    private $checkYodaConditions;
-
-    /**
      * @var null|ReflectionProvider
      */
     private $reflectionProvider;
@@ -41,8 +36,7 @@ final class IfConditionTernaryOperatorRule implements Rule
     public function __construct(
         array $classesNotInIfConditions,
         ?ReflectionProvider $reflectionProvider = null,
-        bool                $checkForAssignments = false,
-        bool                $checkYodaConditions = false
+        bool                $checkForAssignments = false
     )
     {
         $this->reflectionProvider = $reflectionProvider;
@@ -50,8 +44,6 @@ final class IfConditionTernaryOperatorRule implements Rule
         $this->classesNotInIfConditions = $classesNotInIfConditions;
 
         $this->checkForAssignments = $checkForAssignments;
-        
-        $this->checkYodaConditions = $checkYodaConditions;
     }
 
     public function getNodeType(): string
@@ -75,7 +67,7 @@ final class IfConditionTernaryOperatorRule implements Rule
             $node,
             $this->reflectionProvider,
             $this->checkForAssignments,
-            $this->checkYodaConditions
+            false
         );
     }
 }
