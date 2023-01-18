@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.11 (2023-01-18)
+- allow "Yoda"-conditions for more cases
+
 ### 3.1.10 (2023-01-18)
 - allow "Yoda"-conditions for concat
 
