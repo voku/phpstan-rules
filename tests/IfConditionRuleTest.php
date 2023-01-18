@@ -133,6 +133,10 @@ final class IfConditionRuleTest extends RuleTestCase
                     'BooleanAnd: Assignment is not allowed here.',
                     183
                 ],
+                [
+                    'Greater: Yoda condition is not allowed here.',
+                    200
+                ],
             ]
         );
     }

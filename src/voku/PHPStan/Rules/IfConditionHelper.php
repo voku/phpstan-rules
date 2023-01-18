@@ -746,7 +746,11 @@ final class IfConditionHelper
             foreach ($nodes as $expr) {
                 assert($expr instanceof BinaryOp);
 
-                if ($expr->left instanceof MagicConst) {
+                if (
+                    $expr->left instanceof MagicConst
+                    ||
+                    $expr instanceof \PhpParser\Node\Expr\BinaryOp\Concat
+                ) {
                     continue;
                 }
 

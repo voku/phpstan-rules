@@ -183,3 +183,20 @@ if (1 === 1 && $b = rand(0, 1)) {
 while (1 === 1 && $a = rand(0,1)) {
     // ...
 }
+
+// check yoda - ok
+$foo = 'generated';
+if (
+    !is_dir("/tmp/" . $foo)
+    &&
+    !mkdir("/tmp/" . $foo)
+    &&
+    !is_dir("/tmp/" . $foo)
+) {
+    // ...
+}
+// check yoda - error
+$i = 5;
+if (4 > $i) {
+    // ...
+}
