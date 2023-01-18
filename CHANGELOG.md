@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.8 (2023-01-18)
+- "rules.neon" -> add missing config
+
 ### 3.1.7 (2023-01-17)
 - "rules.neon" -> fix typo only
 
