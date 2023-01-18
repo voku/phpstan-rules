@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.9 (2023-01-18)
+- allow "Yoda"-conditions for "Ternary"-conditions
+
 ### 3.1.8 (2023-01-18)
 - "rules.neon" -> add missing config
 
