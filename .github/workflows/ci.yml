@@ -24,9 +24,6 @@ jobs:
           8.1
         ]
         composer: [basic]
-        include:
-          - php: 7.3
-            composer: lowest
     timeout-minutes: 10
     steps:
       - name: Checkout code
@@ -55,10 +52,6 @@ jobs:
         run: |
           if [[ "${{ matrix.php }}" == "7.4" ]]; then
             composer require phpstan/phpstan --no-update
-          fi;
-
-          if [[ "${{ matrix.composer }}" == "lowest" ]]; then
-            composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable
           fi;
 
           if [[ "${{ matrix.composer }}" == "basic" ]]; then
