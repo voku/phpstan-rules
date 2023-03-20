@@ -412,8 +412,24 @@ final class IfConditionRuleTest extends RuleTestCase
                     43,
                 ],
                 [
+                    'Equal: Yoda condition is not allowed here.',
+                    51,
+                ],
+                [
+                    'Equal: Yoda condition is not allowed here.',
+                    55,
+                ],
+                [
                     'Equal: Possible insane comparison between \'0.000\' and 3|null',
                     55,
+                ],
+                [
+                    'Equal: Yoda condition is not allowed here.',
+                    59,
+                ],
+                [
+                    'Equal: Yoda condition is not allowed here.',
+                    63,
                 ],
                 [
                     'Equal: Possible insane comparison between null and 0|3',
