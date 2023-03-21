@@ -202,13 +202,9 @@ if (4 > $i) {
 }
 
 if (rand(0, 10) > 5) {
-    if (rand(0, 10) > 5) {
-        $storage_id = rand();
-    } else {
-        $storage_id = null;
-    }
-} else {
     $storage_id = "NULL";
+} else {
+    $storage_id = rand(0, 10) > 5 ? rand() : null;
 }
 if ($storage_id === "NULL") {
     // ...

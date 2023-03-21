@@ -834,6 +834,8 @@ final class IfConditionHelper
             (
                 $type instanceof \PHPStan\Type\UnionType
                 &&
+                \count($type->getTypes()) === 2
+                &&
                 (
                     (
                         $type->getTypes()[0] instanceof $typeClassName
