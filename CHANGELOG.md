@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.12 (2023-03-21)
+- do not report possible insane comparison between e.g. 'NULL' and 'NULL'|int|null
+
 ### 3.1.11 (2023-01-18)
 - allow "Yoda"-conditions for more cases
 
