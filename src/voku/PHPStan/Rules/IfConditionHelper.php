@@ -310,6 +310,22 @@ final class IfConditionHelper
             return;
         }
 
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+            ||
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
+        ) {
+            if ($type_2 && $type_2->isArray()->yes()) {
+                if ($type_2->isIterableAtLeastOnce()->yes()) {
+                    $errors[] = self::buildErrorMessage($origNode, 'Do not compare boolean and non-empty-array.', $cond->getAttribute('startLine'));
+                } elseif ($type_1->isFalse()->yes()) {
+                    $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) === 0` instead of `$foo == false`.', $cond->getAttribute('startLine'));
+                } else {
+                    $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) > 0` instead of `$foo == true`.', $cond->getAttribute('startLine'));
+                }
+            }
+        }
+        
         if ($type_2 instanceof \PHPStan\Type\Constant\ConstantIntegerType) {
             $errors[] = self::buildErrorMessage($origNode, 'Do not compare boolean and integer.', $cond->getAttribute('startLine'));
         }
@@ -914,18 +930,14 @@ final class IfConditionHelper
             return $errors;
         }
         
-        if ($type_1 instanceof \PHPStan\Type\Accessory\NonEmptyArrayType) {
-
-            $errors[] = self::buildErrorMessage($origNode, 'Non-empty array is never empty.', $cond->getAttribute('startLine'));
-
-        } elseif ($type_1->isArray()->yes()) {
-
-            if ($cond instanceof Node\Expr\BooleanNot) {
+        if ($type_1->isArray()->yes()) {
+            if ($type_1->isIterableAtLeastOnce()->yes()) {
+                $errors[] = self::buildErrorMessage($origNode, 'Non-empty array is never empty.', $cond->getAttribute('startLine'));
+            } elseif ($cond instanceof Node\Expr\BooleanNot) {
                 $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) === 0` instead of `!$foo`.', $cond->getAttribute('startLine'));
             } else {
                 $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) > 0` instead of `$foo`.', $cond->getAttribute('startLine'));
             }
-
         }
         
         return $errors;

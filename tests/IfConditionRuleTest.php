@@ -137,6 +137,22 @@ final class IfConditionRuleTest extends RuleTestCase
                     'Greater: Yoda condition is not allowed here.',
                     200
                 ],
+                [
+                    'Equal: Use a function e.g. `count($foo) === 0` instead of `$foo == false`.',
+                    215
+                ],
+                [
+                    'Identical: Use a function e.g. `count($foo) > 0` instead of `$foo == true`.',
+                    221
+                ],
+                [
+                    'Equal: Use a function e.g. `count($foo) === 0` instead of `$foo == false`.',
+                    227
+                ],
+                [
+                    'Equal: Do not compare boolean and non-empty-array.',
+                    233
+                ],
             ]
         );
     }

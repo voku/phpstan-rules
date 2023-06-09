@@ -209,3 +209,27 @@ if (rand(0, 10) > 5) {
 if ($storage_id === "NULL") {
     // ...
 }
+
+/** @var array<array-key,mixed> $customer */
+$customer = [];
+if ($customer == false) {
+    // ...
+}
+
+/** @var array<array-key,mixed> $customer */
+$customer = [];
+if ($customer === true) {
+    // ...
+}
+
+/** @var array<array-key,mixed> $customer */
+$customer = [];
+if ($customer == false) {
+    // ...
+}
+
+/** @phpstan-var non-empty-list<1> $customer */
+$customer = [1, 1, 1];
+if ($customer == false) {
+    // ...
+}

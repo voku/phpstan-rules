@@ -35,7 +35,7 @@ final class IfConditionBasicRuleTest extends RuleTestCase
                     17
                 ],
                 [
-                    'If_: Use a function e.g. `count($foo) > 0` instead of `$foo`.',
+                    'If_: Non-empty array is never empty.',
                     23
                 ],
                 [
