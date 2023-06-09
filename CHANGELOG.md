@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.2.0 (2023-06-09)
+- add check for `array ==(=) bool` conditions
+
 ### 3.1.12 (2023-03-21)
 - do not report possible insane comparison between e.g. 'NULL' and 'NULL'|int|null
 
