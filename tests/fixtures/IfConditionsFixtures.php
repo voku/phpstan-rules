@@ -233,3 +233,10 @@ $customer = [1, 1, 1];
 if ($customer == false) {
     // ...
 }
+
+// do not report this
+function doStuff2(?\stdClass $maybeThing): \stdClass {
+    $aThing = $maybeThing ?? new \stdClass();
+
+    return $aThing;
+}

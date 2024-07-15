@@ -815,6 +815,10 @@ final class IfConditionHelper
         Node                $origNode
     ): void
     {
+        if ($cond instanceof \PhpParser\Node\Expr\BinaryOp\Coalesce) {
+            return;
+        }
+        
         foreach ($classesNotInIfConditions as $classesNotInIfCondition) {
             if (
                 $type_1 instanceof \PHPStan\Type\ObjectType

@@ -6,6 +6,7 @@ namespace voku\PHPStan\Rules\Test\fixtures;
 $a = new \stdClass();
 $b = $a ? $a->lall : 'foo';
 $b = $a ?: 'foo';
+$b = $a ?? 'foo';
 
 // Allow AND && OR checks on objects
 $a = random_int(0, 1) ? new \SplFixedArray(2) : null;
@@ -42,4 +43,11 @@ if (
     ($getTmp + $postTmp) != $_REQUEST
 ) {
     // ...
+}
+
+// do not report this
+function doStuff(?\stdClass $maybeThing): \stdClass {
+    $aThing = $maybeThing ?? new \stdClass();
+
+    return $aThing;
 }
