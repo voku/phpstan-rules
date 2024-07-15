@@ -58,7 +58,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     31,
                 ],
                 [
-                    'Equal: Insane comparison between \'test\' and \'\'',
+                    'Equal: Insane comparison between \'test\' and \'\'.',
                     37,
                 ],
                 [
@@ -66,7 +66,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     37,
                 ],
                 [
-                    'Equal: Insane comparison between \'\' and \'test\'',
+                    'Equal: Insane comparison between \'\' and \'test\'.',
                     37,
                 ],
                 [
@@ -186,7 +186,7 @@ final class IfConditionRuleTest extends RuleTestCase
             ],
             [
                 [
-                    'Equal: Insane comparison between 0.0 and \'\'',
+                    'Equal: Insane comparison between 0.0 and \'\'.',
                     7,
                 ],
                 [
@@ -194,7 +194,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     7,
                 ],
                 [
-                    'Equal: Insane comparison between \'\' and 0.0',
+                    'Equal: Insane comparison between \'\' and 0.0.',
                     7,
                 ],
                 [
@@ -202,11 +202,11 @@ final class IfConditionRuleTest extends RuleTestCase
                     11,
                 ],
                 [
-                    'NotEqual: Possible insane comparison between \'\' and 0.0',
+                    'NotEqual: Possible insane comparison between \'\' and 0.0.',
                     11,
                 ],
                 [
-                    'Equal: Insane comparison between 0 and \'\'',
+                    'Equal: Insane comparison between 0 and \'\'.',
                     15,
                 ],
                 [
@@ -214,7 +214,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     15,
                 ],
                 [
-                    'Equal: Insane comparison between \'\' and 0',
+                    'Equal: Insane comparison between \'\' and 0.',
                     15,
                 ],
                 [
@@ -226,7 +226,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     19,
                 ],
                 [
-                    'NotEqual: Possible insane comparison between \'\' and 0',
+                    'NotEqual: Possible insane comparison between \'\' and 0.',
                     19,
                 ],
                 [
@@ -234,11 +234,11 @@ final class IfConditionRuleTest extends RuleTestCase
                     23,
                 ],
                 [
-                    'Equal: Insane comparison between \'\' and 0',
+                    'Equal: Insane comparison between \'\' and 0.',
                     23,
                 ],
                 [
-                    'Equal: Insane comparison between 0 and \'\'',
+                    'Equal: Insane comparison between 0 and \'\'.',
                     23,
                 ],
                 [
@@ -246,31 +246,31 @@ final class IfConditionRuleTest extends RuleTestCase
                     27,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'\' and 0|null',
+                    'Equal: Possible insane comparison between \'\' and 0|null.',
                     27,
                 ],
                 [
-                    'Equal: Insane comparison between 0 and \'0foo\'',
+                    'Equal: Insane comparison between 0 and \'0foo\'.',
                     34,
                 ],
                 [
-                    'Equal: Insane comparison between \'0foo\' and 0',
+                    'Equal: Insane comparison between \'0foo\' and 0.',
                     34,
                 ],
                 [
-                    'Identical: Insane comparison between 0 and \'0foo\'',
+                    'Identical: Insane comparison between 0 and \'0foo\'.',
                     37,
                 ],
                 [
-                    'Identical: Insane comparison between \'0foo\' and 0',
+                    'Identical: Insane comparison between \'0foo\' and 0.',
                     37,
                 ],
                 [
-                    'NotEqual: Possible insane comparison between \'0foo\' and 1',
+                    'NotEqual: Possible insane comparison between \'0foo\' and 1.',
                     40,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'3\' and true',
+                    'Equal: Possible insane comparison between \'3\' and true.',
                     43,
                 ],
                 [
@@ -286,7 +286,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     55,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'0.000\' and 3|null',
+                    'Equal: Possible insane comparison between \'0.000\' and 3|null.',
                     55,
                 ],
                 [
@@ -298,35 +298,35 @@ final class IfConditionRuleTest extends RuleTestCase
                     63,
                 ],
                 [
-                    'Equal: Possible insane comparison between null and 0|3',
+                    'Equal: Possible insane comparison between null and 0|3.',
                     63,
                 ],
                 [
-                    'NotEqual: Insane comparison between 1 and \'1\'',
+                    'NotEqual: Insane comparison between 1 and \'1\'.',
                     66,
                 ],
                 [
-                    'NotEqual: Insane comparison between \'1\' and 1',
+                    'NotEqual: Insane comparison between \'1\' and 1.',
                     66,
                 ],
                 [
-                    'NotIdentical: Insane comparison between 1 and 1',
+                    'NotIdentical: Insane comparison between 1 and 1.',
                     69,
                 ],
                 [
-                    'NotIdentical: Insane comparison between 1 and 1',
+                    'NotIdentical: Insane comparison between 1 and 1.',
                     69,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'0\' and 0',
+                    'Equal: Possible insane comparison between \'0\' and 0.',
                     72,
                 ],
                 [
-                    'Identical: Insane comparison between 0 and \'0\'',
+                    'Identical: Insane comparison between 0 and \'0\'.',
                     75,
                 ],
                 [
-                    'Identical: Insane comparison between \'0\' and 0',
+                    'Identical: Insane comparison between \'0\' and 0.',
                     75,
                 ],
             ]
@@ -348,11 +348,11 @@ final class IfConditionRuleTest extends RuleTestCase
                     7,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'\' and 0.0',
+                    'Equal: Possible insane comparison between \'\' and 0.0.',
                     7,
                 ],
                 [
-                    'NotEqual: Insane comparison between 0.0 and \'\'',
+                    'NotEqual: Insane comparison between 0.0 and \'\'.',
                     11
                 ],
                 [
@@ -360,7 +360,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     11,
                 ],
                 [
-                    'NotEqual: Insane comparison between \'\' and 0.0',
+                    'NotEqual: Insane comparison between \'\' and 0.0.',
                     11,
                 ],
                 [
@@ -368,11 +368,11 @@ final class IfConditionRuleTest extends RuleTestCase
                     15,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'\' and 0',
+                    'Equal: Possible insane comparison between \'\' and 0.',
                     15,
                 ],
                 [
-                    'NotEqual: Insane comparison between 0 and \'\'',
+                    'NotEqual: Insane comparison between 0 and \'\'.',
                     19,
                 ],
                 [
@@ -384,7 +384,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     19,
                 ],
                 [
-                    'NotEqual: Insane comparison between \'\' and 0',
+                    'NotEqual: Insane comparison between \'\' and 0.',
                     19,
                 ],
                 [
@@ -392,7 +392,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     23,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'\' and 0',
+                    'Equal: Possible insane comparison between \'\' and 0.',
                     23,
                 ],
                 [
@@ -400,27 +400,27 @@ final class IfConditionRuleTest extends RuleTestCase
                     27,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'\' and 0|null',
+                    'Equal: Possible insane comparison between \'\' and 0|null.',
                     27,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'0foo\' and 0',
+                    'Equal: Possible insane comparison between \'0foo\' and 0.',
                     34,
                 ],
                 [
-                    'Identical: Insane comparison between 0 and \'0foo\'',
+                    'Identical: Insane comparison between 0 and \'0foo\'.',
                     37,
                 ],
                 [
-                    'Identical: Insane comparison between \'0foo\' and 0',
+                    'Identical: Insane comparison between \'0foo\' and 0.',
                     37,
                 ],
                 [
-                    'NotEqual: Possible insane comparison between \'0foo\' and 1',
+                    'NotEqual: Possible insane comparison between \'0foo\' and 1.',
                     40,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'3\' and true',
+                    'Equal: Possible insane comparison between \'3\' and true.',
                     43,
                 ],
                 [
@@ -436,7 +436,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     55,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'0.000\' and 3|null',
+                    'Equal: Possible insane comparison between \'0.000\' and 3|null.',
                     55,
                 ],
                 [
@@ -448,35 +448,35 @@ final class IfConditionRuleTest extends RuleTestCase
                     63,
                 ],
                 [
-                    'Equal: Possible insane comparison between null and 0|3',
+                    'Equal: Possible insane comparison between null and 0|3.',
                     63,
                 ],
                 [
-                    'NotEqual: Insane comparison between 1 and \'1\'',
+                    'NotEqual: Insane comparison between 1 and \'1\'.',
                     66,
                 ],
                 [
-                    'NotEqual: Insane comparison between \'1\' and 1',
+                    'NotEqual: Insane comparison between \'1\' and 1.',
                     66,
                 ],
                 [
-                    'NotIdentical: Insane comparison between 1 and 1',
+                    'NotIdentical: Insane comparison between 1 and 1.',
                     69,
                 ],
                 [
-                    'NotIdentical: Insane comparison between 1 and 1',
+                    'NotIdentical: Insane comparison between 1 and 1.',
                     69,
                 ],
                 [
-                    'Equal: Possible insane comparison between \'0\' and 0',
+                    'Equal: Possible insane comparison between \'0\' and 0.',
                     72,
                 ],
                 [
-                    'Identical: Insane comparison between 0 and \'0\'',
+                    'Identical: Insane comparison between 0 and \'0\'.',
                     75,
                 ],
                 [
-                    'Identical: Insane comparison between \'0\' and 0',
+                    'Identical: Insane comparison between \'0\' and 0.',
                     75,
                 ],
             ]
