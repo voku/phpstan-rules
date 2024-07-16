@@ -95,3 +95,19 @@ services:
 			checkForAssignments: %voku.checkForAssignments%
 		tags:
 			- phpstan.rules.rule
+
+	-
+		class: voku\PHPStan\Rules\IfConditionMatchRule
+		arguments:
+			classesNotInIfConditions: %voku.classesNotInIfConditions%
+			checkForAssignments: %voku.checkForAssignments%
+		tags:
+			- phpstan.rules.rule
+			
+	-
+		class: voku\PHPStan\Rules\IfConditionSwitchCaseRule
+		arguments:
+			classesNotInIfConditions: %voku.classesNotInIfConditions%
+			checkForAssignments: %voku.checkForAssignments%
+		tags:
+			- phpstan.rules.rule
