@@ -240,3 +240,12 @@ function doStuff2(?\stdClass $maybeThing): \stdClass {
 
     return $aThing;
 }
+
+/** @var int<0,10> $a */
+$a = 0;
+if ($a == '-1') {
+    // ...
+}
+if ($a == -1) {
+    // ...
+}

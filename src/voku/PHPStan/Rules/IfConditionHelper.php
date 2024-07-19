@@ -35,7 +35,7 @@ final class IfConditionHelper
     {
         // init
         $errors = [];
-        
+
         // ignore mixed types
         $condType = $scope->getType($cond);
         if ($condType instanceof \PHPStan\Type\MixedType) {
@@ -124,14 +124,14 @@ final class IfConditionHelper
         if ($nodeFinder === null) {
             $nodeFinder = new NodeFinder();
         }
-        
+
         // DEBUG
         //var_dump(get_class($type_1), get_class($cond), get_class($type_2));
 
         // -----------------------------------------------------------------------------------------
 
         self::processNonTypeChecks($cond, $errors, $origNode, $nodeFinder, $checkForAssignments, $checkYodaConditions);
-        
+
         // -----------------------------------------------------------------------------------------
 
         self::processCheckOnArray($type_1, $cond, $errors, $origNode);
@@ -199,6 +199,20 @@ final class IfConditionHelper
             )
         ) {
             $errors[] = self::buildErrorMessage($origNode, 'Please do not use empty-string check for numeric values. e.g. `0 == \'\'` is not working with >= PHP 8.', $cond->getAttribute('startLine'));
+        }
+
+        if (
+            $type_1->isConstantScalarValue()->yes()
+            &&
+            $type_2->isConstantScalarValue()->no()
+            &&
+            $type_2->accepts($type_1, true)->no()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Condition between %s and %s are falsy, please do not mix types.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
         }
     }
 
@@ -285,6 +299,20 @@ final class IfConditionHelper
         ) {
             $errors[] = self::buildErrorMessage($origNode, 'Please do not use double negative null conditions. Use "!==" instead if needed.', $cond->getAttribute('startLine'));
         }
+
+        if (
+            $type_1->isConstantScalarValue()->yes()
+            &&
+            $type_2->isConstantScalarValue()->no()
+            &&
+            $type_2->accepts($type_1, true)->no()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Condition between %s and %s are falsy, please do not mix types.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+        }
     }
 
     /**
@@ -304,7 +332,7 @@ final class IfConditionHelper
         if (!$type_1) {
             return;
         }
-        
+
         if (!$type_1->isBoolean()->yes()) {
             return;
         }
@@ -324,7 +352,7 @@ final class IfConditionHelper
                 }
             }
         }
-        
+
         if ($type_2 instanceof \PHPStan\Type\Constant\ConstantIntegerType) {
             $errors[] = self::buildErrorMessage($origNode, 'Do not compare boolean and integer.', $cond->getAttribute('startLine'));
         }
@@ -382,7 +410,7 @@ final class IfConditionHelper
         if ($type_1->accepts($type_2, true)->yes()) {
             return;
         }
-        
+
         $errorFound = false;
         if (
             (
@@ -394,7 +422,7 @@ final class IfConditionHelper
             $reflectionProvider
         ) {
             $referencedClasses = $type_1->getObjectClassNames();
-            
+
             foreach ($referencedClasses as $referencedClass) {
                 try {
                     $classReflection = $reflectionProvider->getClass($referencedClass);
@@ -414,7 +442,7 @@ final class IfConditionHelper
                 }
             }
         }
-        
+
         if ($errorFound === false) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
@@ -498,7 +526,7 @@ final class IfConditionHelper
                 $cond->getAttribute('startLine')
             );
         }
-        
+
         if (
             !$cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
             &&
@@ -525,7 +553,7 @@ final class IfConditionHelper
                 sprintf('Insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
-            
+
             return;
         }
 
@@ -543,7 +571,7 @@ final class IfConditionHelper
                 sprintf('Insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
-            
+
             return;
         }
 
@@ -561,7 +589,7 @@ final class IfConditionHelper
                 sprintf('Insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
-            
+
             return;
         }
 
@@ -579,7 +607,7 @@ final class IfConditionHelper
                 sprintf('Insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
-            
+
             return;
         }
 
@@ -599,7 +627,7 @@ final class IfConditionHelper
                 sprintf('Possible insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
-            
+
             return;
         }
 
@@ -621,7 +649,7 @@ final class IfConditionHelper
                 sprintf('Possible insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
-            
+
             return;
         }
 
@@ -667,7 +695,7 @@ final class IfConditionHelper
                 sprintf('Possible insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
-            
+
             return;
         }
 
@@ -716,7 +744,7 @@ final class IfConditionHelper
         if ($type_1 instanceof \PHPStan\Type\UnionType) {
             $type_1 = $type_1->generalize(\PHPStan\Type\GeneralizePrecision::lessSpecific());
         }
-        
+
         if ($type_1 instanceof \PHPStan\Type\IntersectionType) {
             foreach ($type_1->getArrays() as $type_1_inner) {
                 $errors = self::checkOnArrayInner($type_1_inner, $origNode, $cond, $errors);
@@ -747,7 +775,7 @@ final class IfConditionHelper
         ) {
             return;
         }
-        
+
         if ($checkForAssignments) {
             $assignNode = $nodeFinder->findFirstInstanceOf($cond, Assign::class);
             if ($assignNode instanceof Assign) {
@@ -772,7 +800,7 @@ final class IfConditionHelper
                 $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
             )
         ) {
-            
+
             $nodes = $nodeFinder->findInstanceOf($cond, BinaryOp::class);
 
             foreach ($nodes as $expr) {
@@ -818,7 +846,7 @@ final class IfConditionHelper
         if ($cond instanceof \PhpParser\Node\Expr\BinaryOp\Coalesce) {
             return;
         }
-        
+
         foreach ($classesNotInIfConditions as $classesNotInIfCondition) {
             if (
                 $type_1 instanceof \PHPStan\Type\ObjectType
@@ -842,11 +870,11 @@ final class IfConditionHelper
         if ($type === null) {
             return false;
         }
-        
+
         if ($useGeneralizeLessSpecific) {
             $type = $type->generalize(GeneralizePrecision::lessSpecific());
         }
-        
+
         if (
             $type instanceof $typeClassName
             ||
@@ -916,7 +944,7 @@ final class IfConditionHelper
         } else {
             $origNodeClassNameSimple = \substr($origNodeClassName, $pos + 1);
         }
-        
+
         return \PHPStan\Rules\RuleErrorBuilder::message($origNodeClassNameSimple . ': ' . $errorMessage)
             ->line($line)
             ->build();
@@ -934,7 +962,7 @@ final class IfConditionHelper
         if (!$type_1) {
             return $errors;
         }
-        
+
         if ($type_1->isArray()->yes()) {
             if ($type_1->isIterableAtLeastOnce()->yes()) {
                 $errors[] = self::buildErrorMessage($origNode, 'Non-empty array is never empty.', $cond->getAttribute('startLine'));
@@ -944,7 +972,7 @@ final class IfConditionHelper
                 $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) > 0` instead of `$foo`.', $cond->getAttribute('startLine'));
             }
         }
-        
+
         return $errors;
     }
 }

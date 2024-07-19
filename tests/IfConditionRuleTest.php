@@ -46,7 +46,15 @@ final class IfConditionRuleTest extends RuleTestCase
                     19,
                 ],
                 [
+                    'NotEqual: Condition between \'\' and stdClass are falsy, please do not mix types.',
+                    19,
+                ],
+                [
                     'Equal: Do not compare boolean and integer.',
+                    25,
+                ],
+                [
+                    'Equal: Condition between 0 and bool are falsy, please do not mix types.',
                     25,
                 ],
                 [
@@ -55,6 +63,10 @@ final class IfConditionRuleTest extends RuleTestCase
                 ],
                 [
                     'NotEqual: Please do not use double negative boolean conditions. e.g. `(bool)$foo != false` is the same as `(bool)$foo`.',
+                    31,
+                ],
+                [
+                    'NotEqual: Condition between \'\' and bool are falsy, please do not mix types.',
                     31,
                 ],
                 [
@@ -80,6 +92,10 @@ final class IfConditionRuleTest extends RuleTestCase
                 [
                     'GreaterOrEqual: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
                     52
+                ],
+                [
+                    'Equal: Condition between \'2032-03-04\' and DateTimeImmutable are falsy, please do not mix types.',
+                    55
                 ],
                 [
                     'Equal: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
@@ -138,6 +154,10 @@ final class IfConditionRuleTest extends RuleTestCase
                     200
                 ],
                 [
+                    'Equal: Condition between false and array are falsy, please do not mix types.',
+                    215
+                ],
+                [
                     'Equal: Use a function e.g. `count($foo) === 0` instead of `$foo == false`.',
                     215
                 ],
@@ -146,12 +166,28 @@ final class IfConditionRuleTest extends RuleTestCase
                     221
                 ],
                 [
+                    'Equal: Condition between false and array are falsy, please do not mix types.',
+                    227
+                ],
+                [
                     'Equal: Use a function e.g. `count($foo) === 0` instead of `$foo == false`.',
                     227
                 ],
                 [
+                    'Equal: Condition between false and non-empty-list<1> are falsy, please do not mix types.',
+                    233
+                ],
+                [
                     'Equal: Do not compare boolean and non-empty-array.',
                     233
+                ],
+                [
+                    'Equal: Condition between \'-1\' and int<0, 10> are falsy, please do not mix types.',
+                    246
+                ],
+                [
+                    'Equal: Condition between -1 and int<0, 10> are falsy, please do not mix types.',
+                    249
                 ],
             ]
         );
