@@ -1,5 +1,11 @@
 # Changelog
 
+### 3.4.0 (2024-07-20)
+- add check for mix types e.g. integer-range in `==` and `!=` conditions
+
+### 3.3.1 (2024-07-17)
+- add check for `switch-case` and `match` conditions v2
+
 ### 3.3.0 (2024-07-16)
 - add check for `switch-case` and `match` conditions
 - changed the error message for "Insane comparison ..."
