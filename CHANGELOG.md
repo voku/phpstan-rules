@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.5.0 (2024-08-30)
+- check more mix types e.g. integer-range in `==` and `!=` conditions
+
 ### 3.4.0 (2024-07-20)
 - add check for mix types e.g. integer-range in `==` and `!=` conditions
 
