@@ -202,7 +202,11 @@ final class IfConditionHelper
         }
 
         if (
+            $type_1
+            &&
             $type_1->isConstantScalarValue()->yes()
+            &&
+            $type_2
             &&
             $type_2->accepts($type_1, true)->no()
         ) {
@@ -299,7 +303,11 @@ final class IfConditionHelper
         }
 
         if (
+            $type_1
+            &&
             $type_1->isConstantScalarValue()->yes()
+            &&
+            $type_2
             &&
             $type_2->accepts($type_1, true)->no()
         ) {
@@ -751,7 +759,6 @@ final class IfConditionHelper
     }
 
     /**
-     * @param \PHPStan\Type\Type|null              $type_1
      * @param Node                                 $cond
      * @param array<int, \PHPStan\Rules\RuleError> $errors
      */
