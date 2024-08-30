@@ -204,8 +204,6 @@ final class IfConditionHelper
         if (
             $type_1->isConstantScalarValue()->yes()
             &&
-            $type_2->isConstantScalarValue()->no()
-            &&
             $type_2->accepts($type_1, true)->no()
         ) {
             $errors[] = self::buildErrorMessage(
@@ -302,8 +300,6 @@ final class IfConditionHelper
 
         if (
             $type_1->isConstantScalarValue()->yes()
-            &&
-            $type_2->isConstantScalarValue()->no()
             &&
             $type_2->accepts($type_1, true)->no()
         ) {

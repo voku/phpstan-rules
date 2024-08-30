@@ -249,3 +249,188 @@ if ($a == '-1') {
 if ($a == -1) {
     // ...
 }
+
+// Comparing array with null
+$a = [1, 2, 3];
+if ($a == null) {
+    // ...
+}
+if ($a === null) {
+    // ...
+}
+
+// Comparing DateTime object with integer
+$date = new \DateTime();
+if ($date == 123456) {
+    // ...
+}
+if ($date === 123456) {
+    // ...
+}
+
+// Comparing float with boolean and array
+$a = 5.7;
+if ($a == true) {
+    // ...
+}
+if ($a == []) {
+    // ...
+}
+
+// Comparing array with boolean
+$a = [1, 2, 3];
+if ($a == true) {
+    // ...
+}
+if ($a === false) {
+    // ...
+}
+
+// Comparing Closure with string
+$a = function() { return 1; };
+if ($a == 'closure') {
+    // ...
+}
+if ($a === 'closure') {
+    // ...
+}
+
+// Comparing object with null string
+$a = new \stdClass();
+if ($a == 'null') {
+    // ...
+}
+if ($a === 'null') {
+    // ...
+}
+
+// Comparing resource with integer
+$handle = fopen('php://memory', 'r');
+if ($handle == 1) {
+    // ...
+}
+if ($handle === 1) {
+    // ...
+}
+
+// Comparing boolean true with numeric string
+$a = '1';
+if (true == $a) {
+    // ...
+}
+if (true === $a) {
+    // ...
+}
+
+// Comparing boolean false with empty array
+$a = [];
+if (false == $a) {
+    // ...
+}
+if (false === $a) {
+    // ...
+}
+
+// Comparing Infinity with boolean
+$a = INF;
+if ($a == true) {
+    // ...
+}
+if ($a === false) {
+    // ...
+}
+
+// Comparing NaN with string
+$a = NAN;
+if ($a == 'NaN') {
+    // ...
+}
+if ($a === 'NaN') {
+    // ...
+}
+
+// Comparing bool with a very large number
+$a = true;
+$b = 999999999999999999999999999;
+if ($a == $b) {
+    // ...
+}
+if ($a === $b) {
+    // ...
+}
+
+// Comparing callable with a string function name
+function foo() { return 'bar'; }
+$a = 'foo';
+if (is_callable($a) == 'function') {
+    // ...
+}
+if (is_callable($a) === 'function') {
+    // ...
+}
+
+// Comparing a class name string with an instance
+$a = new \stdClass();
+if (get_class($a) == new \stdClass()) {
+    // ...
+}
+if (get_class($a) === new \stdClass()) {
+    // ...
+}
+
+// Comparing float with date string
+$a = 3.14;
+if ($a == '2023-10-01') {
+    // ...
+}
+if ($a === '2023-10-01') {
+    // ...
+}
+
+// Comparing boolean with JSON string
+$a = true;
+if ($a == '{"key": "value"}') {
+    // ...
+}
+if ($a === '{"key": "value"}') {
+    // ...
+}
+
+// Comparing numeric string with an encoded array
+$a = '123';
+$b = json_encode([1, 2, 3]);
+if ($a == $b) {
+    // ...
+}
+if ($a === $b) {
+    // ...
+}
+
+// Comparing boolean with regular expression
+$a = true;
+if ($a == '/^pattern/') {
+    // ...
+}
+if ($a === '/^pattern/') {
+    // ...
+}
+
+// Comparing timestamp with file resource
+$a = time();
+$handle = fopen('php://memory', 'r');
+if ($a == $handle) {
+    // ...
+}
+if ($a === $handle) {
+    // ...
+}
+
+// Comparing object with array
+$a = new \stdClass();
+$b = [1, 2, 3];
+if ($a == $b) {
+    // ...
+}
+if ($a === $b) {
+    // ...
+}
