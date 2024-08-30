@@ -10,7 +10,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 
 /**
- * @implements Rule<Node\Stmt\Switch_::class>
+ * @implements Rule<Node\Stmt\Switch_>
  */
 final class IfConditionSwitchCaseRule implements Rule
 {
