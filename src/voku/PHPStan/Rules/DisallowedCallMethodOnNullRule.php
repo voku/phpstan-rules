@@ -74,7 +74,17 @@ final class DisallowedCallMethodOnNullRule implements Rule
         $className = $method->getDeclaringClass()->getDisplayName();
 
         if ($calledOnType->accepts((new NullType()), true)->yes()) {
-            return [RuleErrorBuilder::message(sprintf('Call to %s %s::%s() on NULL.', $method->isStatic() ? 'static method' : 'method', $className, $methodName))->build(),];
+            return [
+                RuleErrorBuilder::message(
+                    sprintf(
+                        'Call to %s %s::%s() on NULL.', 
+                        $method->isStatic() ? 'static method' : 'method', 
+                        $className, 
+                        $methodName
+                    )
+                )->identifier('voku.callMethodOnNull')
+                 ->build(),
+            ];
         }
 
         return [];
@@ -82,7 +92,6 @@ final class DisallowedCallMethodOnNullRule implements Rule
 
     public function findTypeToCheck(\PHPStan\Analyser\Scope $scope, Expr $var): FoundTypeResult
     {
-
         $type = $scope->getType($var);
 
         if ($type instanceof MixedType || $type instanceof NeverType) {
@@ -94,7 +103,7 @@ final class DisallowedCallMethodOnNullRule implements Rule
             $type = $type->getStaticObjectType();
         }
         $errors = [];
-        $directClassNames = TypeUtils::getDirectClassNames($type);
+        $directClassNames = $type->getObjectClassNames();
         $hasClassExistsClass = false;
         foreach ($directClassNames as $referencedClass) {
             if ($this->reflectionProvider->hasClass($referencedClass)) {
@@ -109,7 +118,11 @@ final class DisallowedCallMethodOnNullRule implements Rule
                 continue;
             }
 
-            $errors[] = RuleErrorBuilder::message($referencedClass)->line($var->getLine())->discoveringSymbolsTip()->build();
+            $errors[] = RuleErrorBuilder::message($referencedClass)
+                ->line($var->getLine())
+                ->discoveringSymbolsTip()
+                ->identifier('voku.callMethodReferencedClass')
+                ->build();
         }
 
         if ($hasClassExistsClass || count($errors) > 0) {

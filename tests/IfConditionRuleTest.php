@@ -170,7 +170,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     200
                 ],
                 [
-                    'Equal: Condition between false and array are falsy, please do not mix types.',
+                    'Equal: Condition between false and array<mixed> are falsy, please do not mix types.',
                     215
                 ],
                 [
@@ -182,7 +182,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     221
                 ],
                 [
-                    'Equal: Condition between false and array are falsy, please do not mix types.',
+                    'Equal: Condition between false and array<mixed> are falsy, please do not mix types.',
                     227
                 ],
                 [

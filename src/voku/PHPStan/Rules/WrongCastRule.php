@@ -79,7 +79,8 @@ class WrongCastRule implements Rule
                             $castType->describe(VerbosityLevel::typeOnly()),
                             $expressionType->describe(VerbosityLevel::typeOnly())
                         )
-                    )->build(),
+                    )->identifier('voku.wrongCast')
+                     ->build(),
                 ];
             }
         }

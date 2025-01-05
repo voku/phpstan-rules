@@ -950,6 +950,7 @@ final class IfConditionHelper
 
         return \PHPStan\Rules\RuleErrorBuilder::message($origNodeClassNameSimple . ': ' . $errorMessage)
             ->line($line)
+            ->identifier('voku.' . \str_replace('_', '', $origNodeClassNameSimple))
             ->build();
     }
 
