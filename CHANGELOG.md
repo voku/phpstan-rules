@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.6.0 (2025-01-05)
+- support for phpstan 2.x
+
 ### 3.5.0 (2024-08-30)
 - check more mix types e.g. integer-range in `==` and `!=` conditions
 
