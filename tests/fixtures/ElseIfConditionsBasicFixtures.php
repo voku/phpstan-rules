@@ -29,3 +29,21 @@ if ($a) {
 } elseif (!$b) {
     // ...
 }
+
+// OK: boolean in elseif is fine
+$d = rand(0, 1) ? true : false;
+$e = rand(0, 1) ? true : false;
+if ($d) {
+    // ...
+} elseif ($e) {
+    // ...
+}
+
+// Error: non-empty array in elseif is flagged
+$f = ['x'];
+$g = rand(0, 1) ? true : false;
+if ($g) {
+    // ...
+} elseif ($f) {
+    // ...
+}

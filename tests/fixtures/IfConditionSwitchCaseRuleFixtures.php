@@ -311,3 +311,53 @@ switch (true) {
         // ...
         break;
 }
+
+// Error: stdClass used directly in switch case
+$obj = new \stdClass();
+$flag = rand(0, 1) ? true : false;
+switch (true) {
+    case $obj && $flag:
+        // ...
+        break;
+}
+
+// OK: integer switch is fine
+$val = rand(0, 3);
+switch ($val) {
+    case 1:
+        // ...
+        break;
+    case 2:
+        // ...
+        break;
+    default:
+        // ...
+        break;
+}
+
+// OK: string switch is fine
+$color = rand(0, 1) ? 'red' : 'blue';
+switch ($color) {
+    case 'red':
+        // ...
+        break;
+    default:
+        // ...
+        break;
+}
+
+// Error: Do not compare boolean and float
+$boolVal = rand(0, 1) ? true : false;
+switch ($boolVal) {
+    case 1.5:
+        // ...
+        break;
+}
+
+// Error: Do not compare boolean and null (explicit null case)
+$boolVal2 = rand(0, 1) ? true : false;
+switch ($boolVal2) {
+    case null:
+        // ...
+        break;
+}

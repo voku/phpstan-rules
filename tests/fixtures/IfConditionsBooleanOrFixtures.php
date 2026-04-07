@@ -34,3 +34,24 @@ if ($a !== null) {
 if ($b && $a !== null) {
     // ...
 }
+
+// Use a method to check the condition: stdClass on right side of OR
+$d = new \stdClass();
+$e = rand(0, 1) ? true : false;
+if ($e || $d) {
+    // ...
+}
+
+// OK: boolean || integer
+$f = rand(0, 1) ? true : false;
+$g = rand(0, 5);
+if ($f || $g) {
+    // ...
+}
+
+// OK: nullable SplFixedArray in OR with null-check
+$h = random_int(0, 1) ? new \SplFixedArray(2) : null;
+$i = random_int(0, 1) ? new \SplFixedArray(2) : null;
+if ($h !== null || $i !== null) {
+    // ...
+}

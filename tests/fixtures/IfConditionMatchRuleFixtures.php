@@ -261,3 +261,26 @@ $result = match (true) {
     $customer == false => 'Condition met',
     default => null,
 };
+
+// Error: use a method - stdClass used directly in match condition
+$obj = new \stdClass();
+$flag = rand(0, 1) ? true : false;
+$result = match (true) {
+    $obj && $flag => 'Has object and flag',
+    default => 'No match',
+};
+
+// OK: integer match is fine
+$num = rand(0, 5);
+$result2 = match ($num) {
+    0 => 'zero',
+    1 => 'one',
+    default => 'other',
+};
+
+// OK: string match is fine
+$str = rand(0, 1) ? 'foo' : 'bar';
+$result3 = match ($str) {
+    'foo' => 'is foo',
+    default => 'not foo',
+};

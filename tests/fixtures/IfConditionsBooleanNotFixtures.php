@@ -39,3 +39,15 @@ $b = rand(0, 1) ? [] : [true];
 if (!$b) {
     // ...
 }
+
+// Error: stdClass with BooleanNot in a non-if context
+$j = new \stdClass();
+$k = !$j;
+
+// OK: string negation is fine (not a class)
+$l = rand(0, 1) ? 'foo' : '';
+$m = !$l;
+
+// OK: integer negation is fine
+$n = rand(0, 5);
+$o = !$n;

@@ -141,3 +141,19 @@ function lall_non_empty_v2(): string
 
     $a += ['bar' => 3];
 }
+
+// OK: string concatenation with string
+function lall_string_concat(): string
+{
+    $a = 'Hello';
+    $a .= ' World';
+    return $a;
+}
+
+// OK: int += int
+function lall_int_plus_int(): int
+{
+    $a = 5;
+    $a += 3;
+    return $a;
+}
