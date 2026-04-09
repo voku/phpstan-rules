@@ -32,22 +32,16 @@ class ExtendedBinaryOpRule implements Rule
         // init
         $errors = [];
 
-        if (
-            \property_exists($node, 'left')
-            &&
-            \property_exists($node, 'right')
-        ) {
-            $leftType = $scope->getType($node->left);
-            $rightType = $scope->getType($node->right);
+        $leftType = $scope->getType($node->left);
+        $rightType = $scope->getType($node->right);
 
-            // DEBUG
-            //var_dump($leftType, $rightType);
-            
-            $errorsFound = false;
-            $this->checkErrors($node, $leftType, $rightType, $errors, $errorsFound);
-            if ($errorsFound === false) {
-                $this->checkErrors($node, $rightType, $leftType, $errors, $errorsFound);
-            }
+        // DEBUG
+        //var_dump($leftType, $rightType);
+
+        $errorsFound = false;
+        $this->checkErrors($node, $leftType, $rightType, $errors, $errorsFound);
+        if ($errorsFound === false) {
+            $this->checkErrors($node, $rightType, $leftType, $errors, $errorsFound);
         }
 
         return $errors;
@@ -81,7 +75,7 @@ class ExtendedBinaryOpRule implements Rule
         }
 
         if (
-            $type_1 instanceof \PHPStan\Type\StringType
+            $type_1->isString()->yes()
             &&
             !($type_2 instanceof \PHPStan\Type\MixedType)
             &&
@@ -101,11 +95,7 @@ class ExtendedBinaryOpRule implements Rule
                     $node instanceof Node\Expr\BinaryOp\NotEqual
                 )
                 &&
-                !(
-                    $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
-                    &&
-                    $type_1->getValue() === ''
-                )
+                !IfConditionHelper::hasConstantStringValue($type_1, '')
                 &&
                 !($type_2->toString() instanceof ErrorType)
             ) {
@@ -128,7 +118,7 @@ class ExtendedBinaryOpRule implements Rule
         }
 
         if (
-            $type_1 instanceof \PHPStan\Type\ArrayType
+            $type_1->isArray()->yes()
             &&
             !($type_2 instanceof \PHPStan\Type\MixedType)
             &&

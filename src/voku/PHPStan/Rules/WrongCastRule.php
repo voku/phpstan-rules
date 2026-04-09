@@ -12,8 +12,6 @@ use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\GeneralizePrecision;
-use PHPStan\Type\StringType;
-use PHPStan\Type\TypeUtils;
 use PHPStan\Type\VerbosityLevel;
 use function sprintf;
 
@@ -64,13 +62,17 @@ class WrongCastRule implements Rule
 
         foreach ($this->classesForCheckStringToIntCast as $classForCheckStringToIntCast) {
             if (
-                $expressionTypeGeneralize instanceof \PHPStan\Type\StringType
+                $expressionTypeGeneralize->isString()->yes()
                 &&
-                $castTypeGeneralize instanceof \PHPStan\Type\IntegerType
+                $castTypeGeneralize->isInteger()->yes()
                 &&
                 $tmpClass
                 &&
-                \is_a($tmpClass->getName(), $classForCheckStringToIntCast, true)
+                (
+                    $tmpClass->getName() === $classForCheckStringToIntCast
+                    ||
+                    $tmpClass->isSubclassOf($classForCheckStringToIntCast)
+                )
             ) {
                 return [
                     RuleErrorBuilder::message(
