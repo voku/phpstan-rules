@@ -31,15 +31,19 @@ final class ExtendedBinaryOpRuleTest extends RuleTestCase
                 ],
                 [
                     'Plus: string (\'Hello World!\') in combination with non-string (array{}) is not allowed.',
-                    9
+                    9,
                 ],
                 [
                     'Mul: string (\'Hello World!\') in combination with non-string (stdClass) is not allowed.',
-                    11
+                    11,
                 ],
                 [
                     'Equal: string (\'\') in combination with non-string (int) is not allowed.',
-                    15
+                    15,
+                ],
+                [
+                    'Equal: string (\'\') in combination with non-string (bool) is not allowed.',
+                    86,
                 ],
             ]
         );

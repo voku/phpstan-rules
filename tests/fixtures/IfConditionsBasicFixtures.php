@@ -40,3 +40,21 @@ $b = rand(0, 1) ? [] : [true];
 if (!$b) {
     // ...
 }
+
+// OK: integer comparison is fine
+$d = rand(0, 1);
+if ($d > 0) {
+    // ...
+}
+
+// Error: non-empty array is always non-empty in if condition  
+$e = ['x', 'y'];
+if (!$e) {
+    // ...
+}
+
+// OK: string comparison with operator
+$f = rand(0, 1) ? 'foo' : 'bar';
+if ($f === 'foo') {
+    // ...
+}

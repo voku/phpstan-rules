@@ -51,3 +51,12 @@ function doStuff(?\stdClass $maybeThing): \stdClass {
 
     return $aThing;
 }
+
+// Error: stdClass in ternary without method call
+$p = new \stdClass();
+$q = rand(0, 5);
+$r = $p ? $q : 0;
+
+// OK: explicitly check for null using null coalesce
+$s = random_int(0, 1) ? new \stdClass() : null;
+$t = $s ?? new \stdClass();

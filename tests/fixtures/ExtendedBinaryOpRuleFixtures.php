@@ -75,3 +75,29 @@ function lall3(string $a, int $b): string
         // ...
     }
 }
+
+// OK: null-coalesce is not handled by this rule (ExtendedBinaryOpRule skips Coalesce nodes)
+$nonNull = 'always-set';
+$coalesced = $nonNull ?? 'default';
+
+// Error: comparison between string and bool
+function lall_bool_string_error(bool $a): string
+{
+    if ($a == '') {
+        // ...
+    }
+}
+
+// OK: comparison between string and string
+function lall_string_string(string $a, string $b): string
+{
+    if ($a == $b) {
+        // ...
+    }
+}
+
+// OK: comparison between int and int
+function lall_int_int(int $a, int $b): bool
+{
+    return $a == $b;
+}

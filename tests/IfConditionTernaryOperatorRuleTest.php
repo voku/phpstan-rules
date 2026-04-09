@@ -6,11 +6,10 @@ namespace voku\PHPStan\Rules\Test;
 
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
-use voku\PHPStan\Rules\IfConditionBooleanAndRule;
 use voku\PHPStan\Rules\IfConditionTernaryOperatorRule;
 
 /**
- * @extends RuleTestCase<IfConditionBooleanAndRule>
+ * @extends RuleTestCase<IfConditionTernaryOperatorRule>
  */
 final class IfConditionTernaryOperatorRuleTest extends RuleTestCase
 {
@@ -33,6 +32,10 @@ final class IfConditionTernaryOperatorRuleTest extends RuleTestCase
                 [
                     'Ternary: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     8,
+                ],
+                [
+                    'Ternary: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    58,
                 ],
             ]
         );
