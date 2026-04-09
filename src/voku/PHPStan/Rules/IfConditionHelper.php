@@ -812,6 +812,7 @@ final class IfConditionHelper
             $nodes = $nodeFinder->findInstanceOf($cond, BinaryOp::class);
 
             foreach ($nodes as $expr) {
+                /** @var BinaryOp $expr */
                 if (
                     $expr->left instanceof MagicConst
                     ||
