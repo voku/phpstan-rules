@@ -22,6 +22,20 @@ final class IfConditionMatchRuleTest extends RuleTestCase
     }
 
     /**
+     * @requires PHP 8.1
+     */
+    public function testEnumMatchIsAllowed(): void
+    {
+        $this->analyse(
+            [
+                __DIR__ . '/fixtures/MatchTestMembershipLevel.php',
+                __DIR__ . '/fixtures/MatchTestStatus.php',
+            ],
+            []
+        );
+    }
+
+    /**
      * @requires PHP 8.0
      */
     public function testIfConditions(): void

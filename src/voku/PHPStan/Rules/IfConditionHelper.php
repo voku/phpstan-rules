@@ -411,6 +411,19 @@ final class IfConditionHelper
             return;
         }
 
+        // Enums are singleton values; comparing them via match (which uses ===) is always valid.
+        // However, ordering comparisons on enums (e.g. $a > $b) are still invalid,
+        // so only skip the check when no explicit binary comparison operator is involved.
+        if (
+            $type_1->isEnum()->yes()
+            &&
+            $type_2->isEnum()->yes()
+            &&
+            !($cond instanceof \PhpParser\Node\Expr\BinaryOp)
+        ) {
+            return;
+        }
+
         $errorFound = false;
         if (
             (

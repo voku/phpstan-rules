@@ -285,3 +285,4 @@ $result3 = match ($str) {
     'foo' => 'is foo',
     default => 'not foo',
 };
+
