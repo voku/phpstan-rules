@@ -312,7 +312,8 @@ switch (true) {
         break;
 }
 
-// Error: stdClass used directly in switch case
+// OK: IfConditionSwitchCaseRule checks the switch subject type vs case condition type,
+// not inner expressions; $obj && $flag evaluates to bool, no class-method check is triggered
 $obj = new \stdClass();
 $flag = rand(0, 1) ? true : false;
 switch (true) {
@@ -346,7 +347,8 @@ switch ($color) {
         break;
 }
 
-// Error: Do not compare boolean and float
+// OK: processBooleanComparison only checks ConstantIntegerType and ConstantStringType,
+// not float — bool vs float does not trigger an error
 $boolVal = rand(0, 1) ? true : false;
 switch ($boolVal) {
     case 1.5:
@@ -354,7 +356,8 @@ switch ($boolVal) {
         break;
 }
 
-// Error: Do not compare boolean and null (explicit null case)
+// OK: processBooleanComparison only checks ConstantIntegerType and ConstantStringType,
+// not null — bool vs null does not trigger an error
 $boolVal2 = rand(0, 1) ? true : false;
 switch ($boolVal2) {
     case null:

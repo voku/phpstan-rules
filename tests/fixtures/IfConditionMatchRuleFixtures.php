@@ -262,7 +262,8 @@ $result = match (true) {
     default => null,
 };
 
-// Error: use a method - stdClass used directly in match condition
+// OK: IfConditionMatchRule checks the match subject type vs arm condition type,
+// not inner expressions; $obj && $flag evaluates to bool, no class-method check is triggered
 $obj = new \stdClass();
 $flag = rand(0, 1) ? true : false;
 $result = match (true) {

@@ -76,7 +76,7 @@ function lall3(string $a, int $b): string
     }
 }
 
-// Error: null-coalesce that is always non-null because the left side is a non-empty string
+// OK: null-coalesce is not handled by this rule (ExtendedBinaryOpRule skips Coalesce nodes)
 $nonNull = 'always-set';
 $coalesced = $nonNull ?? 'default';
 
