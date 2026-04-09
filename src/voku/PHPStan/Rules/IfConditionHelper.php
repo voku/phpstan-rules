@@ -188,9 +188,7 @@ final class IfConditionHelper
         }
 
         if (
-            $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
-            &&
-            $type_1->getValue() === ''
+            self::hasConstantStringValue($type_1, '')
             &&
             (
                 self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class)
@@ -237,9 +235,7 @@ final class IfConditionHelper
         }
 
         if (
-            $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
-            &&
-            $type_1->getValue() === ''
+            self::hasConstantStringValue($type_1, '')
             &&
             (
                 self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class)
@@ -251,9 +247,7 @@ final class IfConditionHelper
         }
 
         if (
-            $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
-            &&
-            $type_1->getValue() === ''
+            self::hasConstantStringValue($type_1, '')
             &&
             $type_2
             &&
@@ -264,11 +258,11 @@ final class IfConditionHelper
 
         if (
             (
-                ($type_1 instanceof \PHPStan\Type\Constant\ConstantStringType && $type_1->getValue() === '')
+                self::hasConstantStringValue($type_1, '')
                 ||
-                ($type_1 instanceof \PHPStan\Type\Constant\ConstantIntegerType && $type_1->getValue() === 0)
+                self::hasConstantScalarValue($type_1, 0)
                 ||
-                ($type_1 instanceof \PHPStan\Type\Constant\ConstantBooleanType && $type_1->getValue() === false)
+                self::hasConstantScalarValue($type_1, false)
             )
             &&
             self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\IntegerType::class, false)
@@ -278,11 +272,11 @@ final class IfConditionHelper
 
         if (
             (
-                ($type_1 instanceof \PHPStan\Type\Constant\ConstantStringType && $type_1->getValue() === '')
+                self::hasConstantStringValue($type_1, '')
                 ||
-                ($type_1 instanceof \PHPStan\Type\Constant\ConstantIntegerType && $type_1->getValue() === 0)
+                self::hasConstantScalarValue($type_1, 0)
                 ||
-                ($type_1 instanceof \PHPStan\Type\Constant\ConstantBooleanType && $type_1->getValue() === false)
+                self::hasConstantScalarValue($type_1, false)
             )
             &&
             self::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\BooleanType::class)
@@ -293,11 +287,11 @@ final class IfConditionHelper
         // NULL checks are difficult and maybe unexpected, so that we should use strict check here
         // https://3v4l.org/a4VdC
         if (
-            $type_1 instanceof \PHPStan\Type\ConstantScalarType
+            self::hasConstantScalarValue($type_1, null)
             &&
-            $type_1->getValue() === null
+            $type_2
             &&
-            $type_2 instanceof \PHPStan\Type\IntegerType
+            $type_2->isInteger()->yes()
         ) {
             $errors[] = self::buildErrorMessage($origNode, 'Please do not use double negative null conditions. Use "!==" instead if needed.', $cond->getAttribute('startLine'));
         }
@@ -361,7 +355,7 @@ final class IfConditionHelper
             $errors[] = self::buildErrorMessage($origNode, 'Do not compare boolean and integer.', $cond->getAttribute('startLine'));
         }
 
-        if ($type_2 instanceof \PHPStan\Type\Constant\ConstantStringType) {
+        if (self::getSingleConstantStringType($type_2) !== null) {
             $errors[] = self::buildErrorMessage($origNode, 'Do not compare boolean and string.', $cond->getAttribute('startLine'));
         }
     }
@@ -381,6 +375,8 @@ final class IfConditionHelper
         ?ReflectionProvider $reflectionProvider = null
     ): void
     {
+        $origNodeClass = \get_class($origNode);
+
         if (
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
             ||
@@ -392,9 +388,9 @@ final class IfConditionHelper
             ||
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanOr
             ||
-            $origNode instanceof \PHPStan\Node\BooleanAndNode
+            $origNodeClass === \PHPStan\Node\BooleanAndNode::class
             ||
-            $origNode instanceof \PHPStan\Node\BooleanOrNode
+            $origNodeClass === \PHPStan\Node\BooleanOrNode::class
         ) {
             return;
         }
@@ -472,9 +468,7 @@ final class IfConditionHelper
     {
         if (
             !(
-                $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
-                &&
-                $type_1->getValue() === ''
+                self::hasConstantStringValue($type_1, '')
                 &&
                 $type_2
                 &&
@@ -515,14 +509,16 @@ final class IfConditionHelper
         Node                $origNode
     ): void
     {
+        $type_1ConstantScalar = self::getSingleConstantScalarType($type_1);
+        $type_2ConstantScalar = self::getSingleConstantScalarType($type_2);
+        $type_1ConstantString = self::getSingleConstantStringType($type_1);
+
         if (
             $type_1
             &&
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd
             &&
-            $type_2 instanceof \PHPStan\Type\ConstantScalarType
-            &&
-            !$type_2->getValue()
+            self::hasSingleFalsyConstantScalarValue($type_2)
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
@@ -546,15 +542,15 @@ final class IfConditionHelper
         if (
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
             &&
-            $type_1 instanceof \PHPStan\Type\ConstantScalarType
+            $type_1ConstantScalar !== null
             &&
-            $type_2 instanceof \PHPStan\Type\ConstantScalarType
+            $type_2ConstantScalar !== null
             &&
-            $type_1->getValue() != $type_2->getValue()
+            $type_1ConstantScalar->getValue() != $type_2ConstantScalar->getValue()
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
-                sprintf('Insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                sprintf('Insane comparison between %s and %s.', $type_1ConstantScalar->describe(VerbosityLevel::value()), $type_2ConstantScalar->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
 
@@ -564,15 +560,15 @@ final class IfConditionHelper
         if (
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual
             &&
-            $type_1 instanceof \PHPStan\Type\ConstantScalarType
+            $type_1ConstantScalar !== null
             &&
-            $type_2 instanceof \PHPStan\Type\ConstantScalarType
+            $type_2ConstantScalar !== null
             &&
-            $type_1->getValue() == $type_2->getValue()
+            $type_1ConstantScalar->getValue() == $type_2ConstantScalar->getValue()
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
-                sprintf('Insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                sprintf('Insane comparison between %s and %s.', $type_1ConstantScalar->describe(VerbosityLevel::value()), $type_2ConstantScalar->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
 
@@ -582,15 +578,15 @@ final class IfConditionHelper
         if (
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
             &&
-            $type_1 instanceof \PHPStan\Type\ConstantScalarType
+            $type_1ConstantScalar !== null
             &&
-            $type_2 instanceof \PHPStan\Type\ConstantScalarType
+            $type_2ConstantScalar !== null
             &&
-            $type_1->getValue() !== $type_2->getValue()
+            $type_1ConstantScalar->getValue() !== $type_2ConstantScalar->getValue()
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
-                sprintf('Insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                sprintf('Insane comparison between %s and %s.', $type_1ConstantScalar->describe(VerbosityLevel::value()), $type_2ConstantScalar->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
 
@@ -600,15 +596,15 @@ final class IfConditionHelper
         if (
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
             &&
-            $type_1 instanceof \PHPStan\Type\ConstantScalarType
+            $type_1ConstantScalar !== null
             &&
-            $type_2 instanceof \PHPStan\Type\ConstantScalarType
+            $type_2ConstantScalar !== null
             &&
-            $type_1->getValue() === $type_2->getValue()
+            $type_1ConstantScalar->getValue() === $type_2ConstantScalar->getValue()
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
-                sprintf('Insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                sprintf('Insane comparison between %s and %s.', $type_1ConstantScalar->describe(VerbosityLevel::value()), $type_2ConstantScalar->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
 
@@ -616,11 +612,11 @@ final class IfConditionHelper
         }
 
         if (
-            $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
+            $type_1ConstantString !== null
             &&
-            $type_1->isNumericString()->yes()
+            $type_1ConstantString->isNumericString()->yes()
             &&
-            (float)$type_1->getValue() === 0.0
+            (float) $type_1ConstantString->getValue() === 0.0
             &&
             $type_2
             &&
@@ -628,7 +624,7 @@ final class IfConditionHelper
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
-                sprintf('Possible insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                sprintf('Possible insane comparison between %s and %s.', $type_1ConstantString->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
 
@@ -636,9 +632,9 @@ final class IfConditionHelper
         }
 
         if (
-            $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
+            $type_1ConstantString !== null
             &&
-            $type_1->isNumericString()->no()
+            $type_1ConstantString->isNumericString()->no()
             &&
             $type_2
             &&
@@ -650,7 +646,7 @@ final class IfConditionHelper
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
-                sprintf('Possible insane comparison between %s and %s.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                sprintf('Possible insane comparison between %s and %s.', $type_1ConstantString->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
 
@@ -659,11 +655,11 @@ final class IfConditionHelper
 
         if (
             (
-                $type_1 instanceof \PHPStan\Type\ConstantScalarType
+                $type_1ConstantScalar !== null
                 &&
-                $type_1->getValue() !== null
+                $type_1ConstantScalar->getValue() !== null
                 &&
-                \filter_var($type_1->getValue(), \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE) === null
+                \filter_var($type_1ConstantScalar->getValue(), \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE) === null
                 &&
                 $type_2
                 &&
@@ -671,11 +667,11 @@ final class IfConditionHelper
             )
             ||
             (
-                $type_1 instanceof \PHPStan\Type\ConstantScalarType
+                $type_1ConstantScalar !== null
                 &&
-                $type_1->getValue() !== null
+                $type_1ConstantScalar->getValue() !== null
                 &&
-                \filter_var($type_1->getValue(), \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE) === null
+                \filter_var($type_1ConstantScalar->getValue(), \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE) === null
                 &&
                 $type_2
                 &&
@@ -683,11 +679,11 @@ final class IfConditionHelper
             )
             ||
             (
-                $type_1 instanceof \PHPStan\Type\ConstantScalarType
+                $type_1ConstantScalar !== null
                 &&
-                $type_1->getValue() !== null
+                $type_1ConstantScalar->getValue() !== null
                 &&
-                \filter_var($type_1->getValue(), \FILTER_VALIDATE_FLOAT, \FILTER_NULL_ON_FAILURE) === null
+                \filter_var($type_1ConstantScalar->getValue(), \FILTER_VALIDATE_FLOAT, \FILTER_NULL_ON_FAILURE) === null
                 &&
                 $type_2
                 &&
@@ -704,9 +700,7 @@ final class IfConditionHelper
         }
 
         if (
-            $type_1 instanceof \PHPStan\Type\ConstantScalarType
-            &&
-            $type_1->getValue() === null
+            self::hasConstantScalarValue($type_1, null)
             &&
             $type_2
             &&
@@ -749,13 +743,16 @@ final class IfConditionHelper
             $type_1 = $type_1->generalize(\PHPStan\Type\GeneralizePrecision::lessSpecific());
         }
 
-        if ($type_1 instanceof \PHPStan\Type\IntersectionType) {
-            foreach ($type_1->getArrays() as $type_1_inner) {
+        $arrayTypes = $type_1->getArrays();
+        if ($arrayTypes !== []) {
+            foreach ($arrayTypes as $type_1_inner) {
                 $errors = self::checkOnArrayInner($type_1_inner, $origNode, $cond, $errors);
             }
-        } else {
-            $errors = self::checkOnArrayInner($type_1, $origNode, $cond, $errors);
+
+            return;
         }
+
+        $errors = self::checkOnArrayInner($type_1, $origNode, $cond, $errors);
     }
 
     /**
@@ -807,8 +804,6 @@ final class IfConditionHelper
             $nodes = $nodeFinder->findInstanceOf($cond, BinaryOp::class);
 
             foreach ($nodes as $expr) {
-                assert($expr instanceof BinaryOp);
-
                 if (
                     $expr->left instanceof MagicConst
                     ||
@@ -852,11 +847,17 @@ final class IfConditionHelper
 
         foreach ($classesNotInIfConditions as $classesNotInIfCondition) {
             if (
-                $type_1 instanceof \PHPStan\Type\ObjectType
+                $type_1
                 &&
-                \is_a($type_1->getClassName(), $classesNotInIfCondition, true)
+                $type_1->isObject()->yes()
             ) {
-                $errors[] = self::buildErrorMessage($origNode, 'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.', $cond->getAttribute('startLine'));
+                foreach ($type_1->getObjectClassNames() as $objectClassName) {
+                    if (\is_a($objectClassName, $classesNotInIfCondition, true)) {
+                        $errors[] = self::buildErrorMessage($origNode, 'Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.', $cond->getAttribute('startLine'));
+
+                        break 2;
+                    }
+                }
             }
         }
     }
@@ -890,11 +891,11 @@ final class IfConditionHelper
                     (
                         $type->getTypes()[0] instanceof $typeClassName
                         &&
-                        $type->getTypes()[1] instanceof \PHPStan\Type\NullType
+                        $type->getTypes()[1]->isNull()->yes()
                     )
                     ||
                     (
-                        $type->getTypes()[0] instanceof \PHPStan\Type\NullType
+                        $type->getTypes()[0]->isNull()->yes()
                         &&
                         $type->getTypes()[1] instanceof $typeClassName
                     )
@@ -909,13 +910,7 @@ final class IfConditionHelper
 
     private static function isObjectOrNullType(?\PHPStan\Type\Type $type): bool
     {
-        if (
-            $type instanceof \PHPStan\Type\ObjectType
-            ||
-            $type instanceof \PHPStan\Type\StaticType
-            ||
-            $type instanceof \PHPStan\Type\NullType
-        ) {
+        if ($type !== null && ($type->isObject()->yes() || $type->isNull()->yes())) {
             return true;
         }
 
@@ -932,6 +927,58 @@ final class IfConditionHelper
         }
 
         return $return;
+    }
+
+    public static function hasConstantStringValue(?\PHPStan\Type\Type $type, string $value): bool
+    {
+        $constantStringType = self::getSingleConstantStringType($type);
+
+        return $constantStringType !== null && $constantStringType->getValue() === $value;
+    }
+
+    /**
+     * @param scalar|null $value
+     */
+    public static function hasConstantScalarValue(?\PHPStan\Type\Type $type, $value): bool
+    {
+        $constantScalarType = self::getSingleConstantScalarType($type);
+
+        return $constantScalarType !== null && $constantScalarType->getValue() === $value;
+    }
+
+    public static function hasSingleFalsyConstantScalarValue(?\PHPStan\Type\Type $type): bool
+    {
+        $constantScalarType = self::getSingleConstantScalarType($type);
+
+        return $constantScalarType !== null && !$constantScalarType->getValue();
+    }
+
+    private static function getSingleConstantStringType(?\PHPStan\Type\Type $type): ?\PHPStan\Type\Constant\ConstantStringType
+    {
+        if ($type === null) {
+            return null;
+        }
+
+        $constantStrings = $type->getConstantStrings();
+        if (\count($constantStrings) !== 1) {
+            return null;
+        }
+
+        return $constantStrings[0];
+    }
+
+    private static function getSingleConstantScalarType(?\PHPStan\Type\Type $type): ?\PHPStan\Type\ConstantScalarType
+    {
+        if ($type === null || !$type->isConstantScalarValue()->yes()) {
+            return null;
+        }
+
+        $constantScalarTypes = $type->getConstantScalarTypes();
+        if (\count($constantScalarTypes) !== 1) {
+            return null;
+        }
+
+        return $constantScalarTypes[0];
     }
 
     public static function buildErrorMessage(

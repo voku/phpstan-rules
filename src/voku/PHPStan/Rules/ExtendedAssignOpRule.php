@@ -61,47 +61,39 @@ class ExtendedAssignOpRule implements Rule
         // init
         $errors = [];
 
-        if (
-            \property_exists($node, 'var')
-            &&
-            \property_exists($node, 'expr')
-        ) {
-            $leftType = $scope->getType($node->var);
-            $rightType = $scope->getType($node->expr);
+        $leftType = $scope->getType($node->var);
+        $rightType = $scope->getType($node->expr);
 
-            // DEBUG
-            //var_dump($leftType, $rightType);
+        // DEBUG
+        //var_dump($leftType, $rightType);
 
-            $errors = IfConditionHelper::processNodeHelper(
-                $leftType,
-                $rightType,
-                $node,
-                $errors,
-                [],
-                $node,
-                $this->reflectionProvider,
-                $this->checkForAssignments,
-                $this->checkYodaConditions
-            );
-            $errors = IfConditionHelper::processNodeHelper(
-                $rightType,
-                $leftType,
-                $node,
-                $errors,
-                [],
-                $node,
-                $this->reflectionProvider,
-                false,
-                false
-            );
+        $errors = IfConditionHelper::processNodeHelper(
+            $leftType,
+            $rightType,
+            $node,
+            $errors,
+            [],
+            $node,
+            $this->reflectionProvider,
+            $this->checkForAssignments,
+            $this->checkYodaConditions
+        );
+        $errors = IfConditionHelper::processNodeHelper(
+            $rightType,
+            $leftType,
+            $node,
+            $errors,
+            [],
+            $node,
+            $this->reflectionProvider,
+            false,
+            false
+        );
 
-            $errorsFound = false;
-            $this->checkErrors($node, $leftType, $rightType, $errors, $errorsFound);
-            if ($errorsFound === false) {
-                $this->checkErrors($node, $rightType, $leftType, $errors, $errorsFound);
-            }
-
-            return $errors;
+        $errorsFound = false;
+        $this->checkErrors($node, $leftType, $rightType, $errors, $errorsFound);
+        if ($errorsFound === false) {
+            $this->checkErrors($node, $rightType, $leftType, $errors, $errorsFound);
         }
 
         return $errors;
@@ -120,7 +112,7 @@ class ExtendedAssignOpRule implements Rule
     ): void
     {
         if (
-            $type_1 instanceof \PHPStan\Type\StringType
+            $type_1->isString()->yes()
             &&
             !($type_2 instanceof \PHPStan\Type\MixedType)
             &&
@@ -134,11 +126,7 @@ class ExtendedAssignOpRule implements Rule
             if (
                 $node instanceof Node\Expr\AssignOp\Concat
                 &&
-                !(
-                    $type_1 instanceof \PHPStan\Type\Constant\ConstantStringType
-                    &&
-                    $type_1->getValue() === ''
-                )
+                !IfConditionHelper::hasConstantStringValue($type_1, '')
                 &&
                 !($type_2->toString() instanceof ErrorType)
             ) {
@@ -161,7 +149,7 @@ class ExtendedAssignOpRule implements Rule
         }
 
         if (
-            $type_1 instanceof \PHPStan\Type\ArrayType
+            $type_1->isArray()->yes()
             &&
             !($type_2 instanceof \PHPStan\Type\MixedType)
             &&
