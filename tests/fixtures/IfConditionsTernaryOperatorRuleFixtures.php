@@ -8,6 +8,13 @@ $b = $a ? $a->lall : 'foo';
 $b = $a ?: 'foo';
 $b = $a ?? 'foo';
 
+// Implicit array checks in ternary conditions should behave like if/elseif checks
+$c1 = [];
+$c2 = $c1 ? 'filled' : 'empty';
+
+$e = ['x', 'y'];
+$f = !$e ? 'empty' : 'filled';
+
 // Allow AND && OR checks on objects
 $a = random_int(0, 1) ? new \SplFixedArray(2) : null;
 $b = random_int(0, 1) ? new \SplFixedArray(2) : null;

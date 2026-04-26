@@ -34,88 +34,96 @@ final class IfConditionTernaryOperatorRuleTest extends RuleTestCase
                     8,
                 ],
                 [
-                    'Ternary: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    58,
+                    'Ternary: Use a function e.g. `count($foo) > 0` instead of `$foo`.',
+                    13,
                 ],
                 [
-                    'Ternary: Insane comparison between 0 and 0.',
+                    'Ternary: Non-empty array is never empty.',
+                    16,
+                ],
+                [
+                    'Ternary: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     65,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 0.',
-                    68,
+                    72,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 0.',
-                    71,
+                    75,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 0.',
-                    74,
+                    78,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 0.',
-                    77,
+                    81,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 0.',
-                    80,
+                    84,
+                ],
+                [
+                    'Ternary: Insane comparison between 0 and 0.',
+                    87,
                 ],
                 [
                     'Ternary: Condition between 0 and 1 are falsy, please do not mix types.',
-                    83,
+                    90,
                 ],
                 [
                     'Ternary: Condition between 1 and 0 are falsy, please do not mix types.',
-                    83,
+                    90,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 1.',
-                    83,
+                    90,
                 ],
                 [
                     'Ternary: Insane comparison between 1 and 0.',
-                    83,
+                    90,
                 ],
                 [
                     'Ternary: Please do not use double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`.',
-                    83,
+                    90,
                 ],
                 [
                     'Ternary: Condition between 0 and 1 are falsy, please do not mix types.',
-                    86,
+                    93,
                 ],
                 [
                     'Ternary: Condition between 1 and 0 are falsy, please do not mix types.',
-                    86,
+                    93,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 1.',
-                    86,
+                    93,
                 ],
                 [
                     'Ternary: Insane comparison between 1 and 0.',
-                    86,
+                    93,
                 ],
                 [
                     'Ternary: Please do not use double negative integer conditions. e.g. `(int)$foo != 0` is the same as `(int)$foo`.',
-                    86,
+                    93,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 1.',
-                    89,
+                    96,
                 ],
                 [
                     'Ternary: Insane comparison between 1 and 0.',
-                    89,
+                    96,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 1.',
-                    92,
+                    99,
                 ],
                 [
                     'Ternary: Insane comparison between 1 and 0.',
-                    92,
+                    99,
                 ],
             ]
         );
