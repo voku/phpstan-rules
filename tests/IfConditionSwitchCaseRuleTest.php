@@ -28,6 +28,10 @@ final class IfConditionSwitchCaseRuleTest extends RuleTestCase
             ],
             [
                 [
+                    'Switch_: Do not compare objects directly, stdClass and \'\' found.',
+                    27,
+                ],
+                [
                     'Switch_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
                     73,
                 ],

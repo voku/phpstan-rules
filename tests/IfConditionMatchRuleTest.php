@@ -46,6 +46,10 @@ final class IfConditionMatchRuleTest extends RuleTestCase
             ],
             [
                 [
+                    'Match_: Do not compare objects directly, stdClass and \'\' found.',
+                    22,
+                ],
+                [
                     'Match_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
                     57,
                 ],
