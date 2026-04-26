@@ -567,6 +567,24 @@ final class IfConditionHelper
         }
 
         if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+            &&
+            $type_1ConstantScalar !== null
+            &&
+            $type_2ConstantScalar !== null
+            &&
+            $type_1ConstantScalar->getValue() === $type_2ConstantScalar->getValue()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Insane comparison between %s and %s.', $type_1ConstantScalar->describe(VerbosityLevel::value()), $type_2ConstantScalar->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+
+            return;
+        }
+
+        if (
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual
             &&
             $type_1ConstantScalar !== null
@@ -592,6 +610,24 @@ final class IfConditionHelper
             $type_2ConstantScalar !== null
             &&
             $type_1ConstantScalar->getValue() !== $type_2ConstantScalar->getValue()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Insane comparison between %s and %s.', $type_1ConstantScalar->describe(VerbosityLevel::value()), $type_2ConstantScalar->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+
+            return;
+        }
+
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
+            &&
+            $type_1ConstantScalar !== null
+            &&
+            $type_2ConstantScalar !== null
+            &&
+            $type_1ConstantScalar->getValue() === $type_2ConstantScalar->getValue()
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,

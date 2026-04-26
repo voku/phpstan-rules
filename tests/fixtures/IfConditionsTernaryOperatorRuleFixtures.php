@@ -61,13 +61,25 @@ $r = $p ? $q : 0;
 $s = random_int(0, 1) ? new \stdClass() : null;
 $t = $s ?? new \stdClass();
 
-function ternaryZero(): int
-{
-    return 0;
-}
-
 // Error: disguised impossible comparison inside ternary condition
-$u = ternaryZero() != ternaryZero() ? 'never' : 'always';
+$u = count([]) !== 0 ? 'never' : 'always';
 
 // Error: disguised impossible comparison inside shorthand ternary condition
-$v = (ternaryZero() != ternaryZero()) ?: 'fallback';
+$v = (count([]) !== 0) ?: 'fallback';
+
+// Error: disguised tautology inside ternary condition
+$w = count([]) == 0 ? 'always' : 'never';
+
+// Error: disguised tautology inside shorthand ternary condition
+$x = (count([]) == 0) ?: 'fallback';
+
+// Error: disguised strict tautology inside ternary condition
+$y = count([]) === 0 ? 'always' : 'never';
+
+// Error: disguised strict tautology inside shorthand ternary condition
+$z = (count([]) === 0) ?: 'fallback';
+
+// OK: non-constant count comparison should not be treated as an impossible condition
+$items = rand(0, 1) ? [] : [1];
+$maybeEmpty = count($items) === 0 ? 'empty' : 'not-empty';
+$maybeFallback = (count($items) == 0) ?: 'fallback';
