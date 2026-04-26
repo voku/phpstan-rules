@@ -79,6 +79,18 @@ $y = count([]) === 0 ? 'always' : 'never';
 // Error: disguised strict tautology inside shorthand ternary condition
 $z = (count([]) === 0) ?: 'fallback';
 
+// Error: disguised loose inequality tautology inside ternary condition
+$aa = count([]) != 1 ? 'always' : 'never';
+
+// Error: disguised loose inequality tautology inside shorthand ternary condition
+$ab = (count([]) != 1) ?: 'fallback';
+
+// Error: disguised strict inequality tautology inside ternary condition
+$ac = count([]) !== 1 ? 'always' : 'never';
+
+// Error: disguised strict inequality tautology inside shorthand ternary condition
+$ad = (count([]) !== 1) ?: 'fallback';
+
 // OK: non-constant count comparison should not be treated as an impossible condition
 $items = rand(0, 1) ? [] : [1];
 $maybeEmpty = count($items) === 0 ? 'empty' : 'not-empty';

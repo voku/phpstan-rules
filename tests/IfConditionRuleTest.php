@@ -602,7 +602,11 @@ final class IfConditionRuleTest extends RuleTestCase
                     11,
                 ],
                 [
-                    'NotEqual: Possible insane comparison between \'\' and 0.0.',
+                    'NotEqual: Insane comparison between \'\' and 0.0.',
+                    11,
+                ],
+                [
+                    'NotEqual: Insane comparison between 0.0 and \'\'.',
                     11,
                 ],
                 [
@@ -642,7 +646,11 @@ final class IfConditionRuleTest extends RuleTestCase
                     19,
                 ],
                 [
-                    'NotEqual: Possible insane comparison between \'\' and 0.',
+                    'NotEqual: Insane comparison between \'\' and 0.',
+                    19,
+                ],
+                [
+                    'NotEqual: Insane comparison between 0 and \'\'.',
                     19,
                 ],
                 [
@@ -710,11 +718,15 @@ final class IfConditionRuleTest extends RuleTestCase
                     40,
                 ],
                 [
-                    'NotEqual: Possible insane comparison between \'0foo\' and 1.',
+                    'NotEqual: Insane comparison between \'0foo\' and 1.',
                     40,
                 ],
                 [
                     'NotEqual: Condition between 1 and \'0foo\' are falsy, please do not mix types.',
+                    40,
+                ],
+                [
+                    'NotEqual: Insane comparison between 1 and \'0foo\'.',
                     40,
                 ],
                 [
@@ -828,6 +840,30 @@ final class IfConditionRuleTest extends RuleTestCase
                 [
                     'Identical: Insane comparison between \'0\' and 0.',
                     75,
+                ],
+                [
+                    'NotEqual: Condition between 1 and 2 are falsy, please do not mix types.',
+                    78,
+                ],
+                [
+                    'NotEqual: Condition between 2 and 1 are falsy, please do not mix types.',
+                    78,
+                ],
+                [
+                    'NotEqual: Insane comparison between 1 and 2.',
+                    78,
+                ],
+                [
+                    'NotEqual: Insane comparison between 2 and 1.',
+                    78,
+                ],
+                [
+                    'NotIdentical: Insane comparison between 1 and 2.',
+                    81,
+                ],
+                [
+                    'NotIdentical: Insane comparison between 2 and 1.',
+                    81,
                 ],
             ]
         );
@@ -976,11 +1012,15 @@ final class IfConditionRuleTest extends RuleTestCase
                     40,
                 ],
                 [
-                    'NotEqual: Possible insane comparison between \'0foo\' and 1.',
+                    'NotEqual: Insane comparison between \'0foo\' and 1.',
                     40,
                 ],
                 [
                     'NotEqual: Condition between 1 and \'0foo\' are falsy, please do not mix types.',
+                    40,
+                ],
+                [
+                    'NotEqual: Insane comparison between 1 and \'0foo\'.',
                     40,
                 ],
                 [
