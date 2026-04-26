@@ -34,7 +34,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     13,
                 ],
                 [
-                    'NotEqual: Please do not use double negative string conditions. e.g. `(string)$foo != \'\'` is the same as `(string)$foo`.',
+                    'NotEqual: Insane comparison between \'test\' and \'\'.',
                     13,
                 ],
                 [
@@ -42,7 +42,15 @@ final class IfConditionRuleTest extends RuleTestCase
                     13,
                 ],
                 [
+                    'NotEqual: Insane comparison between \'\' and \'test\'.',
+                    13,
+                ],
+                [
                     'NotEqual: Non-empty string is never empty.',
+                    13,
+                ],
+                [
+                    'NotEqual: Please do not use double negative string conditions. e.g. `(string)$foo != \'\'` is the same as `(string)$foo`.',
                     13,
                 ],
                 [
