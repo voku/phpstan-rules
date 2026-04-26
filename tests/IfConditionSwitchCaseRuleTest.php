@@ -28,6 +28,26 @@ final class IfConditionSwitchCaseRuleTest extends RuleTestCase
             ],
             [
                 [
+                    'Switch_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    73,
+                ],
+                [
+                    'Switch_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    76,
+                ],
+                [
+                    'Switch_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    79,
+                ],
+                [
+                    'Switch_: Do not compare objects directly, DateTimeImmutable|null and \'2013-04-05\' found.',
+                    111,
+                ],
+                [
+                    'Switch_: Do not compare objects directly, DateTimeImmutable and DateTimeImmutable|null found.',
+                    125,
+                ],
+                [
                     'Switch_: Do not compare boolean and integer.',
                     35,
                 ],

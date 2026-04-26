@@ -46,6 +46,26 @@ final class IfConditionMatchRuleTest extends RuleTestCase
             ],
             [
                 [
+                    'Match_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    57,
+                ],
+                [
+                    'Match_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    61,
+                ],
+                [
+                    'Match_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    65,
+                ],
+                [
+                    'Match_: Do not compare objects directly, DateTimeImmutable|null and \'2013-04-05\' found.',
+                    93,
+                ],
+                [
+                    'Match_: Do not compare objects directly, DateTimeImmutable and DateTimeImmutable|null found.',
+                    105,
+                ],
+                [
                     'Match_: Condition between true and false are always false.',
                     144,
                 ],

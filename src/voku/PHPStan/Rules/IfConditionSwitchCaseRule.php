@@ -73,6 +73,19 @@ final class IfConditionSwitchCaseRule implements Rule
                 $this->checkForAssignments,
                 false
             );
+
+            if ($case->cond !== null) {
+                $errors = array_merge(
+                    $errors,
+                    IfConditionHelper::processNestedObjectComparisons(
+                        $case->cond,
+                        $scope,
+                        $this->classesNotInIfConditions,
+                        $node,
+                        $this->reflectionProvider
+                    )
+                );
+            }
         }
         
         return $errors;

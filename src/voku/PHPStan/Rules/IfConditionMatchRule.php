@@ -78,6 +78,17 @@ final class IfConditionMatchRule implements Rule
                     $this->checkForAssignments,
                     false
                 );
+
+                $errors = array_merge(
+                    $errors,
+                    IfConditionHelper::processNestedObjectComparisons(
+                        $case,
+                        $scope,
+                        $this->classesNotInIfConditions,
+                        $node,
+                        $this->reflectionProvider
+                    )
+                );
             }
         }
         
