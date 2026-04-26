@@ -22,3 +22,11 @@ $h = $g->getAttribute('id');
 // Error: null-coalesce does not make method calls on nullable objects safe
 $i = rand(0, 1) >= 1 ? new \DOMDocument() : null;
 $j = $i->createDocumentFragment() ?? null;
+
+// No error: coalesce the receiver to a non-null object before calling the method
+$k = rand(0, 1) >= 1 ? new \DOMDocument() : null;
+$l = ($k ?? new \DOMDocument())->createDocumentFragment();
+
+// No error: nullsafe method call short-circuits before invoking the method
+$m = rand(0, 1) >= 1 ? new \DOMDocument() : null;
+$n = $m?->createDocumentFragment();

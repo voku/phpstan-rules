@@ -113,3 +113,13 @@ function lall_int_int(int $a, int $b): bool
 {
     return $a == $b;
 }
+
+// OK: null-coalesce safely falls back when the root object is null
+/** @var null|object{leaf?: object{value?: int|null}|null} $missingNode */
+$missingNode = null;
+$coalescedFromNullRoot = $missingNode->leaf->value ?? 0;
+
+// OK: null-coalesce safely falls back when the nested property is null
+/** @var object{leaf?: object{value?: int|null}|null} $nodeWithNullableValue */
+$nodeWithNullableValue = (object) ['leaf' => (object) ['value' => null]];
+$coalescedFromNullProperty = $nodeWithNullableValue->leaf->value ?? 0;
