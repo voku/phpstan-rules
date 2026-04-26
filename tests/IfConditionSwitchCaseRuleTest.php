@@ -85,7 +85,7 @@ final class IfConditionSwitchCaseRuleTest extends RuleTestCase
                 ],
                 [
                     'Switch_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    320,
+                    319,
                 ],
                 [
                     'Switch_: Use a function e.g. `count($foo) > 0` instead of `$foo`.',

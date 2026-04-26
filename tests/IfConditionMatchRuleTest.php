@@ -95,7 +95,7 @@ final class IfConditionMatchRuleTest extends RuleTestCase
                 ],
                 [
                     'Match_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    270,
+                    269,
                 ],
                 [
                     'Match_: Insane comparison between true and false.',
