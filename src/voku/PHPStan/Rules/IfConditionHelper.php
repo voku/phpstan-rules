@@ -166,7 +166,7 @@ final class IfConditionHelper
 
         // -----------------------------------------------------------------------------------------
 
-        return $errors;
+        return self::deduplicateErrors($errors);
     }
 
     /**
@@ -567,6 +567,24 @@ final class IfConditionHelper
         }
 
         if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+            &&
+            $type_1ConstantScalar !== null
+            &&
+            $type_2ConstantScalar !== null
+            &&
+            $type_1ConstantScalar->getValue() === $type_2ConstantScalar->getValue()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Insane comparison between %s and %s.', $type_1ConstantScalar->describe(VerbosityLevel::value()), $type_2ConstantScalar->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+
+            return;
+        }
+
+        if (
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual
             &&
             $type_1ConstantScalar !== null
@@ -574,6 +592,24 @@ final class IfConditionHelper
             $type_2ConstantScalar !== null
             &&
             $type_1ConstantScalar->getValue() == $type_2ConstantScalar->getValue()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Insane comparison between %s and %s.', $type_1ConstantScalar->describe(VerbosityLevel::value()), $type_2ConstantScalar->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+
+            return;
+        }
+
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual
+            &&
+            $type_1ConstantScalar !== null
+            &&
+            $type_2ConstantScalar !== null
+            &&
+            $type_1ConstantScalar->getValue() != $type_2ConstantScalar->getValue()
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
@@ -603,6 +639,24 @@ final class IfConditionHelper
         }
 
         if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\Identical
+            &&
+            $type_1ConstantScalar !== null
+            &&
+            $type_2ConstantScalar !== null
+            &&
+            $type_1ConstantScalar->getValue() === $type_2ConstantScalar->getValue()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Insane comparison between %s and %s.', $type_1ConstantScalar->describe(VerbosityLevel::value()), $type_2ConstantScalar->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+
+            return;
+        }
+
+        if (
             $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
             &&
             $type_1ConstantScalar !== null
@@ -610,6 +664,24 @@ final class IfConditionHelper
             $type_2ConstantScalar !== null
             &&
             $type_1ConstantScalar->getValue() === $type_2ConstantScalar->getValue()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Insane comparison between %s and %s.', $type_1ConstantScalar->describe(VerbosityLevel::value()), $type_2ConstantScalar->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+
+            return;
+        }
+
+        if (
+            $cond instanceof \PhpParser\Node\Expr\BinaryOp\NotIdentical
+            &&
+            $type_1ConstantScalar !== null
+            &&
+            $type_2ConstantScalar !== null
+            &&
+            $type_1ConstantScalar->getValue() !== $type_2ConstantScalar->getValue()
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
@@ -1026,6 +1098,32 @@ final class IfConditionHelper
             ->line($line)
             ->identifier('voku.' . \str_replace('_', '', $origNodeClassNameSimple))
             ->build();
+    }
+
+    /**
+     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     *
+     * @return array<int, \PHPStan\Rules\RuleError>
+     */
+    public static function deduplicateErrors(array $errors): array
+    {
+        $uniqueErrors = [];
+        $seen = [];
+
+        foreach ($errors as $error) {
+            $key = $error->getMessage();
+            if ($error instanceof \PHPStan\Rules\LineRuleError) {
+                $key = \serialize([$error->getLine(), $key]);
+            }
+            if (isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+            $uniqueErrors[] = $error;
+        }
+
+        return $uniqueErrors;
     }
 
     /**

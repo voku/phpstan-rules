@@ -58,16 +58,13 @@ final class IfConditionTernaryOperatorRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        return IfConditionHelper::processNodeHelper(
-            $scope->getType($node->cond),
-            null,
-            $node,
-            [],
+        return IfConditionHelper::processBooleanNodeHelper(
+            $node->cond,
+            $scope,
             $this->classesNotInIfConditions,
             $node,
             $this->reflectionProvider,
-            $this->checkForAssignments,
-            false
+            $this->checkForAssignments
         );
     }
 }
