@@ -70,6 +70,10 @@ final class IfConditionMatchRuleTest extends RuleTestCase
                     105,
                 ],
                 [
+                    'Match_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    51,
+                ],
+                [
                     'Match_: Condition between true and false are always false.',
                     144,
                 ],
@@ -88,6 +92,10 @@ final class IfConditionMatchRuleTest extends RuleTestCase
                 [
                     'Match_: Assignment is not allowed here.',
                     205,
+                ],
+                [
+                    'Match_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    270,
                 ],
                 [
                     'Match_: Insane comparison between true and false.',

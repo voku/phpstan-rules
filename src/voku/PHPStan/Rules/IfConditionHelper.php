@@ -193,20 +193,27 @@ final class IfConditionHelper
         $binaryOps = $nodeFinder->findInstanceOf($cond, BinaryOp::class);
 
         foreach ($binaryOps as $binaryOp) {
+            $leftType = $scope->getType($binaryOp->left);
+            $rightType = $scope->getType($binaryOp->right);
+
             if (
                 $binaryOp instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd
                 ||
                 $binaryOp instanceof \PhpParser\Node\Expr\BinaryOp\BooleanOr
-                ||
+            ) {
+                self::processObjectMethodUsageForComparison($leftType, $binaryOp, $errors, $classesNotInIfConditions, $origNode);
+                self::processObjectMethodUsageForComparison($rightType, $binaryOp, $errors, $classesNotInIfConditions, $origNode);
+
+                continue;
+            }
+
+            if (
                 $binaryOp instanceof \PhpParser\Node\Expr\BinaryOp\Coalesce
                 ||
                 $binaryOp instanceof \PhpParser\Node\Expr\BinaryOp\Concat
             ) {
                 continue;
             }
-
-            $leftType = $scope->getType($binaryOp->left);
-            $rightType = $scope->getType($binaryOp->right);
 
             self::processObjectComparison($leftType, $rightType, $binaryOp, $errors, $origNode, $reflectionProvider);
             self::processObjectComparison($rightType, $leftType, $binaryOp, $errors, $origNode, $reflectionProvider);

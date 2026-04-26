@@ -312,8 +312,7 @@ switch (true) {
         break;
 }
 
-// OK: IfConditionSwitchCaseRule checks the switch subject type vs case condition type,
-// not inner expressions; $obj && $flag evaluates to bool, no class-method check is triggered
+// Error: nested boolean-style switch case still needs object method usage checks
 $obj = new \stdClass();
 $flag = rand(0, 1) ? true : false;
 switch (true) {

@@ -52,6 +52,10 @@ final class IfConditionSwitchCaseRuleTest extends RuleTestCase
                     125,
                 ],
                 [
+                    'Switch_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    66,
+                ],
+                [
                     'Switch_: Do not compare boolean and integer.',
                     35,
                 ],
@@ -78,6 +82,10 @@ final class IfConditionSwitchCaseRuleTest extends RuleTestCase
                 [
                     'Switch_: Assignment is not allowed here.',
                     240,
+                ],
+                [
+                    'Switch_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    320,
                 ],
                 [
                     'Switch_: Use a function e.g. `count($foo) > 0` instead of `$foo`.',
