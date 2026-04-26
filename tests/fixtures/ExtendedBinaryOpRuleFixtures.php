@@ -80,26 +80,16 @@ function lall3(string $a, int $b): string
 $nonNull = 'always-set';
 $coalesced = $nonNull ?? 'default';
 
-final class ExtendedBinaryOpCoalesceLeaf
-{
-    public ?int $value = null;
-}
-
-final class ExtendedBinaryOpCoalesceNode
-{
-    public ?ExtendedBinaryOpCoalesceLeaf $leaf = null;
-}
-
-/** @var null|ExtendedBinaryOpCoalesceNode $maybeNode */
-$maybeNode = rand(0, 1) ? new ExtendedBinaryOpCoalesceNode() : null;
+/** @var null|object{leaf?: object{value?: int|null}|null} $maybeNode */
+$maybeNode = rand(0, 1) ? (object) ['leaf' => (object) ['value' => 42]] : null;
 $coalescedValue = $maybeNode->leaf->value ?? 0;
 
-$nodeWithNullLeaf = new ExtendedBinaryOpCoalesceNode();
+/** @var object{leaf?: object{value?: int|null}|null} $nodeWithNullLeaf */
+$nodeWithNullLeaf = (object) ['leaf' => null];
 $coalescedNullLeaf = $nodeWithNullLeaf->leaf->value ?? 0;
 
-$nodeWithValue = new ExtendedBinaryOpCoalesceNode();
-$nodeWithValue->leaf = new ExtendedBinaryOpCoalesceLeaf();
-$nodeWithValue->leaf->value = 42;
+/** @var object{leaf?: object{value?: int|null}|null} $nodeWithValue */
+$nodeWithValue = (object) ['leaf' => (object) ['value' => 42]];
 $coalescedNestedValue = $nodeWithValue->leaf->value ?? 0;
 
 // Error: comparison between string and bool
