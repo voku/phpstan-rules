@@ -32,6 +32,18 @@ final class IfConditionSwitchCaseRuleTest extends RuleTestCase
                     27,
                 ],
                 [
+                    'Switch_: Do not compare boolean and integer.',
+                    35,
+                ],
+                [
+                    'Switch_: Do not compare boolean and string.',
+                    43,
+                ],
+                [
+                    'Switch_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    66,
+                ],
+                [
                     'Switch_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
                     73,
                 ],
@@ -50,18 +62,6 @@ final class IfConditionSwitchCaseRuleTest extends RuleTestCase
                 [
                     'Switch_: Do not compare objects directly, DateTimeImmutable and DateTimeImmutable|null found.',
                     125,
-                ],
-                [
-                    'Switch_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    66,
-                ],
-                [
-                    'Switch_: Do not compare boolean and integer.',
-                    35,
-                ],
-                [
-                    'Switch_: Do not compare boolean and string.',
-                    43,
                 ],
                 [
                     'Switch_: Condition between true and false are always false.',

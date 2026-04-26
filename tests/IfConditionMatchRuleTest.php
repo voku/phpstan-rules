@@ -50,6 +50,10 @@ final class IfConditionMatchRuleTest extends RuleTestCase
                     22,
                 ],
                 [
+                    'Match_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    51,
+                ],
+                [
                     'Match_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
                     57,
                 ],
@@ -68,10 +72,6 @@ final class IfConditionMatchRuleTest extends RuleTestCase
                 [
                     'Match_: Do not compare objects directly, DateTimeImmutable and DateTimeImmutable|null found.',
                     105,
-                ],
-                [
-                    'Match_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    51,
                 ],
                 [
                     'Match_: Condition between true and false are always false.',
