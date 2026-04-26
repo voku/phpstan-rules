@@ -80,6 +80,28 @@ function lall3(string $a, int $b): string
 $nonNull = 'always-set';
 $coalesced = $nonNull ?? 'default';
 
+final class ExtendedBinaryOpCoalesceLeaf
+{
+    public ?int $value = null;
+}
+
+final class ExtendedBinaryOpCoalesceNode
+{
+    public ?ExtendedBinaryOpCoalesceLeaf $leaf = null;
+}
+
+/** @var null|ExtendedBinaryOpCoalesceNode $maybeNode */
+$maybeNode = rand(0, 1) ? new ExtendedBinaryOpCoalesceNode() : null;
+$coalescedValue = $maybeNode->leaf->value ?? 0;
+
+$nodeWithNullLeaf = new ExtendedBinaryOpCoalesceNode();
+$coalescedNullLeaf = $nodeWithNullLeaf->leaf->value ?? 0;
+
+$nodeWithValue = new ExtendedBinaryOpCoalesceNode();
+$nodeWithValue->leaf = new ExtendedBinaryOpCoalesceLeaf();
+$nodeWithValue->leaf->value = 42;
+$coalescedNestedValue = $nodeWithValue->leaf->value ?? 0;
+
 // Error: comparison between string and bool
 function lall_bool_string_error(bool $a): string
 {

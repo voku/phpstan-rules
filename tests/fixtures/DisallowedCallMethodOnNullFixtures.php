@@ -18,3 +18,7 @@ if ($e !== null) {
 // Error: another nullable object used directly
 $g = rand(0, 1) >= 1 ? new \DOMElement('div') : null;
 $h = $g->getAttribute('id');
+
+// Error: null-coalesce does not make method calls on nullable objects safe
+$i = rand(0, 1) >= 1 ? new \DOMDocument() : null;
+$j = $i->createDocumentFragment() ?? null;
