@@ -170,6 +170,59 @@ final class IfConditionHelper
     }
 
     /**
+     * @param array<int, class-string> $classesNotInIfConditions
+     *
+     * @return array<int, \PHPStan\Rules\RuleError>
+     */
+    public static function processNestedObjectComparisons(
+        Node                $cond,
+        Scope               $scope,
+        array               $classesNotInIfConditions,
+        Node                $origNode,
+        ?ReflectionProvider $reflectionProvider = null
+    ): array
+    {
+        static $nodeFinder = null;
+        if ($nodeFinder === null) {
+            $nodeFinder = new NodeFinder();
+        }
+
+        $errors = [];
+
+        /** @var array<int, BinaryOp> $binaryOps */
+        $binaryOps = $nodeFinder->findInstanceOf($cond, BinaryOp::class);
+
+        foreach ($binaryOps as $binaryOp) {
+            $leftType = $scope->getType($binaryOp->left);
+            $rightType = $scope->getType($binaryOp->right);
+
+            if (
+                $binaryOp instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd
+                ||
+                $binaryOp instanceof \PhpParser\Node\Expr\BinaryOp\BooleanOr
+            ) {
+                self::processObjectMethodUsageForComparison($leftType, $binaryOp, $errors, $classesNotInIfConditions, $origNode);
+                self::processObjectMethodUsageForComparison($rightType, $binaryOp, $errors, $classesNotInIfConditions, $origNode);
+
+                continue;
+            }
+
+            if (
+                $binaryOp instanceof \PhpParser\Node\Expr\BinaryOp\Coalesce
+                ||
+                $binaryOp instanceof \PhpParser\Node\Expr\BinaryOp\Concat
+            ) {
+                continue;
+            }
+
+            self::processObjectComparison($leftType, $rightType, $binaryOp, $errors, $origNode, $reflectionProvider);
+            self::processObjectComparison($rightType, $leftType, $binaryOp, $errors, $origNode, $reflectionProvider);
+        }
+
+        return self::deduplicateErrors($errors);
+    }
+
+    /**
      * @param \PHPStan\Type\Type|null $type_1
      * @param \PHPStan\Type\Type|null $type_2
      * @param Node $cond

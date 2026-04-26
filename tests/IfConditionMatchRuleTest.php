@@ -46,6 +46,34 @@ final class IfConditionMatchRuleTest extends RuleTestCase
             ],
             [
                 [
+                    'Match_: Do not compare objects directly, stdClass and \'\' found.',
+                    22,
+                ],
+                [
+                    'Match_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    51,
+                ],
+                [
+                    'Match_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    57,
+                ],
+                [
+                    'Match_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    61,
+                ],
+                [
+                    'Match_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    65,
+                ],
+                [
+                    'Match_: Do not compare objects directly, DateTimeImmutable|null and \'2013-04-05\' found.',
+                    93,
+                ],
+                [
+                    'Match_: Do not compare objects directly, DateTimeImmutable and DateTimeImmutable|null found.',
+                    105,
+                ],
+                [
                     'Match_: Condition between true and false are always false.',
                     144,
                 ],
@@ -64,6 +92,10 @@ final class IfConditionMatchRuleTest extends RuleTestCase
                 [
                     'Match_: Assignment is not allowed here.',
                     205,
+                ],
+                [
+                    'Match_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    269,
                 ],
                 [
                     'Match_: Insane comparison between true and false.',

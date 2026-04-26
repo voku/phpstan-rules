@@ -28,12 +28,40 @@ final class IfConditionSwitchCaseRuleTest extends RuleTestCase
             ],
             [
                 [
+                    'Switch_: Do not compare objects directly, stdClass and \'\' found.',
+                    27,
+                ],
+                [
                     'Switch_: Do not compare boolean and integer.',
                     35,
                 ],
                 [
                     'Switch_: Do not compare boolean and string.',
                     43,
+                ],
+                [
+                    'Switch_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    66,
+                ],
+                [
+                    'Switch_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    73,
+                ],
+                [
+                    'Switch_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    76,
+                ],
+                [
+                    'Switch_: Do not compare objects directly, DateTimeImmutable and \'2032-03-04\' found.',
+                    79,
+                ],
+                [
+                    'Switch_: Do not compare objects directly, DateTimeImmutable|null and \'2013-04-05\' found.',
+                    111,
+                ],
+                [
+                    'Switch_: Do not compare objects directly, DateTimeImmutable and DateTimeImmutable|null found.',
+                    125,
                 ],
                 [
                     'Switch_: Condition between true and false are always false.',
@@ -54,6 +82,10 @@ final class IfConditionSwitchCaseRuleTest extends RuleTestCase
                 [
                     'Switch_: Assignment is not allowed here.',
                     240,
+                ],
+                [
+                    'Switch_: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    319,
                 ],
                 [
                     'Switch_: Use a function e.g. `count($foo) > 0` instead of `$foo`.',

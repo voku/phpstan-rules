@@ -80,6 +80,18 @@ function lall3(string $a, int $b): string
 $nonNull = 'always-set';
 $coalesced = $nonNull ?? 'default';
 
+/** @var null|object{leaf?: object{value?: int|null}|null} $maybeNode */
+$maybeNode = rand(0, 1) ? (object) ['leaf' => (object) ['value' => 42]] : null;
+$coalescedValue = $maybeNode->leaf->value ?? 0;
+
+/** @var object{leaf?: object{value?: int|null}|null} $nodeWithNullLeaf */
+$nodeWithNullLeaf = (object) ['leaf' => null];
+$coalescedNullLeaf = $nodeWithNullLeaf->leaf->value ?? 0;
+
+/** @var object{leaf?: object{value?: int|null}|null} $nodeWithValue */
+$nodeWithValue = (object) ['leaf' => (object) ['value' => 42]];
+$coalescedNestedValue = $nodeWithValue->leaf->value ?? 0;
+
 // Error: comparison between string and bool
 function lall_bool_string_error(bool $a): string
 {
@@ -101,3 +113,13 @@ function lall_int_int(int $a, int $b): bool
 {
     return $a == $b;
 }
+
+// OK: null-coalesce safely falls back when the root object is null
+/** @var null|object{leaf?: object{value?: int|null}|null} $missingNode */
+$missingNode = null;
+$coalescedFromNullRoot = $missingNode->leaf->value ?? 0;
+
+// OK: null-coalesce safely falls back when the nested property is null
+/** @var object{leaf?: object{value?: int|null}|null} $nodeWithNullableValue */
+$nodeWithNullableValue = (object) ['leaf' => (object) ['value' => null]];
+$coalescedFromNullProperty = $nodeWithNullableValue->leaf->value ?? 0;

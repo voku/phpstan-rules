@@ -43,7 +43,7 @@ final class ExtendedBinaryOpRuleTest extends RuleTestCase
                 ],
                 [
                     'Equal: string (\'\') in combination with non-string (bool) is not allowed.',
-                    86,
+                    98,
                 ],
             ]
         );

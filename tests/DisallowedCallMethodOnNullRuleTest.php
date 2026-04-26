@@ -35,6 +35,10 @@ final class DisallowedCallMethodOnNullRuleTest extends RuleTestCase
                     'Call to method DOMElement::getAttribute() on NULL.',
                     20,
                 ],
+                [
+                    'Call to method DOMDocument::createDocumentFragment() on NULL.',
+                    24,
+                ],
             ]
         );
     }
