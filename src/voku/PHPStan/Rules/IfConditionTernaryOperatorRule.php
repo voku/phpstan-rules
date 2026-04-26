@@ -62,28 +62,18 @@ final class IfConditionTernaryOperatorRule implements Rule
             $node->cond instanceof Node\Expr\BooleanNot &&
             $node->cond->expr instanceof Node\Expr\Variable
         ) {
-            return IfConditionHelper::processNodeHelper(
-                $scope->getType($node->cond->expr),
-                null,
+            return $this->processImplicitCondition(
+                $node->cond->expr,
                 $node->cond,
-                [],
-                $this->classesNotInIfConditions,
                 $node,
-                $this->reflectionProvider,
-                $this->checkForAssignments
+                $scope
             );
-        }
-
-        if ($node->cond instanceof Node\Expr\Variable) {
-            return IfConditionHelper::processNodeHelper(
-                $scope->getType($node->cond),
-                null,
+        } elseif ($node->cond instanceof Node\Expr\Variable) {
+            return $this->processImplicitCondition(
                 $node->cond,
-                [],
-                $this->classesNotInIfConditions,
+                $node->cond,
                 $node,
-                $this->reflectionProvider,
-                $this->checkForAssignments
+                $scope
             );
         }
 
@@ -92,6 +82,23 @@ final class IfConditionTernaryOperatorRule implements Rule
             $scope,
             $this->classesNotInIfConditions,
             $node,
+            $this->reflectionProvider,
+            $this->checkForAssignments
+        );
+    }
+
+    /**
+     * @return array<int, \PHPStan\Rules\RuleError>
+     */
+    private function processImplicitCondition(Node\Expr $typeNode, Node\Expr $conditionNode, Node $origNode, Scope $scope): array
+    {
+        return IfConditionHelper::processNodeHelper(
+            $scope->getType($typeNode),
+            null,
+            $conditionNode,
+            [],
+            $this->classesNotInIfConditions,
+            $origNode,
             $this->reflectionProvider,
             $this->checkForAssignments
         );
