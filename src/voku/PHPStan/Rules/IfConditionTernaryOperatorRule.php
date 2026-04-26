@@ -59,8 +59,7 @@ final class IfConditionTernaryOperatorRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         if (
-            $node->cond instanceof Node\Expr\BooleanNot
-            &&
+            $node->cond instanceof Node\Expr\BooleanNot &&
             $node->cond->expr instanceof Node\Expr\Variable
         ) {
             return IfConditionHelper::processNodeHelper(
