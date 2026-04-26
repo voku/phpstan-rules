@@ -162,7 +162,15 @@ final class IfConditionRuleTest extends RuleTestCase
                     180
                 ],
                 [
+                    'Identical: Insane comparison between 1 and 1.',
+                    180
+                ],
+                [
                     'BooleanAnd: Assignment is not allowed here.',
+                    183
+                ],
+                [
+                    'Identical: Insane comparison between 1 and 1.',
                     183
                 ],
                 [
@@ -802,10 +810,6 @@ final class IfConditionRuleTest extends RuleTestCase
                     69,
                 ],
                 [
-                    'NotIdentical: Insane comparison between 1 and 1.',
-                    69,
-                ],
-                [
                     'Equal: Condition between 0 and \'0\' are falsy, please do not mix types.',
                     72,
                 ],
@@ -1066,10 +1070,6 @@ final class IfConditionRuleTest extends RuleTestCase
                 [
                     'NotEqual: Insane comparison between \'1\' and 1.',
                     66,
-                ],
-                [
-                    'NotIdentical: Insane comparison between 1 and 1.',
-                    69,
                 ],
                 [
                     'NotIdentical: Insane comparison between 1 and 1.',

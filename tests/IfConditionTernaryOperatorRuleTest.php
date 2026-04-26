@@ -43,19 +43,7 @@ final class IfConditionTernaryOperatorRuleTest extends RuleTestCase
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 0.',
-                    65,
-                ],
-                [
-                    'Ternary: Insane comparison between 0 and 0.',
                     68,
-                ],
-                [
-                    'Ternary: Insane comparison between 0 and 0.',
-                    68,
-                ],
-                [
-                    'Ternary: Insane comparison between 0 and 0.',
-                    71,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 0.',
@@ -67,19 +55,7 @@ final class IfConditionTernaryOperatorRuleTest extends RuleTestCase
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 0.',
-                    74,
-                ],
-                [
-                    'Ternary: Insane comparison between 0 and 0.',
                     77,
-                ],
-                [
-                    'Ternary: Insane comparison between 0 and 0.',
-                    77,
-                ],
-                [
-                    'Ternary: Insane comparison between 0 and 0.',
-                    80,
                 ],
                 [
                     'Ternary: Insane comparison between 0 and 0.',

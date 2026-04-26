@@ -96,7 +96,7 @@ final class IfConditionHelper
             false
         );
 
-        return $errors;
+        return self::deduplicateErrors($errors);
     }
 
     /**
@@ -166,7 +166,7 @@ final class IfConditionHelper
 
         // -----------------------------------------------------------------------------------------
 
-        return $errors;
+        return self::deduplicateErrors($errors);
     }
 
     /**
@@ -1062,6 +1062,32 @@ final class IfConditionHelper
             ->line($line)
             ->identifier('voku.' . \str_replace('_', '', $origNodeClassNameSimple))
             ->build();
+    }
+
+    /**
+     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     *
+     * @return array<int, \PHPStan\Rules\RuleError>
+     */
+    public static function deduplicateErrors(array $errors): array
+    {
+        $uniqueErrors = [];
+        $seen = [];
+
+        foreach ($errors as $error) {
+            $key = $error->getMessage();
+            if ($error instanceof \PHPStan\Rules\LineRuleError) {
+                $key = \serialize([$error->getLine(), $key]);
+            }
+            if (isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+            $uniqueErrors[] = $error;
+        }
+
+        return $uniqueErrors;
     }
 
     /**
