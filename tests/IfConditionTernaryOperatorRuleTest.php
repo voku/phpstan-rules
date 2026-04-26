@@ -37,6 +37,14 @@ final class IfConditionTernaryOperatorRuleTest extends RuleTestCase
                     'Ternary: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     58,
                 ],
+                [
+                    'Ternary: Insane comparison between 0 and 0.',
+                    70,
+                ],
+                [
+                    'Ternary: Insane comparison between 0 and 0.',
+                    73,
+                ],
             ]
         );
     }

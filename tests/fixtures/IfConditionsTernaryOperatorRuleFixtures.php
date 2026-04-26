@@ -60,3 +60,14 @@ $r = $p ? $q : 0;
 // OK: explicitly check for null using null coalesce
 $s = random_int(0, 1) ? new \stdClass() : null;
 $t = $s ?? new \stdClass();
+
+function ternaryZero(): int
+{
+    return 0;
+}
+
+// Error: disguised impossible comparison inside ternary condition
+$u = ternaryZero() != ternaryZero() ? 'never' : 'always';
+
+// Error: disguised impossible comparison inside shorthand ternary condition
+$v = (ternaryZero() != ternaryZero()) ?: 'fallback';
