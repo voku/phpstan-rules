@@ -75,3 +75,11 @@ if (0 == '0') {
 if (0 === '0') {
 
 }
+
+// impossible null comparisons
+if (0 != null) {
+
+}
+if (0 !== null) {
+
+}

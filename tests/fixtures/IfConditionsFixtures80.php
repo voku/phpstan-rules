@@ -81,3 +81,11 @@ if (1 != 2) {
 if (1 !== 2) {
 
 }
+
+// impossible null comparisons
+if (0 != null) {
+
+}
+if (0 !== null) {
+
+}
