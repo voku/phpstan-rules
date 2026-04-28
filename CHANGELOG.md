@@ -1,8 +1,9 @@
 # Changelog
 
-### Upcoming
+### 3.7.0 (2026-04-28)
 - detect disguised constant ternary conditions and dedupe duplicate diagnostics
 - allow enum `$this` in `match` expressions without direct-object-comparison errors
+- report missed loose constant-array comparisons in `IfConditionRule`
 
 ### 3.6.0 (2025-01-05)
 - support for phpstan 2.x
