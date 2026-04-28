@@ -267,6 +267,21 @@ final class IfConditionHelper
                 $cond->getAttribute('startLine')
             );
         }
+
+        $type_1ConstantArray = self::extractSingleConstantArrayType($type_1);
+        if (
+            $type_1ConstantArray !== null
+            &&
+            $type_2
+            &&
+            $type_2->accepts($type_1ConstantArray, true)->no()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Condition between %s and %s are falsy, please do not mix types.', $type_1ConstantArray->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+        }
     }
 
     /**
@@ -361,6 +376,21 @@ final class IfConditionHelper
             $errors[] = self::buildErrorMessage(
                 $origNode,
                 sprintf('Condition between %s and %s are falsy, please do not mix types.', $type_1->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
+                $cond->getAttribute('startLine')
+            );
+        }
+
+        $type_1ConstantArray = self::extractSingleConstantArrayType($type_1);
+        if (
+            $type_1ConstantArray !== null
+            &&
+            $type_2
+            &&
+            $type_2->accepts($type_1ConstantArray, true)->no()
+        ) {
+            $errors[] = self::buildErrorMessage(
+                $origNode,
+                sprintf('Condition between %s and %s are falsy, please do not mix types.', $type_1ConstantArray->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
                 $cond->getAttribute('startLine')
             );
         }
@@ -1131,6 +1161,20 @@ final class IfConditionHelper
         }
 
         return $constantScalarTypes[0];
+    }
+
+    private static function extractSingleConstantArrayType(?\PHPStan\Type\Type $type): ?\PHPStan\Type\Constant\ConstantArrayType
+    {
+        if ($type === null) {
+            return null;
+        }
+
+        $constantArrayTypes = $type->getConstantArrays();
+        if (\count($constantArrayTypes) !== 1) {
+            return null;
+        }
+
+        return $constantArrayTypes[0];
     }
 
     public static function buildErrorMessage(

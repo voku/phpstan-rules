@@ -561,6 +561,25 @@ final class IfConditionRuleTest extends RuleTestCase
         );
     }
 
+    public function testConditionalReturnTypeArrayRegression(): void
+    {
+        $this->analyse(
+            [
+                __DIR__ . '/fixtures/IfConditionsRegressionFixtures.php',
+            ],
+            [
+                [
+                    'Equal: Condition between array{} and array{status: \'off\'}|non-empty-string are falsy, please do not mix types.',
+                    28,
+                ],
+                [
+                    'NotEqual: Condition between array{} and array{status: \'off\'}|non-empty-string are falsy, please do not mix types.',
+                    31,
+                ],
+            ]
+        );
+    }
+
     /**
      * @requires PHP 8.1
      */
