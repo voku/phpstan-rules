@@ -1218,7 +1218,11 @@ final class IfConditionHelper
             return $constantArrayType->isIterableAtLeastOnce()->yes();
         }
 
-        return $type->isBoolean()->yes();
+        if ($type->isBoolean()->yes()) {
+            return true;
+        }
+
+        return false;
     }
 
     public static function buildErrorMessage(
