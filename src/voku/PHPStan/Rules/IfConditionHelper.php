@@ -268,20 +268,7 @@ final class IfConditionHelper
             );
         }
 
-        $type_1ConstantArray = self::extractSingleConstantArrayType($type_1);
-        if (
-            $type_1ConstantArray !== null
-            &&
-            $type_2
-            &&
-            $type_2->accepts($type_1ConstantArray, true)->no()
-        ) {
-            $errors[] = self::buildErrorMessage(
-                $origNode,
-                sprintf('Condition between %s and %s are falsy, please do not mix types.', $type_1ConstantArray->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                $cond->getAttribute('startLine')
-            );
-        }
+        self::processConstantArrayLooseComparison($type_1, $type_2, $cond, $errors, $origNode);
     }
 
     /**
@@ -380,20 +367,7 @@ final class IfConditionHelper
             );
         }
 
-        $type_1ConstantArray = self::extractSingleConstantArrayType($type_1);
-        if (
-            $type_1ConstantArray !== null
-            &&
-            $type_2
-            &&
-            $type_2->accepts($type_1ConstantArray, true)->no()
-        ) {
-            $errors[] = self::buildErrorMessage(
-                $origNode,
-                sprintf('Condition between %s and %s are falsy, please do not mix types.', $type_1ConstantArray->describe(VerbosityLevel::value()), $type_2->describe(VerbosityLevel::value())),
-                $cond->getAttribute('startLine')
-            );
-        }
+        self::processConstantArrayLooseComparison($type_1, $type_2, $cond, $errors, $origNode);
     }
 
     /**
@@ -1175,6 +1149,76 @@ final class IfConditionHelper
         }
 
         return $constantArrayTypes[0];
+    }
+
+    /**
+     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     */
+    private static function processConstantArrayLooseComparison(
+        ?\PHPStan\Type\Type $type_1,
+        ?\PHPStan\Type\Type $type_2,
+        Node                $cond,
+        array               &$errors,
+        Node                $origNode
+    ): void
+    {
+        if (
+            !$cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+            &&
+            !$cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual
+        ) {
+            return;
+        }
+
+        $type_1ConstantArray = self::extractSingleConstantArrayType($type_1);
+        if ($type_1ConstantArray === null || self::canLooseEqualConstantArray($type_1ConstantArray, $type_2)) {
+            return;
+        }
+
+        $errors[] = self::buildErrorMessage(
+            $origNode,
+            sprintf(
+                'Condition between %s and %s is always %s, please do not mix types.',
+                $type_1ConstantArray->describe(VerbosityLevel::value()),
+                $type_2 !== null ? $type_2->describe(VerbosityLevel::value()) : 'null',
+                $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal ? 'false' : 'true'
+            ),
+            $cond->getAttribute('startLine')
+        );
+    }
+
+    private static function canLooseEqualConstantArray(
+        \PHPStan\Type\Constant\ConstantArrayType $constantArrayType,
+        ?\PHPStan\Type\Type $type
+    ): bool
+    {
+        if ($type === null || $type instanceof \PHPStan\Type\MixedType) {
+            return true;
+        }
+
+        if ($type instanceof \PHPStan\Type\UnionType) {
+            foreach ($type->getTypes() as $innerType) {
+                if (self::canLooseEqualConstantArray($constantArrayType, $innerType)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (!$type->accepts($constantArrayType, true)->no()) {
+            return true;
+        }
+
+        if (self::isNullType($type) || $type->isFalse()->yes()) {
+            return $constantArrayType->isIterableAtLeastOnce()->no();
+        }
+
+        if ($type->isTrue()->yes()) {
+            return $constantArrayType->isIterableAtLeastOnce()->yes();
+        }
+
+        return $type->isBoolean()->yes();
     }
 
     public static function buildErrorMessage(
