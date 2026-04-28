@@ -1210,6 +1210,7 @@ final class IfConditionHelper
             return true;
         }
 
+        // PHP loose equality treats [] like false/null and non-empty arrays like true.
         if (self::isNullType($type) || $type->isFalse()->yes()) {
             return $constantArrayType->isIterableAtLeastOnce()->no();
         }
