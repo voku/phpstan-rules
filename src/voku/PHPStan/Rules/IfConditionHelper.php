@@ -260,6 +260,8 @@ final class IfConditionHelper
             $type_2
             &&
             $type_2->accepts($type_1, true)->no()
+            &&
+            !self::hasDeterministicConstantArrayLooseComparison($type_2, $type_1)
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
@@ -267,6 +269,8 @@ final class IfConditionHelper
                 $cond->getAttribute('startLine')
             );
         }
+
+        self::processConstantArrayLooseComparison($type_1, $type_2, $cond, $errors, $origNode);
     }
 
     /**
@@ -357,6 +361,8 @@ final class IfConditionHelper
             $type_2
             &&
             $type_2->accepts($type_1, true)->no()
+            &&
+            !self::hasDeterministicConstantArrayLooseComparison($type_2, $type_1)
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
@@ -364,6 +370,8 @@ final class IfConditionHelper
                 $cond->getAttribute('startLine')
             );
         }
+
+        self::processConstantArrayLooseComparison($type_1, $type_2, $cond, $errors, $origNode);
     }
 
     /**
@@ -1131,6 +1139,195 @@ final class IfConditionHelper
         }
 
         return $constantScalarTypes[0];
+    }
+
+    private static function extractSingleConstantArrayType(?\PHPStan\Type\Type $type): ?\PHPStan\Type\Constant\ConstantArrayType
+    {
+        if ($type === null) {
+            return null;
+        }
+
+        $constantArrayTypes = $type->getConstantArrays();
+        if (\count($constantArrayTypes) !== 1) {
+            return null;
+        }
+
+        return $constantArrayTypes[0];
+    }
+
+    /**
+     * @param array<int, \PHPStan\Rules\RuleError> $errors
+     */
+    private static function processConstantArrayLooseComparison(
+        ?\PHPStan\Type\Type $type_1,
+        ?\PHPStan\Type\Type $type_2,
+        Node                $cond,
+        array               &$errors,
+        Node                $origNode
+    ): void
+    {
+        if (
+            !$cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+            &&
+            !$cond instanceof \PhpParser\Node\Expr\BinaryOp\NotEqual
+        ) {
+            return;
+        }
+
+        $type_1ConstantArray = self::extractSingleConstantArrayType($type_1);
+        if ($type_1ConstantArray === null) {
+            return;
+        }
+
+        $equalResult = self::getLooseEqualResultForConstantArray($type_1ConstantArray, $type_2);
+        if ($equalResult === null) {
+            return;
+        }
+
+        $errors[] = self::buildErrorMessage(
+            $origNode,
+            self::isDeterministicConstantArrayLooseBoolOrNullComparison($type_2)
+                ? self::buildDeterministicConstantArrayLooseBoolOrNullComparisonMessage(
+                    $type_1ConstantArray,
+                    $type_2,
+                    $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal,
+                    $equalResult
+                )
+                : sprintf(
+                    'Condition between %s and %s is always %s, please do not mix types.',
+                    $type_1ConstantArray->describe(VerbosityLevel::value()),
+                    $type_2 !== null ? $type_2->describe(VerbosityLevel::value()) : 'null',
+                    $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+                        ? ($equalResult ? 'true' : 'false')
+                        : ($equalResult ? 'false' : 'true')
+                ),
+            $cond->getAttribute('startLine')
+        );
+    }
+
+    private static function hasDeterministicConstantArrayLooseComparison(
+        ?\PHPStan\Type\Type $arrayType,
+        ?\PHPStan\Type\Type $otherType
+    ): bool
+    {
+        $constantArrayType = self::extractSingleConstantArrayType($arrayType);
+        if ($constantArrayType === null || !self::isDeterministicConstantArrayLooseBoolOrNullComparison($otherType)) {
+            return false;
+        }
+
+        return self::getLooseEqualResultForConstantArray($constantArrayType, $otherType) !== null;
+    }
+
+    private static function isDeterministicConstantArrayLooseBoolOrNullComparison(?\PHPStan\Type\Type $type): bool
+    {
+        if ($type === null) {
+            return false;
+        }
+
+        return self::isNullType($type) || $type->isTrue()->yes() || $type->isFalse()->yes();
+    }
+
+    private static function buildDeterministicConstantArrayLooseBoolOrNullComparisonMessage(
+        \PHPStan\Type\Constant\ConstantArrayType $constantArrayType,
+        ?\PHPStan\Type\Type $type,
+        bool $isEqualComparison,
+        bool $equalResult
+    ): string
+    {
+        $comparisonResult = $isEqualComparison ? $equalResult : !$equalResult;
+        $otherValue = $type !== null ? $type->describe(VerbosityLevel::value()) : 'null';
+
+        return sprintf(
+            'Condition between %s and %s is always %s, %s Use a function e.g. `%s` instead of `$foo %s %s`.',
+            $constantArrayType->describe(VerbosityLevel::value()),
+            $otherValue,
+            $comparisonResult ? 'true' : 'false',
+            self::getDeterministicConstantArrayLooseBoolOrNullComparisonExplanation($type, $equalResult),
+            self::getDeterministicConstantArrayLooseBoolOrNullComparisonRecommendation($type, $isEqualComparison),
+            $isEqualComparison ? '==' : '!=',
+            $otherValue
+        );
+    }
+
+    private static function getDeterministicConstantArrayLooseBoolOrNullComparisonExplanation(
+        ?\PHPStan\Type\Type $type,
+        bool $equalResult
+    ): string
+    {
+        if ($type !== null && $type->isTrue()->yes()) {
+            return $equalResult
+                ? 'because non-empty arrays are loosely equal to true.'
+                : 'because only non-empty arrays are loosely equal to true.';
+        }
+
+        $otherValue = $type !== null ? $type->describe(VerbosityLevel::value()) : 'null';
+
+        return $equalResult
+            ? sprintf('because empty arrays are loosely equal to %s.', $otherValue)
+            : sprintf('because only empty arrays are loosely equal to %s.', $otherValue);
+    }
+
+    private static function getDeterministicConstantArrayLooseBoolOrNullComparisonRecommendation(
+        ?\PHPStan\Type\Type $type,
+        bool $isEqualComparison
+    ): string
+    {
+        if ($type !== null && $type->isTrue()->yes()) {
+            return $isEqualComparison ? 'count($foo) > 0' : 'count($foo) === 0';
+        }
+
+        return $isEqualComparison ? 'count($foo) === 0' : 'count($foo) > 0';
+    }
+
+    private static function getLooseEqualResultForConstantArray(
+        \PHPStan\Type\Constant\ConstantArrayType $constantArrayType,
+        ?\PHPStan\Type\Type $type
+    ): ?bool
+    {
+        if ($type === null || $type instanceof \PHPStan\Type\MixedType) {
+            return null;
+        }
+
+        if ($type instanceof \PHPStan\Type\UnionType) {
+            $result = null;
+
+            foreach ($type->getTypes() as $innerType) {
+                $innerResult = self::getLooseEqualResultForConstantArray($constantArrayType, $innerType);
+                if ($innerResult === null) {
+                    return null;
+                }
+
+                if ($result === null) {
+                    $result = $innerResult;
+
+                    continue;
+                }
+
+                if ($result !== $innerResult) {
+                    return null;
+                }
+            }
+
+            return $result;
+        }
+
+        if ($type->accepts($constantArrayType, true)->yes()) {
+            return null;
+        }
+
+        if (self::isNullType($type) || $type->isFalse()->yes()) {
+            return $constantArrayType->isIterableAtLeastOnce()->no();
+        }
+
+        if ($type->isTrue()->yes()) {
+            return $constantArrayType->isIterableAtLeastOnce()->yes();
+        }
+
+        if ($type->isBoolean()->yes()) {
+            return null;
+        }
+
+        return false;
     }
 
     public static function buildErrorMessage(

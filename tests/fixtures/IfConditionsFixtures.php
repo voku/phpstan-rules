@@ -359,6 +359,56 @@ if ($a === $b) {
     // ...
 }
 
+// Comparing empty array with null
+$a = [];
+if ($a == null) {
+    // ...
+}
+if ($a != null) {
+    // ...
+}
+
+// Comparing array with null / boolean using loose not-equal
+$a = [1, 2, 3];
+if ($a != null) {
+    // ...
+}
+if ($a != true) {
+    // ...
+}
+
+$a = [];
+if ($a != false) {
+    // ...
+}
+
+// Anonymous class + callback + conditional PHPStan return type
+$callbackResolver = new class {
+    /**
+     * @param callable(bool): bool $callback
+     *
+     * @phpstan-return ($flag is true ? non-empty-string : array{status: 'off'})
+     */
+    public function resolve(bool $flag, callable $callback)
+    {
+        if ($callback($flag)) {
+            return $flag ? 'ready' : ['status' => 'off'];
+        }
+
+        return $flag ? 'ready' : ['status' => 'off'];
+    }
+};
+$callbackResult = $callbackResolver->resolve(
+    random_int(0, 1) === 1,
+    static fn (bool $flag): bool => $flag
+);
+if ($callbackResult == null) {
+    // ...
+}
+if ($callbackResult === null) {
+    // ...
+}
+
 // Comparing callable with a string function name
 function foo() { return 'bar'; }
 $a = 'foo';

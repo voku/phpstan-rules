@@ -222,7 +222,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     249
                 ],
                 [
-                    'Equal: Condition between null and array{1, 2, 3} are falsy, please do not mix types.',
+                    'Equal: Condition between array{1, 2, 3} and null is always false, because only empty arrays are loosely equal to null. Use a function e.g. `count($foo) === 0` instead of `$foo == null`.',
                     255
                 ],
                 [
@@ -258,7 +258,11 @@ final class IfConditionRuleTest extends RuleTestCase
                     276
                 ],
                 [
-                    'Equal: Condition between true and array{1, 2, 3} are falsy, please do not mix types.',
+                    'Equal: Condition between array{} and 5.7 is always false, please do not mix types.',
+                    276
+                ],
+                [
+                    'Equal: Condition between array{1, 2, 3} and true is always true, because non-empty arrays are loosely equal to true. Use a function e.g. `count($foo) > 0` instead of `$foo == true`.',
                     282
                 ],
                 [
@@ -330,7 +334,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     327,
                 ],
                 [
-                    'Equal: Condition between false and array{} are falsy, please do not mix types.',
+                    'Equal: Condition between array{} and false is always true, because empty arrays are loosely equal to false. Use a function e.g. `count($foo) === 0` instead of `$foo == false`.',
                     327,
                 ],
                 [
@@ -410,140 +414,207 @@ final class IfConditionRuleTest extends RuleTestCase
                     358,
                 ],
                 [
+                    'Equal: Condition between array{} and null is always true, because empty arrays are loosely equal to null. Use a function e.g. `count($foo) === 0` instead of `$foo == null`.',
+                    364,
+                ],
+                [
+                    'Equal: Possible insane comparison between null and array{}.',
+                    364,
+                ],
+                [
+                    'NotEqual: Condition between array{} and null is always false, because empty arrays are loosely equal to null. Use a function e.g. `count($foo) > 0` instead of `$foo != null`.',
+                    367,
+                ],
+                [
+                    'NotEqual: Possible insane comparison between null and array{}.',
+                    367,
+                ],
+                [
+                    'Equal: Condition between null and array{status: \'off\'}|non-empty-string are falsy, please do not mix types.',
+                    405,
+                ],
+                [
+                    'Equal: Possible insane comparison between null and array{status: \'off\'}|non-empty-string.',
+                    405,
+                ],
+                [
+                    'Identical: Possible insane comparison between null and array{status: \'off\'}|non-empty-string.',
+                    408,
+                ],
+                [
+                    'NotEqual: Condition between array{1, 2, 3} and null is always true, because only empty arrays are loosely equal to null. Use a function e.g. `count($foo) > 0` instead of `$foo != null`.',
+                    373,
+                ],
+                [
+                    'NotEqual: Possible insane comparison between null and array{1, 2, 3}.',
+                    373,
+                ],
+                [
+                    'NotEqual: Condition between array{1, 2, 3} and true is always false, because non-empty arrays are loosely equal to true. Use a function e.g. `count($foo) === 0` instead of `$foo != true`.',
+                    376,
+                ],
+                [
+                    'NotEqual: Condition between array{} and false is always false, because empty arrays are loosely equal to false. Use a function e.g. `count($foo) > 0` instead of `$foo != false`.',
+                    381,
+                ],
+                [
                     'Equal: Condition between false and \'function\' are falsy, please do not mix types.',
-                    365,
+                    415,
                 ],
                 [
                     'Equal: Do not compare boolean and string.',
-                    365,
+                    415,
                 ],
                 [
                     'Equal: Insane comparison between false and \'function\'.',
-                    365,
+                    415,
                 ],
                 [
                     'Equal: Condition between \'function\' and false are falsy, please do not mix types.',
-                    365,
+                    415,
                 ],
                 [
                     'Equal: Insane comparison between \'function\' and false.',
-                    365,
+                    415,
                 ],
                 [
                     'Identical: Do not compare boolean and string.',
-                    368,
+                    418,
                 ],
                 [
                     'Identical: Insane comparison between false and \'function\'.',
-                    368,
+                    418,
                 ],
                 [
                     'Identical: Insane comparison between \'function\' and false.',
-                    368,
+                    418,
                 ],
                 [
                     'Equal: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    374,
+                    424,
                 ],
                 [
                     'Equal: Do not compare objects directly, stdClass and class-string<stdClass> found.',
-                    374,
+                    424,
                 ],
                 [
                     'Identical: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    377,
+                    427,
                 ],
                 [
                     'Equal: Condition between 3.14 and \'2023-10-01\' are falsy, please do not mix types.',
-                    383,
+                    433,
                 ],
                 [
                     'Equal: Insane comparison between 3.14 and \'2023-10-01\'.',
-                    383,
+                    433,
                 ],
                 [
                     'Equal: Condition between \'2023-10-01\' and 3.14 are falsy, please do not mix types.',
-                    383,
+                    433,
                 ],
                 [
                     'Equal: Insane comparison between \'2023-10-01\' and 3.14.',
-                    383,
+                    433,
                 ],
                 [
                     'Identical: Insane comparison between 3.14 and \'2023-10-01\'.',
-                    386,
+                    436,
                 ],
                 [
                     'Identical: Insane comparison between \'2023-10-01\' and 3.14.',
-                    386,
+                    436,
                 ],
                 [
                     'Equal: Condition between true and \'{"key": "value"}\' are falsy, please do not mix types.',
-                    392,
+                    442,
                 ],
                 [
                     'Equal: Do not compare boolean and string.',
-                    392,
+                    442,
                 ],
                 [
                     'Equal: Condition between \'{"key": "value"}\' and true are falsy, please do not mix types.',
-                    392,
+                    442,
                 ],
                 [
                     'Equal: Possible insane comparison between \'{"key": "value"}\' and true.',
-                    392,
+                    442,
                 ],
                 [
                     'Identical: Do not compare boolean and string.',
-                    395,
+                    445,
                 ],
                 [
                     'Identical: Insane comparison between true and \'{"key": "value"}\'.',
-                    395,
+                    445,
                 ],
                 [
                     'Identical: Insane comparison between \'{"key": "value"}\' and true.',
-                    395,
+                    445,
                 ],
                 [
                     'Equal: Condition between true and \'/^pattern/\' are falsy, please do not mix types.',
-                    411,
+                    461,
                 ],
                 [
                     'Equal: Do not compare boolean and string.',
-                    411,
+                    461,
                 ],
                 [
                     'Equal: Condition between \'/^pattern/\' and true are falsy, please do not mix types.',
-                    411,
+                    461,
                 ],
                 [
                     'Equal: Possible insane comparison between \'/^pattern/\' and true.',
-                    411,
+                    461,
                 ],
                 [
                     'Identical: Do not compare boolean and string.',
-                    414,
+                    464,
                 ],
                 [
                     'Identical: Insane comparison between true and \'/^pattern/\'.',
-                    414,
+                    464,
                 ],
                 [
                     'Identical: Insane comparison between \'/^pattern/\' and true.',
-                    414,
+                    464,
+                ],
+                [
+                    'Equal: Condition between array{1, 2, 3} and stdClass is always false, please do not mix types.',
+                    481,
                 ],
                 [
                     'Equal: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    431,
+                    481,
                 ],
                 [
                     'Equal: Do not compare objects directly, stdClass and array{1, 2, 3} found.',
-                    431,
+                    481,
                 ],
                 [
                     'Identical: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    434,
+                    484,
+                ],
+            ]
+        );
+    }
+
+    public function testConditionalReturnTypeArrayRegression(): void
+    {
+        $this->analyse(
+            [
+                __DIR__ . '/fixtures/IfConditionsRegressionFixtures.php',
+            ],
+            [
+                [
+                    'Equal: Condition between array{} and array{status: \'off\'}|non-empty-string is always false, please do not mix types.',
+                    28,
+                ],
+                [
+                    'NotEqual: Condition between array{} and array{status: \'off\'}|non-empty-string is always true, please do not mix types.',
+                    31,
                 ],
             ]
         );
@@ -873,6 +944,34 @@ final class IfConditionRuleTest extends RuleTestCase
                     'NotIdentical: Insane comparison between 2 and 1.',
                     81,
                 ],
+                [
+                    'NotEqual: Condition between 0 and null are falsy, please do not mix types.',
+                    86,
+                ],
+                [
+                    'NotEqual: Condition between null and 0 are falsy, please do not mix types.',
+                    86,
+                ],
+                [
+                    'NotEqual: Insane comparison between 0 and null.',
+                    86,
+                ],
+                [
+                    'NotEqual: Insane comparison between null and 0.',
+                    86,
+                ],
+                [
+                    'NotEqual: Please do not use double negative null conditions. Use "!==" instead if needed.',
+                    86,
+                ],
+                [
+                    'NotIdentical: Insane comparison between 0 and null.',
+                    89,
+                ],
+                [
+                    'NotIdentical: Insane comparison between null and 0.',
+                    89,
+                ],
             ]
         );
     }
@@ -1142,6 +1241,34 @@ final class IfConditionRuleTest extends RuleTestCase
                 [
                     'Identical: Insane comparison between \'0\' and 0.',
                     75,
+                ],
+                [
+                    'NotEqual: Condition between 0 and null are falsy, please do not mix types.',
+                    80,
+                ],
+                [
+                    'NotEqual: Condition between null and 0 are falsy, please do not mix types.',
+                    80,
+                ],
+                [
+                    'NotEqual: Insane comparison between 0 and null.',
+                    80,
+                ],
+                [
+                    'NotEqual: Insane comparison between null and 0.',
+                    80,
+                ],
+                [
+                    'NotEqual: Please do not use double negative null conditions. Use "!==" instead if needed.',
+                    80,
+                ],
+                [
+                    'NotIdentical: Insane comparison between 0 and null.',
+                    83,
+                ],
+                [
+                    'NotIdentical: Insane comparison between null and 0.',
+                    83,
                 ],
             ]
         );
