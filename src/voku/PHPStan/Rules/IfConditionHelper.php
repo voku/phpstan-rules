@@ -1262,7 +1262,7 @@ final class IfConditionHelper
             return $result;
         }
 
-        if (!$type->accepts($constantArrayType, true)->no()) {
+        if ($type->accepts($constantArrayType, true)->yes()) {
             return null;
         }
 
