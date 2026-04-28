@@ -222,6 +222,10 @@ final class IfConditionRuleTest extends RuleTestCase
                     249
                 ],
                 [
+                    'Equal: Condition between array{1, 2, 3} and null are falsy, please do not mix types.',
+                    255
+                ],
+                [
                     'Equal: Condition between null and array{1, 2, 3} are falsy, please do not mix types.',
                     255
                 ],
@@ -258,7 +262,15 @@ final class IfConditionRuleTest extends RuleTestCase
                     276
                 ],
                 [
+                    'Equal: Condition between array{} and 5.7 are falsy, please do not mix types.',
+                    276
+                ],
+                [
                     'Equal: Condition between true and array{1, 2, 3} are falsy, please do not mix types.',
+                    282
+                ],
+                [
+                    'Equal: Condition between array{1, 2, 3} and true are falsy, please do not mix types.',
                     282
                 ],
                 [
@@ -327,6 +339,10 @@ final class IfConditionRuleTest extends RuleTestCase
                 ],
                 [
                     'Equal: Yoda condition is not allowed here.',
+                    327,
+                ],
+                [
+                    'Equal: Condition between array{} and false are falsy, please do not mix types.',
                     327,
                 ],
                 [
@@ -544,6 +560,10 @@ final class IfConditionRuleTest extends RuleTestCase
                 [
                     'Identical: Insane comparison between \'/^pattern/\' and true.',
                     441,
+                ],
+                [
+                    'Equal: Condition between array{1, 2, 3} and stdClass are falsy, please do not mix types.',
+                    458,
                 ],
                 [
                     'Equal: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
