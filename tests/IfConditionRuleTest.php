@@ -222,11 +222,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     249
                 ],
                 [
-                    'Equal: Condition between array{1, 2, 3} and null is always false, please do not mix types.',
-                    255
-                ],
-                [
-                    'Equal: Condition between null and array{1, 2, 3} are falsy, please do not mix types.',
+                    'Equal: Loose comparison using == between array{1, 2, 3} and null will always evaluate to false.',
                     255
                 ],
                 [
@@ -266,11 +262,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     276
                 ],
                 [
-                    'Equal: Condition between array{1, 2, 3} and true is always true, please do not mix types.',
-                    282
-                ],
-                [
-                    'Equal: Condition between true and array{1, 2, 3} are falsy, please do not mix types.',
+                    'Equal: Loose comparison using == between array{1, 2, 3} and true will always evaluate to true.',
                     282
                 ],
                 [
@@ -342,11 +334,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     327,
                 ],
                 [
-                    'Equal: Condition between array{} and false is always true, please do not mix types.',
-                    327,
-                ],
-                [
-                    'Equal: Condition between false and array{} are falsy, please do not mix types.',
+                    'Equal: Loose comparison using == between array{} and false will always evaluate to true.',
                     327,
                 ],
                 [
@@ -438,11 +426,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     399,
                 ],
                 [
-                    'NotEqual: Condition between array{1, 2, 3} and null is always true, please do not mix types.',
-                    364,
-                ],
-                [
-                    'NotEqual: Condition between null and array{1, 2, 3} are falsy, please do not mix types.',
+                    'NotEqual: Loose comparison using != between array{1, 2, 3} and null will always evaluate to true.',
                     364,
                 ],
                 [
@@ -450,19 +434,11 @@ final class IfConditionRuleTest extends RuleTestCase
                     364,
                 ],
                 [
-                    'NotEqual: Condition between array{1, 2, 3} and true is always false, please do not mix types.',
+                    'NotEqual: Loose comparison using != between array{1, 2, 3} and true will always evaluate to false.',
                     367,
                 ],
                 [
-                    'NotEqual: Condition between true and array{1, 2, 3} are falsy, please do not mix types.',
-                    367,
-                ],
-                [
-                    'NotEqual: Condition between array{} and false is always false, please do not mix types.',
-                    372,
-                ],
-                [
-                    'NotEqual: Condition between false and array{} are falsy, please do not mix types.',
+                    'NotEqual: Loose comparison using != between array{} and false will always evaluate to false.',
                     372,
                 ],
                 [

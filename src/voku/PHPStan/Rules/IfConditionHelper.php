@@ -260,6 +260,8 @@ final class IfConditionHelper
             $type_2
             &&
             $type_2->accepts($type_1, true)->no()
+            &&
+            !self::hasDeterministicConstantArrayLooseComparison($type_2, $type_1)
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
@@ -359,6 +361,8 @@ final class IfConditionHelper
             $type_2
             &&
             $type_2->accepts($type_1, true)->no()
+            &&
+            !self::hasDeterministicConstantArrayLooseComparison($type_2, $type_1)
         ) {
             $errors[] = self::buildErrorMessage(
                 $origNode,
@@ -1182,16 +1186,48 @@ final class IfConditionHelper
 
         $errors[] = self::buildErrorMessage(
             $origNode,
-            sprintf(
-                'Condition between %s and %s is always %s, please do not mix types.',
-                $type_1ConstantArray->describe(VerbosityLevel::value()),
-                $type_2 !== null ? $type_2->describe(VerbosityLevel::value()) : 'null',
-                $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
-                    ? ($equalResult ? 'true' : 'false')
-                    : ($equalResult ? 'false' : 'true')
-            ),
+            self::isDeterministicConstantArrayLooseBoolOrNullComparison($type_2)
+                ? sprintf(
+                    'Loose comparison using %s between %s and %s will always evaluate to %s.',
+                    $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal ? '==' : '!=',
+                    $type_1ConstantArray->describe(VerbosityLevel::value()),
+                    $type_2 !== null ? $type_2->describe(VerbosityLevel::value()) : 'null',
+                    $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+                        ? ($equalResult ? 'true' : 'false')
+                        : ($equalResult ? 'false' : 'true')
+                )
+                : sprintf(
+                    'Condition between %s and %s is always %s, please do not mix types.',
+                    $type_1ConstantArray->describe(VerbosityLevel::value()),
+                    $type_2 !== null ? $type_2->describe(VerbosityLevel::value()) : 'null',
+                    $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+                        ? ($equalResult ? 'true' : 'false')
+                        : ($equalResult ? 'false' : 'true')
+                ),
             $cond->getAttribute('startLine')
         );
+    }
+
+    private static function hasDeterministicConstantArrayLooseComparison(
+        ?\PHPStan\Type\Type $arrayType,
+        ?\PHPStan\Type\Type $otherType
+    ): bool
+    {
+        $constantArrayType = self::extractSingleConstantArrayType($arrayType);
+        if ($constantArrayType === null || !self::isDeterministicConstantArrayLooseBoolOrNullComparison($otherType)) {
+            return false;
+        }
+
+        return self::getLooseEqualResultForConstantArray($constantArrayType, $otherType) !== null;
+    }
+
+    private static function isDeterministicConstantArrayLooseBoolOrNullComparison(?\PHPStan\Type\Type $type): bool
+    {
+        if ($type === null) {
+            return false;
+        }
+
+        return self::isNullType($type) || $type->isTrue()->yes() || $type->isFalse()->yes();
     }
 
     private static function getLooseEqualResultForConstantArray(
