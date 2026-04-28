@@ -1187,14 +1187,11 @@ final class IfConditionHelper
         $errors[] = self::buildErrorMessage(
             $origNode,
             self::isDeterministicConstantArrayLooseBoolOrNullComparison($type_2)
-                ? sprintf(
-                    'Loose comparison using %s between %s and %s will always evaluate to %s.',
-                    $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal ? '==' : '!=',
-                    $type_1ConstantArray->describe(VerbosityLevel::value()),
-                    $type_2 !== null ? $type_2->describe(VerbosityLevel::value()) : 'null',
-                    $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
-                        ? ($equalResult ? 'true' : 'false')
-                        : ($equalResult ? 'false' : 'true')
+                ? self::buildDeterministicConstantArrayLooseBoolOrNullComparisonMessage(
+                    $type_1ConstantArray,
+                    $type_2,
+                    $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal,
+                    $equalResult
                 )
                 : sprintf(
                     'Condition between %s and %s is always %s, please do not mix types.',
@@ -1228,6 +1225,58 @@ final class IfConditionHelper
         }
 
         return self::isNullType($type) || $type->isTrue()->yes() || $type->isFalse()->yes();
+    }
+
+    private static function buildDeterministicConstantArrayLooseBoolOrNullComparisonMessage(
+        \PHPStan\Type\Constant\ConstantArrayType $constantArrayType,
+        ?\PHPStan\Type\Type $type,
+        bool $isEqualComparison,
+        bool $equalResult
+    ): string
+    {
+        $comparisonResult = $isEqualComparison ? $equalResult : !$equalResult;
+        $otherValue = $type !== null ? $type->describe(VerbosityLevel::value()) : 'null';
+
+        return sprintf(
+            'Condition between %s and %s is always %s, %s Use a function e.g. `%s` instead of `$foo %s %s`.',
+            $constantArrayType->describe(VerbosityLevel::value()),
+            $otherValue,
+            $comparisonResult ? 'true' : 'false',
+            self::getDeterministicConstantArrayLooseBoolOrNullComparisonExplanation($type, $equalResult),
+            self::getDeterministicConstantArrayLooseBoolOrNullComparisonRecommendation($type, $isEqualComparison),
+            $isEqualComparison ? '==' : '!=',
+            $otherValue
+        );
+    }
+
+    private static function getDeterministicConstantArrayLooseBoolOrNullComparisonExplanation(
+        ?\PHPStan\Type\Type $type,
+        bool $equalResult
+    ): string
+    {
+        if ($type !== null && $type->isTrue()->yes()) {
+            return $equalResult
+                ? 'because non-empty arrays are loosely equal to true.'
+                : 'because only non-empty arrays are loosely equal to true.';
+        }
+
+        $otherValue = $type !== null ? $type->describe(VerbosityLevel::value()) : 'null';
+
+        return $equalResult
+            ? sprintf('because empty arrays are loosely equal to %s.', $otherValue)
+            : sprintf('because only empty arrays are loosely equal to %s.', $otherValue);
+    }
+
+    private static function getDeterministicConstantArrayLooseBoolOrNullComparisonRecommendation(
+        ?\PHPStan\Type\Type $type,
+        bool $isEqualComparison
+    ): string
+    {
+        if ($type !== null && $type->isTrue()->yes()) {
+            return $isEqualComparison ? 'count($foo) > 0' : 'count($foo) === 0';
+        }
+
+        return $isEqualComparison ? 'count($foo) === 0' : 'count($foo) > 0';
     }
 
     private static function getLooseEqualResultForConstantArray(

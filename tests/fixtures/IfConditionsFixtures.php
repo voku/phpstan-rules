@@ -359,6 +359,15 @@ if ($a === $b) {
     // ...
 }
 
+// Comparing empty array with null
+$a = [];
+if ($a == null) {
+    // ...
+}
+if ($a != null) {
+    // ...
+}
+
 // Comparing array with null / boolean using loose not-equal
 $a = [1, 2, 3];
 if ($a != null) {

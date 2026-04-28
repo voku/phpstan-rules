@@ -222,7 +222,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     249
                 ],
                 [
-                    'Equal: Loose comparison using == between array{1, 2, 3} and null will always evaluate to false.',
+                    'Equal: Condition between array{1, 2, 3} and null is always false, because only empty arrays are loosely equal to null. Use a function e.g. `count($foo) === 0` instead of `$foo == null`.',
                     255
                 ],
                 [
@@ -262,7 +262,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     276
                 ],
                 [
-                    'Equal: Loose comparison using == between array{1, 2, 3} and true will always evaluate to true.',
+                    'Equal: Condition between array{1, 2, 3} and true is always true, because non-empty arrays are loosely equal to true. Use a function e.g. `count($foo) > 0` instead of `$foo == true`.',
                     282
                 ],
                 [
@@ -334,7 +334,7 @@ final class IfConditionRuleTest extends RuleTestCase
                     327,
                 ],
                 [
-                    'Equal: Loose comparison using == between array{} and false will always evaluate to true.',
+                    'Equal: Condition between array{} and false is always true, because empty arrays are loosely equal to false. Use a function e.g. `count($foo) === 0` instead of `$foo == false`.',
                     327,
                 ],
                 [
@@ -414,172 +414,188 @@ final class IfConditionRuleTest extends RuleTestCase
                     358,
                 ],
                 [
-                    'Equal: Condition between null and array{status: \'off\'}|non-empty-string are falsy, please do not mix types.',
-                    396,
-                ],
-                [
-                    'Equal: Possible insane comparison between null and array{status: \'off\'}|non-empty-string.',
-                    396,
-                ],
-                [
-                    'Identical: Possible insane comparison between null and array{status: \'off\'}|non-empty-string.',
-                    399,
-                ],
-                [
-                    'NotEqual: Loose comparison using != between array{1, 2, 3} and null will always evaluate to true.',
+                    'Equal: Condition between array{} and null is always true, because empty arrays are loosely equal to null. Use a function e.g. `count($foo) === 0` instead of `$foo == null`.',
                     364,
                 ],
                 [
-                    'NotEqual: Possible insane comparison between null and array{1, 2, 3}.',
+                    'Equal: Possible insane comparison between null and array{}.',
                     364,
                 ],
                 [
-                    'NotEqual: Loose comparison using != between array{1, 2, 3} and true will always evaluate to false.',
+                    'NotEqual: Condition between array{} and null is always false, because empty arrays are loosely equal to null. Use a function e.g. `count($foo) > 0` instead of `$foo != null`.',
                     367,
                 ],
                 [
-                    'NotEqual: Loose comparison using != between array{} and false will always evaluate to false.',
-                    372,
+                    'NotEqual: Possible insane comparison between null and array{}.',
+                    367,
+                ],
+                [
+                    'Equal: Condition between null and array{status: \'off\'}|non-empty-string are falsy, please do not mix types.',
+                    405,
+                ],
+                [
+                    'Equal: Possible insane comparison between null and array{status: \'off\'}|non-empty-string.',
+                    405,
+                ],
+                [
+                    'Identical: Possible insane comparison between null and array{status: \'off\'}|non-empty-string.',
+                    408,
+                ],
+                [
+                    'NotEqual: Condition between array{1, 2, 3} and null is always true, because only empty arrays are loosely equal to null. Use a function e.g. `count($foo) > 0` instead of `$foo != null`.',
+                    373,
+                ],
+                [
+                    'NotEqual: Possible insane comparison between null and array{1, 2, 3}.',
+                    373,
+                ],
+                [
+                    'NotEqual: Condition between array{1, 2, 3} and true is always false, because non-empty arrays are loosely equal to true. Use a function e.g. `count($foo) === 0` instead of `$foo != true`.',
+                    376,
+                ],
+                [
+                    'NotEqual: Condition between array{} and false is always false, because empty arrays are loosely equal to false. Use a function e.g. `count($foo) > 0` instead of `$foo != false`.',
+                    381,
                 ],
                 [
                     'Equal: Condition between false and \'function\' are falsy, please do not mix types.',
-                    406,
+                    415,
                 ],
                 [
                     'Equal: Do not compare boolean and string.',
-                    406,
+                    415,
                 ],
                 [
                     'Equal: Insane comparison between false and \'function\'.',
-                    406,
+                    415,
                 ],
                 [
                     'Equal: Condition between \'function\' and false are falsy, please do not mix types.',
-                    406,
+                    415,
                 ],
                 [
                     'Equal: Insane comparison between \'function\' and false.',
-                    406,
+                    415,
                 ],
                 [
                     'Identical: Do not compare boolean and string.',
-                    409,
-                ],
-                [
-                    'Identical: Insane comparison between false and \'function\'.',
-                    409,
-                ],
-                [
-                    'Identical: Insane comparison between \'function\' and false.',
-                    409,
-                ],
-                [
-                    'Equal: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    415,
-                ],
-                [
-                    'Equal: Do not compare objects directly, stdClass and class-string<stdClass> found.',
-                    415,
-                ],
-                [
-                    'Identical: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
                     418,
                 ],
                 [
-                    'Equal: Condition between 3.14 and \'2023-10-01\' are falsy, please do not mix types.',
-                    424,
+                    'Identical: Insane comparison between false and \'function\'.',
+                    418,
                 ],
                 [
-                    'Equal: Insane comparison between 3.14 and \'2023-10-01\'.',
-                    424,
-                ],
-                [
-                    'Equal: Condition between \'2023-10-01\' and 3.14 are falsy, please do not mix types.',
-                    424,
-                ],
-                [
-                    'Equal: Insane comparison between \'2023-10-01\' and 3.14.',
-                    424,
-                ],
-                [
-                    'Identical: Insane comparison between 3.14 and \'2023-10-01\'.',
-                    427,
-                ],
-                [
-                    'Identical: Insane comparison between \'2023-10-01\' and 3.14.',
-                    427,
-                ],
-                [
-                    'Equal: Condition between true and \'{"key": "value"}\' are falsy, please do not mix types.',
-                    433,
-                ],
-                [
-                    'Equal: Do not compare boolean and string.',
-                    433,
-                ],
-                [
-                    'Equal: Condition between \'{"key": "value"}\' and true are falsy, please do not mix types.',
-                    433,
-                ],
-                [
-                    'Equal: Possible insane comparison between \'{"key": "value"}\' and true.',
-                    433,
-                ],
-                [
-                    'Identical: Do not compare boolean and string.',
-                    436,
-                ],
-                [
-                    'Identical: Insane comparison between true and \'{"key": "value"}\'.',
-                    436,
-                ],
-                [
-                    'Identical: Insane comparison between \'{"key": "value"}\' and true.',
-                    436,
-                ],
-                [
-                    'Equal: Condition between true and \'/^pattern/\' are falsy, please do not mix types.',
-                    452,
-                ],
-                [
-                    'Equal: Do not compare boolean and string.',
-                    452,
-                ],
-                [
-                    'Equal: Condition between \'/^pattern/\' and true are falsy, please do not mix types.',
-                    452,
-                ],
-                [
-                    'Equal: Possible insane comparison between \'/^pattern/\' and true.',
-                    452,
-                ],
-                [
-                    'Identical: Do not compare boolean and string.',
-                    455,
-                ],
-                [
-                    'Identical: Insane comparison between true and \'/^pattern/\'.',
-                    455,
-                ],
-                [
-                    'Identical: Insane comparison between \'/^pattern/\' and true.',
-                    455,
-                ],
-                [
-                    'Equal: Condition between array{1, 2, 3} and stdClass is always false, please do not mix types.',
-                    472,
+                    'Identical: Insane comparison between \'function\' and false.',
+                    418,
                 ],
                 [
                     'Equal: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    472,
+                    424,
                 ],
                 [
-                    'Equal: Do not compare objects directly, stdClass and array{1, 2, 3} found.',
-                    472,
+                    'Equal: Do not compare objects directly, stdClass and class-string<stdClass> found.',
+                    424,
                 ],
                 [
                     'Identical: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
-                    475,
+                    427,
+                ],
+                [
+                    'Equal: Condition between 3.14 and \'2023-10-01\' are falsy, please do not mix types.',
+                    433,
+                ],
+                [
+                    'Equal: Insane comparison between 3.14 and \'2023-10-01\'.',
+                    433,
+                ],
+                [
+                    'Equal: Condition between \'2023-10-01\' and 3.14 are falsy, please do not mix types.',
+                    433,
+                ],
+                [
+                    'Equal: Insane comparison between \'2023-10-01\' and 3.14.',
+                    433,
+                ],
+                [
+                    'Identical: Insane comparison between 3.14 and \'2023-10-01\'.',
+                    436,
+                ],
+                [
+                    'Identical: Insane comparison between \'2023-10-01\' and 3.14.',
+                    436,
+                ],
+                [
+                    'Equal: Condition between true and \'{"key": "value"}\' are falsy, please do not mix types.',
+                    442,
+                ],
+                [
+                    'Equal: Do not compare boolean and string.',
+                    442,
+                ],
+                [
+                    'Equal: Condition between \'{"key": "value"}\' and true are falsy, please do not mix types.',
+                    442,
+                ],
+                [
+                    'Equal: Possible insane comparison between \'{"key": "value"}\' and true.',
+                    442,
+                ],
+                [
+                    'Identical: Do not compare boolean and string.',
+                    445,
+                ],
+                [
+                    'Identical: Insane comparison between true and \'{"key": "value"}\'.',
+                    445,
+                ],
+                [
+                    'Identical: Insane comparison between \'{"key": "value"}\' and true.',
+                    445,
+                ],
+                [
+                    'Equal: Condition between true and \'/^pattern/\' are falsy, please do not mix types.',
+                    461,
+                ],
+                [
+                    'Equal: Do not compare boolean and string.',
+                    461,
+                ],
+                [
+                    'Equal: Condition between \'/^pattern/\' and true are falsy, please do not mix types.',
+                    461,
+                ],
+                [
+                    'Equal: Possible insane comparison between \'/^pattern/\' and true.',
+                    461,
+                ],
+                [
+                    'Identical: Do not compare boolean and string.',
+                    464,
+                ],
+                [
+                    'Identical: Insane comparison between true and \'/^pattern/\'.',
+                    464,
+                ],
+                [
+                    'Identical: Insane comparison between \'/^pattern/\' and true.',
+                    464,
+                ],
+                [
+                    'Equal: Condition between array{1, 2, 3} and stdClass is always false, please do not mix types.',
+                    481,
+                ],
+                [
+                    'Equal: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    481,
+                ],
+                [
+                    'Equal: Do not compare objects directly, stdClass and array{1, 2, 3} found.',
+                    481,
+                ],
+                [
+                    'Identical: Use a method to check the condition e.g. `$foo->value()` instead of `$foo`.',
+                    484,
                 ],
             ]
         );
