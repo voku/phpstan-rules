@@ -873,6 +873,34 @@ final class IfConditionRuleTest extends RuleTestCase
                     'NotIdentical: Insane comparison between 2 and 1.',
                     81,
                 ],
+                [
+                    'NotEqual: Condition between 0 and null are falsy, please do not mix types.',
+                    86,
+                ],
+                [
+                    'NotEqual: Condition between null and 0 are falsy, please do not mix types.',
+                    86,
+                ],
+                [
+                    'NotEqual: Insane comparison between 0 and null.',
+                    86,
+                ],
+                [
+                    'NotEqual: Insane comparison between null and 0.',
+                    86,
+                ],
+                [
+                    'NotEqual: Please do not use double negative null conditions. Use "!==" instead if needed.',
+                    86,
+                ],
+                [
+                    'NotIdentical: Insane comparison between 0 and null.',
+                    89,
+                ],
+                [
+                    'NotIdentical: Insane comparison between null and 0.',
+                    89,
+                ],
             ]
         );
     }
@@ -1142,6 +1170,34 @@ final class IfConditionRuleTest extends RuleTestCase
                 [
                     'Identical: Insane comparison between \'0\' and 0.',
                     75,
+                ],
+                [
+                    'NotEqual: Condition between 0 and null are falsy, please do not mix types.',
+                    80,
+                ],
+                [
+                    'NotEqual: Condition between null and 0 are falsy, please do not mix types.',
+                    80,
+                ],
+                [
+                    'NotEqual: Insane comparison between 0 and null.',
+                    80,
+                ],
+                [
+                    'NotEqual: Insane comparison between null and 0.',
+                    80,
+                ],
+                [
+                    'NotEqual: Please do not use double negative null conditions. Use "!==" instead if needed.',
+                    80,
+                ],
+                [
+                    'NotIdentical: Insane comparison between 0 and null.',
+                    83,
+                ],
+                [
+                    'NotIdentical: Insane comparison between null and 0.',
+                    83,
                 ],
             ]
         );
