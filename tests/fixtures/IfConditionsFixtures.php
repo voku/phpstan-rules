@@ -359,6 +359,20 @@ if ($a === $b) {
     // ...
 }
 
+// Comparing array with null / boolean using loose not-equal
+$a = [1, 2, 3];
+if ($a != null) {
+    // ...
+}
+if ($a != true) {
+    // ...
+}
+
+$a = [];
+if ($a != false) {
+    // ...
+}
+
 // Anonymous class + callback + conditional PHPStan return type
 $callbackResolver = new class {
     /**

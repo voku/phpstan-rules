@@ -1171,7 +1171,12 @@ final class IfConditionHelper
         }
 
         $type_1ConstantArray = self::extractSingleConstantArrayType($type_1);
-        if ($type_1ConstantArray === null || self::canLooseEqualConstantArray($type_1ConstantArray, $type_2)) {
+        if ($type_1ConstantArray === null) {
+            return;
+        }
+
+        $equalResult = self::getLooseEqualResultForConstantArray($type_1ConstantArray, $type_2);
+        if ($equalResult === null) {
             return;
         }
 
@@ -1181,36 +1186,50 @@ final class IfConditionHelper
                 'Condition between %s and %s is always %s, please do not mix types.',
                 $type_1ConstantArray->describe(VerbosityLevel::value()),
                 $type_2 !== null ? $type_2->describe(VerbosityLevel::value()) : 'null',
-                $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal ? 'false' : 'true'
+                $cond instanceof \PhpParser\Node\Expr\BinaryOp\Equal
+                    ? ($equalResult ? 'true' : 'false')
+                    : ($equalResult ? 'false' : 'true')
             ),
             $cond->getAttribute('startLine')
         );
     }
 
-    private static function canLooseEqualConstantArray(
+    private static function getLooseEqualResultForConstantArray(
         \PHPStan\Type\Constant\ConstantArrayType $constantArrayType,
         ?\PHPStan\Type\Type $type
-    ): bool
+    ): ?bool
     {
         if ($type === null || $type instanceof \PHPStan\Type\MixedType) {
-            return true;
+            return null;
         }
 
         if ($type instanceof \PHPStan\Type\UnionType) {
+            $result = null;
+
             foreach ($type->getTypes() as $innerType) {
-                if (self::canLooseEqualConstantArray($constantArrayType, $innerType)) {
-                    return true;
+                $innerResult = self::getLooseEqualResultForConstantArray($constantArrayType, $innerType);
+                if ($innerResult === null) {
+                    return null;
+                }
+
+                if ($result === null) {
+                    $result = $innerResult;
+
+                    continue;
+                }
+
+                if ($result !== $innerResult) {
+                    return null;
                 }
             }
 
-            return false;
+            return $result;
         }
 
         if (!$type->accepts($constantArrayType, true)->no()) {
-            return true;
+            return null;
         }
 
-        // Empty arrays ([]) can loose-equal false/null; non-empty arrays can loose-equal true.
         if (self::isNullType($type) || $type->isFalse()->yes()) {
             return $constantArrayType->isIterableAtLeastOnce()->no();
         }
@@ -1220,7 +1239,7 @@ final class IfConditionHelper
         }
 
         if ($type->isBoolean()->yes()) {
-            return true;
+            return null;
         }
 
         return false;
