@@ -56,16 +56,16 @@ if ('2032-03-04' == new \DateTimeImmutable()) {
   // ...
 }
 
-class A1
+$a1 = new class
 {
-    public function foo(self $bar)
+    public function foo(self $bar): void
     {
         // Allow this and static comparison
         if ($bar === $this) {
             //
         }
     }
-}
+};
 
 // Intercept binary op wherever they are
 $var = function(): bool {

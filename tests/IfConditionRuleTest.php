@@ -154,11 +154,11 @@ final class IfConditionRuleTest extends RuleTestCase
                     148
                 ],
                 [
-                    'BooleanAnd: Condition between float|int|numeric-string and \'\' are always false.',
+                    'BooleanAnd: Condition between \'0\'|float|int|(non-falsy-string&numeric-string) and \'\' are always false.',
                     151
                 ],
                 [
-                    'BooleanAnd: Condition between float|int|numeric-string and false are always false.',
+                    'BooleanAnd: Condition between \'0\'|float|int|(non-falsy-string&numeric-string) and false are always false.',
                     154
                 ],
                 [
