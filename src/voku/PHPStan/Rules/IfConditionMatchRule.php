@@ -14,7 +14,6 @@ use PHPStan\Rules\Rule;
  */
 final class IfConditionMatchRule implements Rule
 {
-
     /**
      * @var array<int, class-string>
      */
@@ -26,24 +25,34 @@ final class IfConditionMatchRule implements Rule
     private $checkForAssignments;
 
     /**
+     * @var bool
+     */
+    private $checkYodaConditions;
+
+    /**
      * @var null|ReflectionProvider
      */
     private $reflectionProvider;
 
     /**
+     * The first three parameters intentionally keep the legacy positional order.
+     *
      * @param array<int, class-string> $classesNotInIfConditions
      */
     public function __construct(
         array $classesNotInIfConditions,
         bool $checkForAssignments = false,
-        ?ReflectionProvider $reflectionProvider = null
+        ?ReflectionProvider $reflectionProvider = null,
+        bool $checkYodaConditions = false
     )
     {
         $this->reflectionProvider = $reflectionProvider;
-        
+
         $this->checkForAssignments = $checkForAssignments;
-        
+
         $this->classesNotInIfConditions = $classesNotInIfConditions;
+
+        $this->checkYodaConditions = $checkYodaConditions;
     }
 
     public function getNodeType(): string
@@ -58,14 +67,13 @@ final class IfConditionMatchRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        // init
         $errors = [];
 
         foreach ($node->arms as $arm) {
             if ($arm->conds === null) {
                 continue;
             }
-            
+
             foreach ($arm->conds as $case) {
                 $errors = IfConditionHelper::processNodeHelper(
                     $scope->getType($node->cond),
@@ -76,7 +84,7 @@ final class IfConditionMatchRule implements Rule
                     $node,
                     $this->reflectionProvider,
                     $this->checkForAssignments,
-                    false
+                    $this->checkYodaConditions
                 );
 
                 $errors = array_merge(
@@ -91,7 +99,7 @@ final class IfConditionMatchRule implements Rule
                 );
             }
         }
-        
+
         return $errors;
     }
 }
