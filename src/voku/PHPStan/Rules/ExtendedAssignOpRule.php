@@ -27,7 +27,7 @@ class ExtendedAssignOpRule implements Rule
      * @var bool
      */
     private $checkYodaConditions;
-    
+
     /**
      * @var ReflectionProvider
      */
@@ -40,9 +40,9 @@ class ExtendedAssignOpRule implements Rule
     )
     {
         $this->reflectionProvider = $reflectionProvider;
-        
+
         $this->checkForAssignments = $checkForAssignments;
-        
+
         $this->checkYodaConditions = $checkYodaConditions;
     }
 
@@ -58,14 +58,10 @@ class ExtendedAssignOpRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        // init
         $errors = [];
 
         $leftType = $scope->getType($node->var);
         $rightType = $scope->getType($node->expr);
-
-        // DEBUG
-        //var_dump($leftType, $rightType);
 
         $errors = IfConditionHelper::processNodeHelper(
             $leftType,
@@ -120,9 +116,6 @@ class ExtendedAssignOpRule implements Rule
             &&
             $type_2->describe(VerbosityLevel::typeOnly()) !== 'string' // INFO: hack for non-empty-string
         ) {
-            // INFO:
-            // string concatenation is allowed only with string compatible types
-            // == and != are allowed only with string compatible types
             if (
                 $node instanceof Node\Expr\AssignOp\Concat
                 &&
@@ -144,7 +137,7 @@ class ExtendedAssignOpRule implements Rule
             );
 
             $errorsFound = true;
-            
+
             return;
         }
 
@@ -153,13 +146,7 @@ class ExtendedAssignOpRule implements Rule
             &&
             !($type_2 instanceof \PHPStan\Type\MixedType)
             &&
-            !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\ArrayType::class)
-            &&
-            !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Constant\ConstantArrayType::class, false)
-            &&
-            !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Accessory\NonEmptyArrayType::class, false)
-            &&
-            \strpos($type_2->describe(VerbosityLevel::typeOnly()), 'non-empty-array') !== false
+            $type_2->isArray()->no()
         ) {
             $errors[] = IfConditionHelper::buildErrorMessage(
                 $node,

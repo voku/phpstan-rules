@@ -14,7 +14,6 @@ use PHPStan\Rules\Rule;
  */
 final class IfConditionSwitchCaseRule implements Rule
 {
-
     /**
      * @var array<int, class-string>
      */
@@ -26,24 +25,34 @@ final class IfConditionSwitchCaseRule implements Rule
     private $checkForAssignments;
 
     /**
+     * @var bool
+     */
+    private $checkYodaConditions;
+
+    /**
      * @var null|ReflectionProvider
      */
     private $reflectionProvider;
 
     /**
+     * The first three parameters intentionally keep the legacy positional order.
+     *
      * @param array<int, class-string> $classesNotInIfConditions
      */
     public function __construct(
         array $classesNotInIfConditions,
         bool $checkForAssignments = false,
-        ?ReflectionProvider $reflectionProvider = null
+        ?ReflectionProvider $reflectionProvider = null,
+        bool $checkYodaConditions = false
     )
     {
         $this->reflectionProvider = $reflectionProvider;
-        
+
         $this->checkForAssignments = $checkForAssignments;
-        
+
         $this->classesNotInIfConditions = $classesNotInIfConditions;
+
+        $this->checkYodaConditions = $checkYodaConditions;
     }
 
     public function getNodeType(): string
@@ -58,7 +67,6 @@ final class IfConditionSwitchCaseRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        // init
         $errors = [];
 
         foreach ($node->cases as $case) {
@@ -71,7 +79,7 @@ final class IfConditionSwitchCaseRule implements Rule
                 $node,
                 $this->reflectionProvider,
                 $this->checkForAssignments,
-                false
+                $this->checkYodaConditions
             );
 
             if ($case->cond !== null) {
@@ -87,7 +95,7 @@ final class IfConditionSwitchCaseRule implements Rule
                 );
             }
         }
-        
+
         return $errors;
     }
 }

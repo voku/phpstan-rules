@@ -68,7 +68,7 @@ services:
 			checkYodaConditions: %voku.checkYodaConditions%
 			checkForAssignments: %voku.checkForAssignments%
 		tags:
-			- phpstan.rules.rule
+			- phpstan.rules.rule		
 			
 	-
 		class: voku\PHPStan\Rules\IfConditionBasicRule
@@ -93,6 +93,7 @@ services:
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkForAssignments: %voku.checkForAssignments%
+			checkYodaConditions: %voku.checkYodaConditions%
 		tags:
 			- phpstan.rules.rule
 
@@ -101,6 +102,7 @@ services:
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkForAssignments: %voku.checkForAssignments%
+			checkYodaConditions: %voku.checkYodaConditions%
 		tags:
 			- phpstan.rules.rule
 			
@@ -109,5 +111,6 @@ services:
 		arguments:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkForAssignments: %voku.checkForAssignments%
+			checkYodaConditions: %voku.checkYodaConditions%
 		tags:
 			- phpstan.rules.rule

@@ -29,14 +29,10 @@ class ExtendedBinaryOpRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        // init
         $errors = [];
 
         $leftType = $scope->getType($node->left);
         $rightType = $scope->getType($node->right);
-
-        // DEBUG
-        //var_dump($leftType, $rightType);
 
         $errorsFound = false;
         $this->checkErrors($node, $leftType, $rightType, $errors, $errorsFound);
@@ -59,7 +55,6 @@ class ExtendedBinaryOpRule implements Rule
         bool               &$errorsFound
     ): void
     {
-        // if contains are checked separately
         if (
             $node instanceof \PhpParser\Node\Expr\BinaryOp\Identical
             ||
@@ -83,9 +78,6 @@ class ExtendedBinaryOpRule implements Rule
             &&
             $type_2->describe(VerbosityLevel::typeOnly()) !== 'string' // INFO: hack for non-empty-string
         ) {
-            // INFO:
-            // string concatenation is allowed only with string compatible types
-            // == and != are allowed only with string compatible types
             if (
                 (
                     $node instanceof Node\Expr\BinaryOp\Concat
@@ -113,7 +105,7 @@ class ExtendedBinaryOpRule implements Rule
             );
 
             $errorsFound = true;
-            
+
             return;
         }
 
@@ -122,13 +114,7 @@ class ExtendedBinaryOpRule implements Rule
             &&
             !($type_2 instanceof \PHPStan\Type\MixedType)
             &&
-            !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\ArrayType::class)
-            &&
-            !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Constant\ConstantArrayType::class, false)
-            &&
-            !IfConditionHelper::isPhpStanTypeMaybeWithUnionNullable($type_2, \PHPStan\Type\Accessory\NonEmptyArrayType::class, false)
-            &&
-            \strpos($type_2->describe(VerbosityLevel::typeOnly()), 'non-empty-array') !== false // INFO: hack for non-empty-array
+            $type_2->isArray()->no()
         ) {
             $errors[] = IfConditionHelper::buildErrorMessage(
                 $node,
