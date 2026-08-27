@@ -13,4 +13,12 @@ final class ComparisonDiagnosticPolicyMatchFixtures
             default => 0,
         };
     }
+
+    public function lastArmWithoutDefault(int $value): int
+    {
+        return match (true) {
+            $value === 0 => 0,
+            $value != '' => 1,
+        };
+    }
 }
