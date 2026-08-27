@@ -107,6 +107,17 @@ rules:
     - voku\PHPStan\Rules\DisallowedCallMethodOnNullRule
 ```
 
+### InArrayLooseComparisonRule
+
+This opt-in rule detects the PHP 7 -> PHP 8 loose-comparison hazard in `in_array()` and `array_search()` when a definite int/float is compared with a definite non-numeric string through a typed, non-constant haystack.
+
+It is deliberately **not** part of `rules.neon`: strict mode, numeric strings, mixed/union types, unknown strict flags and constant haystacks remain outside its reporting surface.
+
+```neon
+rules:
+    - voku\PHPStan\Rules\InArrayLooseComparisonRule
+```
+
 ### Support
 
 For support and donations please visit [Github](https://github.com/voku/phpstan-rules/) | [Issues](https://github.com/voku/phpstan-rules/issues) | [PayPal](https://paypal.me/moelleken) | [Patreon](https://www.patreon.com/voku).
