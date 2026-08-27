@@ -1,0 +1,29 @@
+{
+    "id": "finding.2026-08-27.c67212",
+    "task_id": "VPR-1",
+    "session": "2026-08-27-vpr-1-r1-0c1de113",
+    "created_at": "2026-08-27T00:18:11+00:00",
+    "created_by": "Lars Moelleken",
+    "scope": [
+        "src/Cli"
+    ],
+    "observation": "Creating one Finding took five CLI round-trips. Each run reported exactly one missing requirement and stopped: 'requires --by actor option', then 'requires --sensitivity option', then 'finding requires evidence', then 'unsupported evidence type at index 0'. 'learn finding-create --help' prints the shared learn help, which lists --evidence-json JSON as 'Evidence object for finding-create' without naming any of the ten accepted type values; the accepted list is only readable in src/EvidenceValidator.php.",
+    "evidence": [
+        {
+            "type": "runtime_observation",
+            "summary": "Five successive finding-create invocations differing only by added options, each failing on the next single missing requirement: --by, --sensitivity, evidence presence, evidence type."
+        },
+        {
+            "type": "file_reference",
+            "path": "tools/agent-loop/vendor/voku/agent-learning/src/EvidenceValidator.php",
+            "line": 15,
+            "summary": "const TYPES lists the ten accepted evidence types that the CLI error message does not name."
+        }
+    ],
+    "hypothesis": "Option validation is a sequence of independent guard clauses rather than one collected validation pass, and the evidence schema is documented in code instead of in the CLI surface that requires it.",
+    "validated_conclusion": "finding-create should report every missing required option in one failure, and the unsupported-evidence-type error should list the accepted type values.",
+    "confidence": "high",
+    "validation_status": "validated",
+    "status": "validated",
+    "sensitivity": "public"
+}

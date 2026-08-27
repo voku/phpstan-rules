@@ -1,0 +1,22 @@
+{
+    "contract_revision": 2,
+    "contract_sha256": "sha256:9d496974b86d9da22c0f5d699ccbf0580f196f3e21d621ce0cd12e4b412b6bda",
+    "implementation_snapshot": "sha256:ee823882fd38347b0023a927f341bdc89b0bc6f654ec131eb81b882b5a403bf8",
+    "kind": "run_verification_receipt",
+    "obligations": [
+        {
+            "command": "php vendor/bin/phpunit -c phpunit.xml",
+            "duration_ms": 2296,
+            "executed_at": "2026-08-27T00:36:36+00:00",
+            "exit_code": 0,
+            "recorded_by": "agent-loop.finish",
+            "status": "passed"
+        }
+    ],
+    "run_id": "run:VPR-1:dfcb7cf6568646a9",
+    "schema_version": "1.1",
+    "source_session_id": "2026-08-27-vpr-1-r2-76cb75d2",
+    "task_id": "VPR-1",
+    "verdict": "satisfied",
+    "verified_at": "2026-08-27T00:38:56+00:00"
+}

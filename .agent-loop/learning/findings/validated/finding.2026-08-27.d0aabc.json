@@ -1,0 +1,27 @@
+{
+    "id": "finding.2026-08-27.d0aabc",
+    "task_id": "VPR-1",
+    "session": "2026-08-27-vpr-1-r1-0c1de113",
+    "created_at": "2026-08-27T00:18:00+00:00",
+    "created_by": "Lars Moelleken",
+    "scope": [
+        "docs/quick-start.md"
+    ],
+    "observation": "workflow plan --scope 'tests/' was accepted at PLAN and APPROVE time, but the following 'enter' returned next_action_kind=host_work with 'repair the agent-loop artifact this task depends on (verification.readiness_unreadable): Implementation snapshot scope escapes or ambiguously addresses the repository: tests/'. Re-running plan without --supersede then refused because a Session was already active, so recovering from a trailing slash required superseding an approved Contract.",
+    "evidence": [
+        {
+            "type": "runtime_observation",
+            "summary": "agent-loop enter VPR-1 --format=json returned next_action_kind=host_work, next_action=repair the agent-loop artifact this task depends on (verification.readiness_unreadable): Implementation snapshot scope escapes or ambiguously addresses the repository: tests/"
+        },
+        {
+            "type": "runtime_observation",
+            "summary": "agent-loop workflow plan VPR-1 without --supersede: [FAIL] Cannot revise Contract for VPR-1 while governed Session 2026-08-27-vpr-1-r1-0c1de113 is active."
+        }
+    ],
+    "hypothesis": "Scope path normalisation happens in the verification/readiness projection rather than in the plan-time validator, so a trivially fixable input error is only surfaced after the approval gate has consumed it.",
+    "validated_conclusion": "workflow plan should reject or normalise a directory scope with a trailing slash at plan time, and the readiness message should name the accepted form; failing that, a scope-only correction should not need to supersede an approved Contract.",
+    "confidence": "high",
+    "validation_status": "validated",
+    "status": "validated",
+    "sensitivity": "public"
+}

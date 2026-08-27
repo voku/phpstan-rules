@@ -1,0 +1,14 @@
+{
+    "contract_revision": 2,
+    "contract_source": {
+        "path": ".agent-loop/contracts/VPR-1/contract.json",
+        "sha256": "sha256:9d496974b86d9da22c0f5d699ccbf0580f196f3e21d621ce0cd12e4b412b6bda"
+    },
+    "kind": "governed_run",
+    "learning_root": ".agent-loop/learning",
+    "prepared_at": "2026-08-27T00:17:00+00:00",
+    "run_id": "run:VPR-1:dfcb7cf6568646a9",
+    "schema_version": "1.0",
+    "session_id": "2026-08-27-vpr-1-r2-76cb75d2",
+    "task_id": "VPR-1"
+}

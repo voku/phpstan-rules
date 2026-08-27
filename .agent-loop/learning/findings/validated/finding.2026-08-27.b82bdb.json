@@ -1,0 +1,23 @@
+{
+    "id": "finding.2026-08-27.b82bdb",
+    "task_id": "VPR-1",
+    "session": "2026-08-27-vpr-1-r2-76cb75d2",
+    "created_at": "2026-08-27T00:40:35+00:00",
+    "created_by": "Lars Moelleken",
+    "scope": [
+        "src/Cli"
+    ],
+    "observation": "On an unmodified repository, immediately after 'init install-assets --agent=claude' and with no edit to any projected file, 'init doctor' reports '[WARN] Managed assets [claude skills]: current=2, stale=16' and '[WARN] Managed assets [claude subagents]: stale=3', while 'init status' on the same state reports '[OK] claude skills: no stale managed entries', '[OK] claude subagents: no stale managed entries' and then lists all 18 skills and all 3 subagents as current.",
+    "evidence": [
+        {
+            "type": "runtime_observation",
+            "summary": "init doctor: [WARN] Managed assets [claude skills]: current=2, stale=16 / [WARN] Managed assets [claude subagents]: stale=3. init status, same repository state: [OK] claude skills: no stale managed entries / [OK] claude subagents: no stale managed entries, followed by all 18 skills and 3 subagents listed as current."
+        }
+    ],
+    "hypothesis": "doctor and status compute staleness against different sources - most likely doctor resolves the canonical asset root from the configured skills-root (docs/agents/skills, which is empty in a host repository that only consumes package-owned assets) while status compares against the manifest and the installed files.",
+    "validated_conclusion": "Two commands must not disagree about whether managed assets are current. Whichever is right, the WARN teaches a host to re-run a sync that changes nothing, and after that the host has no way to tell a real drift from this noise.",
+    "confidence": "high",
+    "validation_status": "validated",
+    "status": "validated",
+    "sensitivity": "public"
+}

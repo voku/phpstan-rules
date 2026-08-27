@@ -1,0 +1,156 @@
+{
+    "disagreements": [],
+    "mode": "governed",
+    "next_action": "none",
+    "next_action_kind": "none",
+    "references": {
+        "approval": {
+            "approved_at": "2026-08-27T00:17:00+00:00",
+            "approved_by": "Lars Moelleken",
+            "contract_revision": 2,
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "source": {
+                "path": ".agent-loop/contracts/VPR-1/contract.json",
+                "sha256": "sha256:9d496974b86d9da22c0f5d699ccbf0580f196f3e21d621ce0cd12e4b412b6bda"
+            },
+            "state": "current"
+        },
+        "board": {
+            "card_id": "VPR-1",
+            "configuration": {
+                "mode": "json",
+                "source": {
+                    "path": ".agent-loop/todo/kanban.config.json",
+                    "sha256": "sha256:4f5eb2e4a6d692aee2eee1e64f8086b69756d26a7192a1d4b6490a3bc2321951"
+                }
+            },
+            "lane": "READY",
+            "observation_mode": "checked",
+            "owner": "agent-kanban",
+            "revision": "43e209bba927f4a35aed3630a9d85b044e8192e5a2f705e165bc7ab48c55ee7d",
+            "source": {
+                "path": ".agent-loop/todo/cards/VPR-1.md",
+                "sha256": "sha256:43e209bba927f4a35aed3630a9d85b044e8192e5a2f705e165bc7ab48c55ee7d"
+            },
+            "state": "linked",
+            "status": "ready"
+        },
+        "contract": {
+            "acceptance_criteria": [
+                "vendor/bin/phpunit is green on PHP 8.4 with the current phpstan/phpstan 2.x release.",
+                "Every rule class in src/voku/PHPStan/Rules/ has at least one test asserting that valid code produces no error.",
+                "Every rule class has its error identifier asserted.",
+                "rules.neon is loaded and every declared service is asserted to be registered."
+            ],
+            "goal": "Replace the thin happy-path PHPUnit coverage of voku/phpstan-rules with a regression-grade suite: no-false-positive fixtures per rule, asserted error identifiers, both states of every configuration flag, rules.neon service wiring, and a fix for the expectations that are already red against the current PHPStan 2.x.",
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "revision": 2,
+            "run_revision": 2,
+            "source": {
+                "path": ".agent-loop/contracts/VPR-1/contract.json",
+                "sha256": "sha256:9d496974b86d9da22c0f5d699ccbf0580f196f3e21d621ce0cd12e4b412b6bda"
+            },
+            "state": "approved"
+        },
+        "edit": {
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "state": "none"
+        },
+        "execution_contract": {
+            "contract_revision": 2,
+            "contract_source": {
+                "path": ".agent-loop/contracts/VPR-1/contract.json",
+                "sha256": "sha256:9d496974b86d9da22c0f5d699ccbf0580f196f3e21d621ce0cd12e4b412b6bda"
+            },
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "required": false,
+            "state": "not_required"
+        },
+        "learning": {
+            "decided_at": "2026-08-27T00:38:44+00:00",
+            "decided_by": "Lars Moelleken",
+            "decision": "findings_recorded",
+            "observation_mode": "checked",
+            "owner": "agent-learning",
+            "run_id": "run:VPR-1:dfcb7cf6568646a9",
+            "source": {
+                "path": ".agent-loop/learning/history/run-learning/5ecd69121031ac4230a3f71f7548ea861502e245de8b3dd333e8d2f6843e85ed.json",
+                "sha256": "sha256:59063a56dfb44daab8ba3d9dc2ee30643d3cd9dedd6e26fafd0cb8cc7662d4b0"
+            },
+            "state": "decided"
+        },
+        "map": {
+            "observation_mode": "checked",
+            "owner": "agent-map",
+            "path": ".agent-loop/map/php-symbols.json",
+            "state": "missing"
+        },
+        "outcome_lineage": {
+            "observation_mode": "checked",
+            "owner": "agent-learning",
+            "run_id": "run:VPR-1:dfcb7cf6568646a9",
+            "state": "run_bound"
+        },
+        "recall": {
+            "bundle_sha256": "c59bd7999f124e9a021d22ffbb99bb502eddae14ff7e43ae6861df3a356714a8",
+            "compilation_id": "compilation.VPR-1.2026-08-27-001700.90acce37",
+            "observation_mode": "checked",
+            "owner": "agent-recall-compiler",
+            "snapshot_sha256": "4bc95adedc2fb02c0b91188e6ada7e8103c62fea54677203bbe9e13bffc94949",
+            "source": {
+                "path": ".agent-loop/recall/VPR-1/meta.json",
+                "sha256": "sha256:263bb6191762fcdeb285a4edfeb8fab94b464fd06b83461d0f97f80a53db0e11"
+            },
+            "state": "compiled"
+        },
+        "review": {
+            "observation_mode": "checked",
+            "owner": "agent-recall-compiler",
+            "source": {
+                "path": ".agent-loop/recall/VPR-1/reviews/VPR-1.blindspots.json",
+                "sha256": "sha256:2882bdd7325669d765ae7bf653edb2aa1fc41672d364e87e423b8a50af1403cf"
+            },
+            "state": "warn"
+        },
+        "search_index": {
+            "observation_mode": "checked",
+            "owner": "agent-map",
+            "path": ".agent-loop/map/search.sqlite",
+            "state": "unavailable"
+        },
+        "session": {
+            "base_commit": null,
+            "ephemeral": false,
+            "observation_mode": "checked",
+            "owner": "agent-session",
+            "session_id": "2026-08-27-vpr-1-r2-76cb75d2",
+            "source": {
+                "path": ".agent-loop/sessions/2026-08-27-vpr-1-r2-76cb75d2/session.json",
+                "sha256": "sha256:deb12f455647a2fd70824372514badd8abfd4dd61bb6d208580d8aa60ad11ff6"
+            },
+            "state": "done",
+            "task_id": "VPR-1"
+        },
+        "verification": {
+            "contract_revision": 2,
+            "implementation_snapshot": "sha256:ee823882fd38347b0023a927f341bdc89b0bc6f654ec131eb81b882b5a403bf8",
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "run_id": "run:VPR-1:dfcb7cf6568646a9",
+            "source": {
+                "path": ".agent-loop/runs/VPR-1/verification.json",
+                "sha256": "sha256:e63f70708b021605706a4d44fc7575c70a616ee6cb70e987e048b8f468da7186"
+            },
+            "source_session_id": "2026-08-27-vpr-1-r2-76cb75d2",
+            "state": "passed"
+        }
+    },
+    "run_id": "run:VPR-1:dfcb7cf6568646a9",
+    "schema_version": "1.0",
+    "state": "complete",
+    "task_id": "VPR-1"
+}

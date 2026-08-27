@@ -1,0 +1,23 @@
+{
+    "id": "finding.2026-08-27.990a1b",
+    "task_id": "VPR-1",
+    "session": "2026-08-27-vpr-1-r2-76cb75d2",
+    "created_at": "2026-08-27T00:38:32+00:00",
+    "created_by": "Lars Moelleken",
+    "scope": [
+        "src/Cli"
+    ],
+    "observation": "'agent-loop finish VPR-1 --learning findings_recorded --learning-reason ... --by ...' fails with '[FAIL] finish: findings_recorded requires at least one finding id.' The same invocation with --format=json prints no error at all: it returns the previous result with the identical next_action command_template, so a host that follows the documented JSON contract sees an unchanged next step and no reason, and cannot tell a refusal from a no-op. The command_template itself also omits the --finding option it requires: it reads 'agent-loop finish VPR-1 --learning <no_durable_learning|findings_recorded|follow_up_required> --learning-reason <learning-reason> --by <actor>'.",
+    "evidence": [
+        {
+            "type": "runtime_observation",
+            "summary": "Text mode: [FAIL] finish: findings_recorded requires at least one finding id. JSON mode for the identical arguments: next_action_kind=command_template, next_action=agent-loop finish VPR-1 --learning <...> --learning-reason <learning-reason> --by <actor>, with no error field."
+        }
+    ],
+    "hypothesis": "The JSON renderer serialises the lifecycle projection and never the failure of the mutation that was just attempted, and the template is built from the option list of the generic learning transition rather than from the requirements of the selected status.",
+    "validated_conclusion": "A refused mutation must be visible in --format=json, and a command_template for findings_recorded has to include --finding <id>. The workflow instructs hosts to obey next_action_kind/next_action; a template that cannot succeed as written breaks exactly that contract.",
+    "confidence": "high",
+    "validation_status": "validated",
+    "status": "validated",
+    "sensitivity": "public"
+}

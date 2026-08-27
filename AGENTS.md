@@ -1,0 +1,16 @@
+<!-- agent-loop:project-instructions:begin -->
+## agent-loop workflow router
+
+This repository uses `voku/agent-loop` for governed coding work. Keep this always-on router small; detailed procedures live in the installed skills and CLI help. If host integration is uncertain, run `tools/agent-loop/vendor/bin/agent-loop init host-status --format=json` and obey its `next_action_kind` / `next_action` until no repository-owned action remains; `runtime_boundary` describes host/user scope and is not authority to mutate it. Troubleshooting only: use `tools/agent-loop/vendor/bin/agent-loop init status` to inspect broader setup and `init sync-instructions` when managed instruction projection itself needs repair.
+
+Before the lifecycle CLI is runnable, recover only the minimum reversible workspace/tool bootstrap needed to execute the repository's declared workflow: inspect the checkout/remotes, fetch the obvious public repository, install already-declared Composer dependencies, obtain required public sibling checkouts for cross-package work, discover available host/GitHub capabilities without exposing credentials, and establish an isolated branch or worktree before implementation. This bootstrap is not product-code mutation and does not authorize approval, task state, or owner artifacts. Missing `vendor/`, a missing remote, or an unavailable preferred PR/push tool is not by itself a terminal workflow blocker; continue safe local work until the next genuinely required action cannot be performed.
+
+For a durable task id:
+
+1. Before mutating product code, run `tools/agent-loop/vendor/bin/agent-loop enter <task-id> --format=json` and obey the returned `next_action_kind` / `next_action`. `command` means execute it as written; `command_template` means fill model-owned placeholders from the actual request and repository evidence and execute it without asking a human merely because placeholders exist; `decision_required` means a genuine human-authority decision is required, so show the exact current decision subject before asking; `host_work` means perform the described host-native implementation/model work; `none` means there is no further lifecycle action. Never fabricate an approval or risk owner.
+2. Use repository-managed skills and subagents when their descriptions match the task. Do not recreate their procedures from conversational memory. In particular, do not pre-build Map/Search, create Session/Recall state, or infer approval/close ordering: deterministic prerequisites and repairs must come from the canonical lifecycle result.
+3. When host-native mutation is complete, run `tools/agent-loop/vendor/bin/agent-loop finish <task-id> --format=json`, then obey its canonical next step until `next_action_kind=none` and the result is complete. If a human decision is requested, present the exact Contract/review/Learning/risk evidence being decided instead of asking for a generic confirmation. If an advertised command deterministically refuses without changing the next step, report a workflow defect rather than teaching the host a private workaround.
+4. Never claim that hooks fired, checks passed, CI is green, a PR merged, or a release/deploy shipped unless current evidence proves it.
+
+For untracked exploration, use an ephemeral session rather than inventing a durable task.
+<!-- agent-loop:project-instructions:end -->

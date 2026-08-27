@@ -143,15 +143,15 @@ if (
     // ...
 }
 
-/** @var numeric $a */
-$a = '1';
+/** @var numeric $a */ $a = '1'; /** @var numeric $b */ $b = '1';
+/** @var numeric $c */ $c = '1';
 if ($a && '0') {
     // ...
 }
-if ($a && '') {
+if ($b && '') {
     // ...
 }
-if ($a && false) {
+if ($c && false) {
     // ...
 }
 
