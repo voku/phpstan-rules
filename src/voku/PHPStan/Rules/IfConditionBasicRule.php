@@ -36,25 +36,13 @@ final class IfConditionBasicRule implements Rule
     private $reflectionProvider;
 
     /**
-     * @var bool
-     */
-    private $reportAlwaysTrueInLastCondition;
-
-    /**
-     * @var bool
-     */
-    private $treatPhpDocTypesAsCertain;
-
-    /**
      * @param array<int, class-string> $classesNotInIfConditions
      */
     public function __construct(
         array $classesNotInIfConditions,
         ?ReflectionProvider $reflectionProvider = null,
         bool $checkForAssignments = false,
-        bool $checkYodaConditions = false,
-        bool $reportAlwaysTrueInLastCondition = true,
-        bool $treatPhpDocTypesAsCertain = true
+        bool $checkYodaConditions = false
     )
     {
         $this->reflectionProvider = $reflectionProvider;
@@ -62,12 +50,8 @@ final class IfConditionBasicRule implements Rule
         $this->classesNotInIfConditions = $classesNotInIfConditions;
 
         $this->checkForAssignments = $checkForAssignments;
-
+        
         $this->checkYodaConditions = $checkYodaConditions;
-
-        $this->reportAlwaysTrueInLastCondition = $reportAlwaysTrueInLastCondition;
-
-        $this->treatPhpDocTypesAsCertain = $treatPhpDocTypesAsCertain;
     }
 
     public function getNodeType(): string
@@ -87,7 +71,7 @@ final class IfConditionBasicRule implements Rule
             &&
             $node->cond->expr instanceof Node\Expr\Variable
         ) {
-            $errors = IfConditionHelper::processNodeHelper(
+            return IfConditionHelper::processNodeHelper(
                 $scope->getType($node->cond->expr),
                 null,
                 $node->cond,
@@ -98,21 +82,13 @@ final class IfConditionBasicRule implements Rule
                 $this->checkForAssignments,
                 $this->checkYodaConditions
             );
-
-            return IfConditionDiagnosticPolicy::filterTruthiness(
-                $node->cond,
-                $scope,
-                $errors,
-                $this->reportAlwaysTrueInLastCondition,
-                $this->treatPhpDocTypesAsCertain
-            );
         }
-
+        
         if (!$node->cond instanceof Node\Expr\Variable) {
             return [];
         }
 
-        $errors = IfConditionHelper::processNodeHelper(
+        return IfConditionHelper::processNodeHelper(
             $scope->getType($node->cond),
             null,
             $node->cond,
@@ -122,14 +98,6 @@ final class IfConditionBasicRule implements Rule
             $this->reflectionProvider,
             $this->checkForAssignments,
             $this->checkYodaConditions
-        );
-
-        return IfConditionDiagnosticPolicy::filterTruthiness(
-            $node->cond,
-            $scope,
-            $errors,
-            $this->reportAlwaysTrueInLastCondition,
-            $this->treatPhpDocTypesAsCertain
         );
     }
 }
