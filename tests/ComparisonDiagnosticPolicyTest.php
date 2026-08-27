@@ -36,6 +36,9 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
         return $this->ruleUnderTest;
     }
 
+    /**
+     * @requires PHP >= 8.0
+     */
     public function testDuplicateSuppressionRemovesOnlyTheGenericNativeOverlapClaim(): void
     {
         $this->ruleUnderTest = new IfConditionRule(
@@ -57,6 +60,27 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
         self::assertNoMessageContains($messages[16] ?? [], 'Condition between ');
         self::assertMessageContains($messages[16] ?? [], 'double negative integer conditions');
         self::assertMessageContains($messages[16] ?? [], 'Possible insane comparison');
+    }
+
+    /**
+     * @requires PHP < 8.0
+     */
+    public function testPhp7ComparisonSemanticsFailOpenInsteadOfSuppressingExtensionFindings(): void
+    {
+        $this->ruleUnderTest = new IfConditionRule(
+            [],
+            $this->createReflectionProvider(),
+            false,
+            false,
+            false,
+            false,
+            true
+        );
+
+        $messages = $this->messagesByLine([self::COMPARISON_FIXTURE]);
+
+        self::assertMessageContains($messages[11] ?? [], 'Condition between ');
+        self::assertMessageContains($messages[23] ?? [], 'Condition between ');
     }
 
     public function testDefaultDuplicateReportingKeepsTheExistingGenericClaim(): void
@@ -115,6 +139,9 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
         );
     }
 
+    /**
+     * @requires PHP >= 8.0
+     */
     public function testAlwaysTrueLastElseIfDropsOnlyTheTruthClaimWhenThePhpStanFlagIsOff(): void
     {
         $this->ruleUnderTest = new IfConditionRule(
@@ -169,7 +196,7 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
     }
 
     /**
-     * @requires PHP 8.0
+     * @requires PHP >= 8.0
      */
     public function testMatchArmBeforeDefaultIsNotTreatedAsALastCondition(): void
     {
