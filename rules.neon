@@ -4,6 +4,7 @@ parameters:
 		classesForCheckStringToIntCast: []
 		checkForAssignments: false
 		checkYodaConditions: false
+		reportDuplicateNativeComparisons: true
 
 parametersSchema:
 	voku: structure([
@@ -11,6 +12,7 @@ parametersSchema:
 		classesForCheckStringToIntCast: listOf(string())
 		checkForAssignments: bool()
 		checkYodaConditions: bool()
+		reportDuplicateNativeComparisons: bool()
 	])
 
 services:
@@ -67,6 +69,8 @@ services:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkYodaConditions: %voku.checkYodaConditions%
 			checkForAssignments: %voku.checkForAssignments%
+			reportDuplicateNativeComparisons: %voku.reportDuplicateNativeComparisons%
+			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
 		tags:
 			- phpstan.rules.rule		
 			
@@ -76,6 +80,7 @@ services:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkYodaConditions: %voku.checkYodaConditions%
 			checkForAssignments: %voku.checkForAssignments%
+			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
 		tags:
 			- phpstan.rules.rule
 
@@ -85,6 +90,7 @@ services:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkYodaConditions: %voku.checkYodaConditions%
 			checkForAssignments: %voku.checkForAssignments%
+			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
 		tags:
 			- phpstan.rules.rule
 
