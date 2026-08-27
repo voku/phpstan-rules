@@ -46,6 +46,7 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
             false,
             false,
             false,
+            true,
             true
         );
 
@@ -68,6 +69,7 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
             false,
             false,
             true,
+            true,
             true
         );
 
@@ -77,7 +79,7 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
         self::assertMessageContains($messages[16] ?? [], 'Condition between ');
     }
 
-    public function testPhpDocOnlyConstantConditionFailsOpenInsteadOfLosingTheExtensionFinding(): void
+    public function testPhpDocConstantOverlapIsSuppressedWhenPhpDocTypesAreCertain(): void
     {
         $this->ruleUnderTest = new IfConditionRule(
             [],
@@ -85,7 +87,28 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
             false,
             false,
             false,
+            true,
             true
+        );
+
+        $messages = $this->messagesByLine([self::COMPARISON_FIXTURE]);
+
+        self::assertNoMessageContains(
+            $messages[45] ?? [],
+            'Condition between '
+        );
+    }
+
+    public function testPhpDocConstantOverlapFailsOpenWhenPhpDocTypesAreNotCertain(): void
+    {
+        $this->ruleUnderTest = new IfConditionRule(
+            [],
+            $this->createReflectionProvider(),
+            false,
+            false,
+            false,
+            true,
+            false
         );
 
         $messages = $this->messagesByLine([self::COMPARISON_FIXTURE]);
@@ -93,7 +116,7 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
         self::assertMessageContains(
             $messages[45] ?? [],
             'Condition between ',
-            'The full PHPDoc-aware type is constant here but the native type is not. Suppression must fail open.'
+            'PHPStan uses the native type with treatPhpDocTypesAsCertain=false, so suppression must fail open.'
         );
     }
 
@@ -105,7 +128,8 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
             false,
             false,
             true,
-            false
+            false,
+            true
         );
 
         $messages = $this->messagesByLine([self::COMPARISON_FIXTURE]);
@@ -123,6 +147,7 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
             false,
             false,
             true,
+            true,
             true
         );
 
@@ -139,7 +164,8 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
             false,
             false,
             true,
-            false
+            false,
+            true
         );
 
         $messages = $this->messagesByLine([self::COMPARISON_FIXTURE]);
@@ -158,12 +184,45 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
             false,
             false,
             true,
-            false
+            false,
+            true
         );
 
         $messages = $this->messagesByLine([self::MATCH_FIXTURE]);
 
         self::assertMessageContains($messages[12] ?? [], 'Condition between ');
+    }
+
+    /**
+     * @requires PHP 8.0
+     */
+    public function testActualLastMatchArmHonorsThePhpStanFlag(): void
+    {
+        $this->ruleUnderTest = new IfConditionRule(
+            [],
+            $this->createReflectionProvider(),
+            false,
+            false,
+            true,
+            false,
+            true
+        );
+
+        $messages = $this->messagesByLine([self::MATCH_FIXTURE]);
+        self::assertNoMessageContains($messages[21] ?? [], 'Condition between ');
+
+        $this->ruleUnderTest = new IfConditionRule(
+            [],
+            $this->createReflectionProvider(),
+            false,
+            false,
+            true,
+            true,
+            true
+        );
+
+        $messages = $this->messagesByLine([self::MATCH_FIXTURE]);
+        self::assertMessageContains($messages[21] ?? [], 'Condition between ');
     }
 
     public function testTruthinessLastConditionSuppressesAlwaysTrueButNeverAlwaysFalse(): void
@@ -173,7 +232,8 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
             $this->createReflectionProvider(),
             false,
             false,
-            false
+            false,
+            true
         );
 
         $messages = $this->messagesByLine([self::TRUTHINESS_FIXTURE]);
@@ -193,6 +253,7 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
             $this->createReflectionProvider(),
             false,
             false,
+            true,
             true
         );
 
@@ -200,6 +261,26 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
 
         self::assertMessageContains($messages[16] ?? [], 'Non-empty array is never empty.');
         self::assertMessageContains($messages[30] ?? [], 'Non-empty array is never empty.');
+    }
+
+    public function testTruthinessUsesNativeTypeWhenPhpDocTypesAreNotCertain(): void
+    {
+        $this->ruleUnderTest = new ElseIfConditionBasicRule(
+            [],
+            $this->createReflectionProvider(),
+            false,
+            false,
+            false,
+            false
+        );
+
+        $messages = $this->messagesByLine([self::TRUTHINESS_FIXTURE]);
+
+        self::assertMessageContains(
+            $messages[16] ?? [],
+            'Non-empty array is never empty.',
+            'The helper may see the PHPDoc non-empty-array, but last-condition suppression must follow PHPStan native certainty.'
+        );
     }
 
     /**
