@@ -16,9 +16,9 @@ final class ComparisonDiagnosticPolicyFixtures
         return $value != '';
     }
 
-    public function lastElseIf(int $value): bool
+    public function lastElseIf(bool $gate, int $value): bool
     {
-        if ($value === 0) {
+        if ($gate) {
             return false;
         } elseif ($value != '') {
             return true;
