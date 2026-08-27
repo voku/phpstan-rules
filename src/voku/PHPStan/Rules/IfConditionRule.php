@@ -14,41 +14,10 @@ use PHPStan\Rules\Rule;
  */
 final class IfConditionRule implements Rule
 {
-
     /**
-     * @var array<int, class-string>
+     * @var IfConditionRuleDiagnostics
      */
-    private $classesNotInIfConditions;
-
-    /**
-     * @var bool
-     */
-    private $checkForAssignments;
-
-    /**
-     * @var bool
-     */
-    private $checkYodaConditions;
-
-    /**
-     * @var null|ReflectionProvider
-     */
-    private $reflectionProvider;
-
-    /**
-     * @var bool
-     */
-    private $reportDuplicateNativeComparisons;
-
-    /**
-     * @var bool
-     */
-    private $reportAlwaysTrueInLastCondition;
-
-    /**
-     * @var bool
-     */
-    private $treatPhpDocTypesAsCertain;
+    private $diagnostics;
 
     /**
      * @param array<int, class-string> $classesNotInIfConditions
@@ -56,26 +25,21 @@ final class IfConditionRule implements Rule
     public function __construct(
         array $classesNotInIfConditions = [],
         ?ReflectionProvider $reflectionProvider = null,
-        bool                $checkForAssignments = false,
-        bool                $checkYodaConditions = false,
-        bool                $reportDuplicateNativeComparisons = true,
-        bool                $reportAlwaysTrueInLastCondition = true,
-        bool                $treatPhpDocTypesAsCertain = true
-    )
-    {
-        $this->reflectionProvider = $reflectionProvider;
-
-        $this->classesNotInIfConditions = $classesNotInIfConditions;
-
-        $this->checkForAssignments = $checkForAssignments;
-
-        $this->checkYodaConditions = $checkYodaConditions;
-
-        $this->reportDuplicateNativeComparisons = $reportDuplicateNativeComparisons;
-
-        $this->reportAlwaysTrueInLastCondition = $reportAlwaysTrueInLastCondition;
-
-        $this->treatPhpDocTypesAsCertain = $treatPhpDocTypesAsCertain;
+        bool $checkForAssignments = false,
+        bool $checkYodaConditions = false,
+        bool $reportDuplicateNativeComparisons = true,
+        bool $reportAlwaysTrueInLastCondition = true,
+        bool $treatPhpDocTypesAsCertain = true
+    ) {
+        $this->diagnostics = new IfConditionRuleDiagnostics(
+            $classesNotInIfConditions,
+            $reflectionProvider,
+            $checkForAssignments,
+            $checkYodaConditions,
+            $reportDuplicateNativeComparisons,
+            $reportAlwaysTrueInLastCondition,
+            $treatPhpDocTypesAsCertain
+        );
     }
 
     public function getNodeType(): string
@@ -90,40 +54,10 @@ final class IfConditionRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        $leftType = $scope->getType($node->left);
-        $rightType = $scope->getType($node->right);
+        if ($scope->isInTrait()) {
+            return [];
+        }
 
-        $errors = [];
-        $errors = IfConditionHelper::processNodeHelper(
-            $leftType,
-            $rightType,
-            $node,
-            $errors,
-            $this->classesNotInIfConditions,
-            $node,
-            $this->reflectionProvider,
-            $this->checkForAssignments,
-            $this->checkYodaConditions
-        );
-        $errors = IfConditionHelper::processNodeHelper(
-            $rightType,
-            $leftType,
-            $node,
-            $errors,
-            $this->classesNotInIfConditions,
-            $node,
-            $this->reflectionProvider,
-            false,
-            false
-        );
-
-        return IfConditionDiagnosticPolicy::filterBinaryComparison(
-            $node,
-            $scope,
-            $errors,
-            $this->reportDuplicateNativeComparisons,
-            $this->reportAlwaysTrueInLastCondition,
-            $this->treatPhpDocTypesAsCertain
-        );
+        return $this->diagnostics->processNode($node, $scope);
     }
 }
