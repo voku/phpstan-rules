@@ -1,13 +1,17 @@
 # VPR-8: checkYodaConditions is silently ignored by three rules
 
 - **Ticket:** VPR-8
-- **Lane:** READY
-- **Status:** ready
+- **Lane:** VERIFY
+- **Status:** done
 - **Created:** 2026-08-27T00:35:08+00:00
-- **Updated:** 2026-08-27T00:35:08+00:00
-- **Summary:** rules.neon passes checkYodaConditions to IfConditionRule, IfConditionBasicRule, ElseIfConditionBasicRule, IfConditionBooleanAnd/Or/NotRule and ExtendedAssignOpRule. IfConditionTernaryOperatorRule, IfConditionMatchRule and IfConditionSwitchCaseRule have no such constructor parameter at all, so a project that sets checkYodaConditions: true gets no Yoda reporting inside a ternary, a match arm or a switch case and is never told. Separately, IfConditionMatchRule and IfConditionSwitchCaseRule take (array, bool, ?ReflectionProvider) while every other rule takes (array, ?ReflectionProvider, bool, bool), which is a trap for anyone constructing them positionally.
-- **Validation:** php vendor/bin/phpunit -c phpunit.xml --filter 'RuleConfigurationTest|RulesNeonRegistrationTest'
+- **Updated:** 2026-08-27T10:33:00+00:00
+- **Summary:** Implemented and merged through PR #71. `checkYodaConditions` now reaches ternary, match and switch rules. Match/Switch keep their historical first three positional constructor arguments and append the new flag instead of reordering public parameters. `rules.neon` uses named arguments, and regression tests cover both flag states plus the legacy constructor positions.
+- **Next:** No follow-up required unless a new condition frontdoor bypasses the shared configuration contract.
+- **Validation:** PR #71 exact-head PHP 7.4-8.4 matrix is green, including PHPStan on PHP 7.4.
 - **Format version:** 1
 
-## Agent Task Brief
-Either add checkYodaConditions to the three rules or document why a Yoda condition is acceptable there, and align the constructor parameter order. RulesNeonRegistrationTest already compiles every service, so a signature change is covered; add a RuleConfigurationTest case per rule for the flag itself.
+## Decision evidence
+
+- Configuration propagation is tested on all three previously missing rules.
+- Direct positional construction remains backward-compatible for Match/Switch.
+- `RulesNeonRegistrationTest` compiles the real service wiring.

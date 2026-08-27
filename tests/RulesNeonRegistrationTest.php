@@ -126,6 +126,7 @@ final class RulesNeonRegistrationTest extends PHPStanTestCase
                 'checkYodaConditions' => false,
                 'classesForCheckStringToIntCast' => [],
                 'classesNotInIfConditions' => [],
+                'reportDuplicateNativeComparisons' => true,
             ],
             self::sortByKey($parameters)
         );

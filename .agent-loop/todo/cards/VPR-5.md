@@ -1,12 +1,21 @@
 # VPR-5: Check the rules against PHPStan's reportAlwaysTrueInLastCondition semantics
 
 - **Ticket:** VPR-5
-- **Lane:** BACKLOG
-- **Status:** todo
+- **Lane:** VERIFY
+- **Status:** done
 - **Created:** 2026-08-27T00:34:41+00:00
-- **Updated:** 2026-08-27T00:34:41+00:00
-- **Summary:** PHPStan deliberately stays silent about an always-true *last* condition of an if/elseif chain unless reportAlwaysTrueInLastCondition is enabled, because that last branch is often a deliberate guard. The rules in this package have no equivalent notion and report 'are always false' / 'is always true' unconditionally.
+- **Updated:** 2026-08-27T10:54:00+00:00
+- **Summary:** Measured and implemented only on the proven native-overlap surface. `IfConditionRule` consumes PHPStan's `reportAlwaysTrueInLastCondition` and `treatPhpDocTypesAsCertain` parameters for constant loose binary comparisons. A final always-true `elseif` generic truth claim is suppressed when PHPStan suppresses it, while extension-only double-negative and PHP 7/8 advice on the same line remain. Switch cases are not marked last by PHPStan, and a match condition immediately before a default is not last, so both remain reportable. Basic array/string truthiness diagnostics are extension-only rather than native overlap and are deliberately left unchanged.
+- **Next:** No VPR-5 follow-up remains; trait-context semantics are separately owned by #74.
+- **Validation:** PR #75 run #321 is green across PHP 7.4-8.4; PHPStan is green on PHP 7.4. Both reportAlwaysTrueInLastCondition modes and the applicable elseif/match/switch boundaries are pinned.
 - **Format version:** 1
 
-## Agent Task Brief
-Build fixtures for the last condition of an if/elseif chain, a match default and a switch default, compare against a native PHPStan run with the parameter both off and on, and decide whether this package should honour the same parameter.
+## Decision evidence
+
+- Final binary `elseif` is tested with the flag off and on at message level.
+- Style/advice on that same line remains when only the generic native-overlap claim is removed.
+- Match-before-default remains reportable because `LastConditionVisitor` does not mark it last.
+- Switch-before-default remains reportable because PHPStan does not mark switch cases as last conditions.
+- Probes showed no corresponding generic extension truth claim for an actual final match arm, so no new diagnostic was invented merely to mirror the parameter.
+- Non-empty-array truthiness remains extension-owned; it is not filtered under VPR-5 without proven native overlap.
+- PHP 7 behavior is explicitly fail-open where the same constant PHP 8 loose-comparison result does not exist.

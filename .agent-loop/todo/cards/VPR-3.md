@@ -1,12 +1,20 @@
 # VPR-3: Decide how much of PHPStan 2.x native comparison reporting to duplicate
 
 - **Ticket:** VPR-3
-- **Lane:** BACKLOG
-- **Status:** todo
+- **Lane:** VERIFY
+- **Status:** done
 - **Created:** 2026-08-27T00:34:41+00:00
-- **Updated:** 2026-08-27T00:34:41+00:00
-- **Summary:** PHPStan 2.x registers ConstantLooseComparisonRule and StrictComparisonOfDifferentTypesRule at level 4, plus BooleanAnd/Or/Not, Ternary, ElseIf, Match, Switch, DoWhile and WhileLoop constant-condition rules. Measured on tests/fixtures/Php8ComparisonSemanticsFixtures.php: PHPStan reports 4 errors (equal.alwaysFalse / notEqual.alwaysTrue), this package reports 19 on the same lines, three of them per line saying the same thing in three ways.
+- **Updated:** 2026-08-27T10:54:00+00:00
+- **Summary:** Implemented as a backward-compatible output policy. `voku.reportDuplicateNativeComparisons` defaults to `true`; when disabled, only the generic constant loose-comparison truth claim is removed, and only when PHPStan would report the same condition under the same PHP-version semantics, `treatPhpDocTypesAsCertain`, and `reportAlwaysTrueInLastCondition` configuration. Extension-only PHP 7/8 migration advice, double-negative advice and possible-insane-comparison diagnostics remain published. Trait contexts fail open until #74 owns contextual deferral.
+- **Next:** No VPR-3 follow-up remains; trait-context behavior is separately owned by #74.
+- **Validation:** PR #75 run #321 is green across PHP 7.4-8.4; PHPStan is green on PHP 7.4. Message-level regression coverage also pins PHP 7 fail-open semantics.
 - **Format version:** 1
 
-## Agent Task Brief
-Split the rule set into (a) what PHPStan already reports, (b) what only this package reports. (b) is real and worth keeping: none of the double negative checks - $v != '', $v != 0, $v != false, $v != null - are reported by PHPStan, because those conditions are not constant. For (a), consider a parameter that suppresses the duplicated messages, or narrow the checks to the cases PHPStan misses, so that a project at level 4+ does not get the same finding three times.
+## Decision evidence
+
+- Duplicate suppression is opt-in; existing consumers keep current output by default.
+- The policy mirrors PHPStan's `treatPhpDocTypesAsCertain` type choice instead of inferring overlap from this extension's PHPDoc-aware type alone.
+- A last always-true condition is not classified as a native duplicate when PHPStan itself suppresses it.
+- PHP 7 comparison semantics are tested separately and deliberately fail open where PHPStan does not prove the same constant result.
+- Tests assert individual messages on the same line, so removing an extension-only diagnostic cannot hide behind a correct set of line numbers.
+- PHPDoc-only overlap is tested in both certainty modes.

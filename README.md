@@ -91,6 +91,16 @@ parameters:
         checkYodaConditions: true
 ```
 
+The default keeps this extension's historical comparison output. If your PHPStan level already reports constant loose comparisons, you can suppress only the duplicated generic truth claim while keeping the extension-specific PHP 7/8 and style advice:
+
+```neon
+parameters:
+    voku:
+        reportDuplicateNativeComparisons: false
+```
+
+Duplicate suppression follows PHPStan's own `treatPhpDocTypesAsCertain` and `reportAlwaysTrueInLastCondition` parameters. If PHPStan would not publish the native finding under the active configuration, this extension keeps its diagnostic instead of guessing. Trait contexts also fail open until the contextual trait follow-up in issue #74 is resolved.
+
 ### ExtendedBinaryOpRule
 
 This rule will check "+", "*", "/", "-", ... (operators) and "." (concatenation) for compatible types. 
