@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace voku\PHPStan\Rules\Test;
 
 use PHPStan\Analyser\Analyser;
+use PHPStan\Analyser\AnalyserResultFinalizer;
 use PHPStan\Analyser\Error;
 use PHPStan\File\FileHelper;
 use PHPStan\Testing\PHPStanTestCase;
@@ -83,8 +84,14 @@ final class TraitContextIntegrationTest extends PHPStanTestCase
 
         /** @var Analyser $analyser */
         $analyser = self::getContainer()->getByType(Analyser::class);
+        /** @var AnalyserResultFinalizer $finalizer */
+        $finalizer = self::getContainer()->getByType(AnalyserResultFinalizer::class);
 
-        return $analyser->analyse($files)->getErrors();
+        return $finalizer->finalize(
+            $analyser->analyse($files, null, null, true),
+            false,
+            true
+        )->getErrors();
     }
 
     /**
