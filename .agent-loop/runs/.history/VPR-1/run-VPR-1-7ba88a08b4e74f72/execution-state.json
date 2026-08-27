@@ -1,0 +1,13 @@
+{
+    "attention": null,
+    "candidate_revision": "run:run:VPR-1:7ba88a08b4e74f72:initial",
+    "contract_revision": 1,
+    "current_attempt": 0,
+    "current_stage_id": null,
+    "execution_plan_digest": "sha256:f4af3d938641e924698ecede4b383c96e767c1f5a032cc32a411c4444db7405b",
+    "history": [],
+    "kind": "governed_execution_state",
+    "run_id": "run:VPR-1:7ba88a08b4e74f72",
+    "schema_version": "1.0",
+    "task_id": "VPR-1"
+}

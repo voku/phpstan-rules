@@ -1,0 +1,17 @@
+{
+    "base_commit": null,
+    "contract_revision": 2,
+    "contract_source": {
+        "path": ".agent-loop/contracts/VPR-1/contract.json",
+        "sha256": "sha256:9d496974b86d9da22c0f5d699ccbf0580f196f3e21d621ce0cd12e4b412b6bda"
+    },
+    "digest": "sha256:46c08322727339c83885431b396716595dee4b3e15711fae7e68c18b3672d588",
+    "kind": "governed_execution_plan",
+    "prepared_at": "2026-08-27T00:17:00+00:00",
+    "profile": "manual",
+    "roles": [],
+    "run_id": "run:VPR-1:dfcb7cf6568646a9",
+    "schema_version": "1.0",
+    "stages": [],
+    "task_id": "VPR-1"
+}

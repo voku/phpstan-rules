@@ -1,0 +1,144 @@
+{
+    "disagreements": [
+        {
+            "code": "verification.readiness_unreadable",
+            "message": "Implementation snapshot scope escapes or ambiguously addresses the repository: tests/",
+            "owner": "agent-loop"
+        }
+    ],
+    "mode": "governed",
+    "next_action": "repair the agent-loop artifact this task depends on (verification.readiness_unreadable): Implementation snapshot scope escapes or ambiguously addresses the repository: tests/",
+    "next_action_kind": "host_work",
+    "references": {
+        "approval": {
+            "approved_at": "2026-08-27T00:16:35+00:00",
+            "approved_by": "Lars Moelleken",
+            "contract_revision": 1,
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "source": {
+                "path": ".agent-loop/contracts/VPR-1/contract.json",
+                "sha256": "sha256:d0a7238958dbb85c687374e7268ab72f3db2d8995122ecfe416497999f77cf80"
+            },
+            "state": "current"
+        },
+        "board": {
+            "card_id": "VPR-1",
+            "configuration": {
+                "mode": "json",
+                "source": {
+                    "path": ".agent-loop/todo/kanban.config.json",
+                    "sha256": "sha256:4f5eb2e4a6d692aee2eee1e64f8086b69756d26a7192a1d4b6490a3bc2321951"
+                }
+            },
+            "lane": "READY",
+            "observation_mode": "checked",
+            "owner": "agent-kanban",
+            "revision": "43e209bba927f4a35aed3630a9d85b044e8192e5a2f705e165bc7ab48c55ee7d",
+            "source": {
+                "path": ".agent-loop/todo/cards/VPR-1.md",
+                "sha256": "sha256:43e209bba927f4a35aed3630a9d85b044e8192e5a2f705e165bc7ab48c55ee7d"
+            },
+            "state": "linked",
+            "status": "ready"
+        },
+        "contract": {
+            "acceptance_criteria": [
+                "vendor/bin/phpunit is green on PHP 8.4 with the current phpstan/phpstan 2.x release.",
+                "Every rule class in src/voku/PHPStan/Rules/ has at least one test asserting that valid code produces no error.",
+                "Every rule class has its error identifier asserted.",
+                "rules.neon is loaded and every declared service is asserted to be registered."
+            ],
+            "goal": "Replace the thin happy-path PHPUnit coverage of voku/phpstan-rules with a regression-grade suite: no-false-positive fixtures per rule, asserted error identifiers, both states of every configuration flag, rules.neon service wiring, and a fix for the expectations that are already red against the current PHPStan 2.x.",
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "revision": 1,
+            "run_revision": 1,
+            "source": {
+                "path": ".agent-loop/contracts/VPR-1/contract.json",
+                "sha256": "sha256:d0a7238958dbb85c687374e7268ab72f3db2d8995122ecfe416497999f77cf80"
+            },
+            "state": "approved"
+        },
+        "edit": {
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "state": "none"
+        },
+        "execution_contract": {
+            "contract_revision": 1,
+            "contract_source": {
+                "path": ".agent-loop/contracts/VPR-1/contract.json",
+                "sha256": "sha256:d0a7238958dbb85c687374e7268ab72f3db2d8995122ecfe416497999f77cf80"
+            },
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "required": false,
+            "state": "not_required"
+        },
+        "learning": {
+            "observation_mode": "checked",
+            "owner": "agent-learning",
+            "run_id": "run:VPR-1:7ba88a08b4e74f72",
+            "state": "missing"
+        },
+        "map": {
+            "observation_mode": "checked",
+            "owner": "agent-map",
+            "path": ".agent-loop/map/php-symbols.json",
+            "state": "missing"
+        },
+        "outcome_lineage": {
+            "observation_mode": "checked",
+            "owner": "agent-learning",
+            "run_id": "run:VPR-1:7ba88a08b4e74f72",
+            "state": "run_bound"
+        },
+        "recall": {
+            "bundle_sha256": "8da6785d6812b35921458913548f264dfdce14cec089d9a8ab27f23ffdb82ab0",
+            "compilation_id": "compilation.VPR-1.2026-08-27-001635.a6cccbf4",
+            "observation_mode": "checked",
+            "owner": "agent-recall-compiler",
+            "snapshot_sha256": "9d539312a97a3d17aaeb58cc051d27bbddc80c4148ee9406bb470f2338ec13cd",
+            "source": {
+                "path": ".agent-loop/recall/VPR-1/meta.json",
+                "sha256": "sha256:b4563cbae69caa72b433d14df73423d7745d271e73a7bbb05c370ff61662cf38"
+            },
+            "state": "compiled"
+        },
+        "review": {
+            "observation_mode": "checked",
+            "owner": "agent-recall-compiler",
+            "path": ".agent-loop/recall/VPR-1/reviews/VPR-1.blindspots.json",
+            "state": "missing"
+        },
+        "search_index": {
+            "observation_mode": "checked",
+            "owner": "agent-map",
+            "path": ".agent-loop/map/search.sqlite",
+            "state": "unavailable"
+        },
+        "session": {
+            "base_commit": null,
+            "ephemeral": false,
+            "observation_mode": "checked",
+            "owner": "agent-session",
+            "session_id": "2026-08-27-vpr-1-r1-0c1de113",
+            "source": {
+                "path": ".agent-loop/sessions/2026-08-27-vpr-1-r1-0c1de113/session.json",
+                "sha256": "sha256:8dd323e1df432ae270bf1b3574ca7ca43bf9deb3bf3a36fd888f2553b17f3980"
+            },
+            "state": "active",
+            "task_id": "VPR-1"
+        },
+        "verification": {
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "state": "invalid"
+        }
+    },
+    "run_id": "run:VPR-1:7ba88a08b4e74f72",
+    "schema_version": "1.0",
+    "state": "blocked",
+    "task_id": "VPR-1"
+}

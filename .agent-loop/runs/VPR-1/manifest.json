@@ -1,0 +1,143 @@
+{
+    "disagreements": [],
+    "mode": "governed",
+    "next_action": "perform the approved host-native implementation for VPR-1 before calling agent-loop finish VPR-1",
+    "next_action_kind": "host_work",
+    "references": {
+        "approval": {
+            "approved_at": "2026-08-27T00:17:00+00:00",
+            "approved_by": "Lars Moelleken",
+            "contract_revision": 2,
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "source": {
+                "path": ".agent-loop/contracts/VPR-1/contract.json",
+                "sha256": "sha256:9d496974b86d9da22c0f5d699ccbf0580f196f3e21d621ce0cd12e4b412b6bda"
+            },
+            "state": "current"
+        },
+        "board": {
+            "card_id": "VPR-1",
+            "configuration": {
+                "mode": "json",
+                "source": {
+                    "path": ".agent-loop/todo/kanban.config.json",
+                    "sha256": "sha256:4f5eb2e4a6d692aee2eee1e64f8086b69756d26a7192a1d4b6490a3bc2321951"
+                }
+            },
+            "lane": "READY",
+            "observation_mode": "checked",
+            "owner": "agent-kanban",
+            "revision": "43e209bba927f4a35aed3630a9d85b044e8192e5a2f705e165bc7ab48c55ee7d",
+            "source": {
+                "path": ".agent-loop/todo/cards/VPR-1.md",
+                "sha256": "sha256:43e209bba927f4a35aed3630a9d85b044e8192e5a2f705e165bc7ab48c55ee7d"
+            },
+            "state": "linked",
+            "status": "ready"
+        },
+        "contract": {
+            "acceptance_criteria": [
+                "vendor/bin/phpunit is green on PHP 8.4 with the current phpstan/phpstan 2.x release.",
+                "Every rule class in src/voku/PHPStan/Rules/ has at least one test asserting that valid code produces no error.",
+                "Every rule class has its error identifier asserted.",
+                "rules.neon is loaded and every declared service is asserted to be registered."
+            ],
+            "goal": "Replace the thin happy-path PHPUnit coverage of voku/phpstan-rules with a regression-grade suite: no-false-positive fixtures per rule, asserted error identifiers, both states of every configuration flag, rules.neon service wiring, and a fix for the expectations that are already red against the current PHPStan 2.x.",
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "revision": 2,
+            "run_revision": 2,
+            "source": {
+                "path": ".agent-loop/contracts/VPR-1/contract.json",
+                "sha256": "sha256:9d496974b86d9da22c0f5d699ccbf0580f196f3e21d621ce0cd12e4b412b6bda"
+            },
+            "state": "approved"
+        },
+        "edit": {
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "state": "none"
+        },
+        "execution_contract": {
+            "contract_revision": 2,
+            "contract_source": {
+                "path": ".agent-loop/contracts/VPR-1/contract.json",
+                "sha256": "sha256:9d496974b86d9da22c0f5d699ccbf0580f196f3e21d621ce0cd12e4b412b6bda"
+            },
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "required": false,
+            "state": "not_required"
+        },
+        "learning": {
+            "observation_mode": "checked",
+            "owner": "agent-learning",
+            "run_id": "run:VPR-1:dfcb7cf6568646a9",
+            "state": "missing"
+        },
+        "map": {
+            "observation_mode": "checked",
+            "owner": "agent-map",
+            "path": ".agent-loop/map/php-symbols.json",
+            "state": "missing"
+        },
+        "outcome_lineage": {
+            "observation_mode": "checked",
+            "owner": "agent-learning",
+            "run_id": "run:VPR-1:dfcb7cf6568646a9",
+            "state": "run_bound"
+        },
+        "recall": {
+            "bundle_sha256": "c59bd7999f124e9a021d22ffbb99bb502eddae14ff7e43ae6861df3a356714a8",
+            "compilation_id": "compilation.VPR-1.2026-08-27-001700.90acce37",
+            "observation_mode": "checked",
+            "owner": "agent-recall-compiler",
+            "snapshot_sha256": "4bc95adedc2fb02c0b91188e6ada7e8103c62fea54677203bbe9e13bffc94949",
+            "source": {
+                "path": ".agent-loop/recall/VPR-1/meta.json",
+                "sha256": "sha256:263bb6191762fcdeb285a4edfeb8fab94b464fd06b83461d0f97f80a53db0e11"
+            },
+            "state": "compiled"
+        },
+        "review": {
+            "observation_mode": "checked",
+            "owner": "agent-recall-compiler",
+            "path": ".agent-loop/recall/VPR-1/reviews/VPR-1.blindspots.json",
+            "state": "missing"
+        },
+        "search_index": {
+            "observation_mode": "checked",
+            "owner": "agent-map",
+            "path": ".agent-loop/map/search.sqlite",
+            "state": "unavailable"
+        },
+        "session": {
+            "base_commit": null,
+            "ephemeral": false,
+            "observation_mode": "checked",
+            "owner": "agent-session",
+            "session_id": "2026-08-27-vpr-1-r2-76cb75d2",
+            "source": {
+                "path": ".agent-loop/sessions/2026-08-27-vpr-1-r2-76cb75d2/session.json",
+                "sha256": "sha256:9b550f3be02f412c7befac536e3bd27be7fbfbfd175ab1814d952b9ae99bce3f"
+            },
+            "state": "active",
+            "task_id": "VPR-1"
+        },
+        "verification": {
+            "action": "php vendor/bin/phpunit -c phpunit.xml",
+            "gate": "validation",
+            "implementation_snapshot": "sha256:5af6d151490b4dce8e5d146c925b44ccb6b71cc2448f069c2cd2b6ec8f452a6b",
+            "observation_mode": "checked",
+            "owner": "agent-loop",
+            "reason": "validation evidence missing or not passed for current implementation: php vendor/bin/phpunit -c phpunit.xml (no current evidence)",
+            "state": "blocked",
+            "validation_failed": false
+        }
+    },
+    "run_id": "run:VPR-1:dfcb7cf6568646a9",
+    "schema_version": "1.0",
+    "state": "incomplete",
+    "task_id": "VPR-1"
+}
