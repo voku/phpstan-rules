@@ -46,6 +46,11 @@ final class IfConditionRule implements Rule
     private $reportAlwaysTrueInLastCondition;
 
     /**
+     * @var bool
+     */
+    private $treatPhpDocTypesAsCertain;
+
+    /**
      * @param array<int, class-string> $classesNotInIfConditions
      */
     public function __construct(
@@ -54,7 +59,8 @@ final class IfConditionRule implements Rule
         bool                $checkForAssignments = false,
         bool                $checkYodaConditions = false,
         bool                $reportDuplicateNativeComparisons = true,
-        bool                $reportAlwaysTrueInLastCondition = true
+        bool                $reportAlwaysTrueInLastCondition = true,
+        bool                $treatPhpDocTypesAsCertain = true
     )
     {
         $this->reflectionProvider = $reflectionProvider;
@@ -68,6 +74,8 @@ final class IfConditionRule implements Rule
         $this->reportDuplicateNativeComparisons = $reportDuplicateNativeComparisons;
 
         $this->reportAlwaysTrueInLastCondition = $reportAlwaysTrueInLastCondition;
+
+        $this->treatPhpDocTypesAsCertain = $treatPhpDocTypesAsCertain;
     }
 
     public function getNodeType(): string
@@ -114,7 +122,8 @@ final class IfConditionRule implements Rule
             $scope,
             $errors,
             $this->reportDuplicateNativeComparisons,
-            $this->reportAlwaysTrueInLastCondition
+            $this->reportAlwaysTrueInLastCondition,
+            $this->treatPhpDocTypesAsCertain
         );
     }
 }
