@@ -6,11 +6,10 @@ namespace voku\PHPStan\Rules\Test\fixtures;
 
 final class LastConditionTruthinessFixtures
 {
-    /**
-     * @param non-empty-array<int, int> $items
-     */
-    public function lastAlwaysTrue(bool $gate, array $items): bool
+    public function lastAlwaysTrue(bool $gate): bool
     {
+        $items = [1];
+
         if ($gate) {
             return false;
         } elseif ($items) {
@@ -20,11 +19,10 @@ final class LastConditionTruthinessFixtures
         return false;
     }
 
-    /**
-     * @param non-empty-array<int, int> $items
-     */
-    public function lastAlwaysFalse(bool $gate, array $items): bool
+    public function lastAlwaysFalse(bool $gate): bool
     {
+        $items = [1];
+
         if ($gate) {
             return false;
         } elseif (!$items) {
