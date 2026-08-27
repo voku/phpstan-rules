@@ -1,0 +1,21 @@
+{
+    "schema_version": "1.0",
+    "kind": "run_learning_decision",
+    "run_id": "run:VPR-1:dfcb7cf6568646a9",
+    "decision": "findings_recorded",
+    "decided_by": "Lars Moelleken",
+    "decided_at": "2026-08-27T00:38:44+00:00",
+    "reason": "Five validated findings about the agent-loop workflow itself were recorded while dogfooding this task; they are tracked for triage as board card VPR-9. The rule-level findings are tracked as board cards VPR-2..VPR-8.",
+    "finding_ids": [
+        "finding.2026-08-27.013256",
+        "finding.2026-08-27.5f4b3e",
+        "finding.2026-08-27.990a1b",
+        "finding.2026-08-27.c67212",
+        "finding.2026-08-27.d0aabc"
+    ],
+    "follow_up_ref": null,
+    "contract_revision": 2,
+    "implementation_snapshot": "sha256:ee823882fd38347b0023a927f341bdc89b0bc6f654ec131eb81b882b5a403bf8",
+    "validation_evidence_sha256": "sha256:2d94b7b7bb4d5df8ba3cd8feff7360a956d3df9e72b9838f464534dc701ffd65",
+    "review_evidence_sha256": "sha256:2882bdd7325669d765ae7bf653edb2aa1fc41672d364e87e423b8a50af1403cf"
+}

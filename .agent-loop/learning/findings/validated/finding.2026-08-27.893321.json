@@ -1,0 +1,23 @@
+{
+    "id": "finding.2026-08-27.893321",
+    "task_id": "VPR-1",
+    "session": "2026-08-27-vpr-1-r2-76cb75d2",
+    "created_at": "2026-08-27T00:38:56+00:00",
+    "created_by": "Lars Moelleken",
+    "scope": [
+        "src/Cli"
+    ],
+    "observation": "'agent-loop finish <task> --learning findings_recorded' cannot be completed through the finish front door at all. It requires at least one finding id, its own command_template omits the option, and passing the option that 'agent-loop workflow learn' documents fails with '[FAIL] finish: Unknown option: --finding'. The transition only succeeds through the lower-level 'agent-loop workflow learn <task> --status findings_recorded --by ... --reason ... --finding <id> ...'.",
+    "evidence": [
+        {
+            "type": "runtime_observation",
+            "summary": "agent-loop finish VPR-1 --learning findings_recorded --learning-reason ... --by ... -> [FAIL] findings_recorded requires at least one finding id. Adding --finding <id> -> [FAIL] finish: Unknown option: --finding. agent-loop workflow learn VPR-1 --status findings_recorded --by ... --reason ... --finding <id> ... -> [OK]."
+        }
+    ],
+    "hypothesis": "finish forwards a fixed subset of options to the learning transition and was never exercised with the findings_recorded status, only with no_durable_learning, which needs no finding ids.",
+    "validated_conclusion": "finish has to accept and forward --finding, or its command_template for findings_recorded has to name 'workflow learn' as the command to run. As it stands the documented front door dead-ends on the only status that carries durable findings, and the JSON contract hides the refusal.",
+    "confidence": "high",
+    "validation_status": "validated",
+    "status": "validated",
+    "sensitivity": "public"
+}

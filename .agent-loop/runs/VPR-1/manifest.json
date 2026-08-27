@@ -1,8 +1,8 @@
 {
     "disagreements": [],
     "mode": "governed",
-    "next_action": "perform the approved host-native implementation for VPR-1 before calling agent-loop finish VPR-1",
-    "next_action_kind": "host_work",
+    "next_action": "none",
+    "next_action_kind": "none",
     "references": {
         "approval": {
             "approved_at": "2026-08-27T00:17:00+00:00",
@@ -71,10 +71,17 @@
             "state": "not_required"
         },
         "learning": {
+            "decided_at": "2026-08-27T00:38:44+00:00",
+            "decided_by": "Lars Moelleken",
+            "decision": "findings_recorded",
             "observation_mode": "checked",
             "owner": "agent-learning",
             "run_id": "run:VPR-1:dfcb7cf6568646a9",
-            "state": "missing"
+            "source": {
+                "path": ".agent-loop/learning/history/run-learning/5ecd69121031ac4230a3f71f7548ea861502e245de8b3dd333e8d2f6843e85ed.json",
+                "sha256": "sha256:59063a56dfb44daab8ba3d9dc2ee30643d3cd9dedd6e26fafd0cb8cc7662d4b0"
+            },
+            "state": "decided"
         },
         "map": {
             "observation_mode": "checked",
@@ -103,8 +110,11 @@
         "review": {
             "observation_mode": "checked",
             "owner": "agent-recall-compiler",
-            "path": ".agent-loop/recall/VPR-1/reviews/VPR-1.blindspots.json",
-            "state": "missing"
+            "source": {
+                "path": ".agent-loop/recall/VPR-1/reviews/VPR-1.blindspots.json",
+                "sha256": "sha256:2882bdd7325669d765ae7bf653edb2aa1fc41672d364e87e423b8a50af1403cf"
+            },
+            "state": "warn"
         },
         "search_index": {
             "observation_mode": "checked",
@@ -120,24 +130,27 @@
             "session_id": "2026-08-27-vpr-1-r2-76cb75d2",
             "source": {
                 "path": ".agent-loop/sessions/2026-08-27-vpr-1-r2-76cb75d2/session.json",
-                "sha256": "sha256:9b550f3be02f412c7befac536e3bd27be7fbfbfd175ab1814d952b9ae99bce3f"
+                "sha256": "sha256:deb12f455647a2fd70824372514badd8abfd4dd61bb6d208580d8aa60ad11ff6"
             },
-            "state": "active",
+            "state": "done",
             "task_id": "VPR-1"
         },
         "verification": {
-            "action": "php vendor/bin/phpunit -c phpunit.xml",
-            "gate": "validation",
-            "implementation_snapshot": "sha256:5af6d151490b4dce8e5d146c925b44ccb6b71cc2448f069c2cd2b6ec8f452a6b",
+            "contract_revision": 2,
+            "implementation_snapshot": "sha256:ee823882fd38347b0023a927f341bdc89b0bc6f654ec131eb81b882b5a403bf8",
             "observation_mode": "checked",
             "owner": "agent-loop",
-            "reason": "validation evidence missing or not passed for current implementation: php vendor/bin/phpunit -c phpunit.xml (no current evidence)",
-            "state": "blocked",
-            "validation_failed": false
+            "run_id": "run:VPR-1:dfcb7cf6568646a9",
+            "source": {
+                "path": ".agent-loop/runs/VPR-1/verification.json",
+                "sha256": "sha256:e63f70708b021605706a4d44fc7575c70a616ee6cb70e987e048b8f468da7186"
+            },
+            "source_session_id": "2026-08-27-vpr-1-r2-76cb75d2",
+            "state": "passed"
         }
     },
     "run_id": "run:VPR-1:dfcb7cf6568646a9",
     "schema_version": "1.0",
-    "state": "incomplete",
+    "state": "complete",
     "task_id": "VPR-1"
 }
