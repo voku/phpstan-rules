@@ -29,7 +29,8 @@ final class IfConditionDiagnosticPolicy
         Scope $scope,
         array $errors,
         bool $reportDuplicateNativeComparisons,
-        bool $reportAlwaysTrueInLastCondition
+        bool $reportAlwaysTrueInLastCondition,
+        bool $treatPhpDocTypesAsCertain
     ): array
     {
         // PHPStan defers trait constant-condition decisions across all using classes. Until VPR-4
@@ -42,12 +43,14 @@ final class IfConditionDiagnosticPolicy
             && self::isProvablyReportedByNativeConstantLooseComparison(
                 $condition,
                 $scope,
-                $reportAlwaysTrueInLastCondition
+                $reportAlwaysTrueInLastCondition,
+                $treatPhpDocTypesAsCertain
             );
         $suppressAlwaysTrue = self::isSuppressedAlwaysTrueLastCondition(
             $condition,
             $scope,
-            $reportAlwaysTrueInLastCondition
+            $reportAlwaysTrueInLastCondition,
+            $treatPhpDocTypesAsCertain
         );
 
         if (!$suppressNativeDuplicate && !$suppressAlwaysTrue) {
@@ -81,13 +84,19 @@ final class IfConditionDiagnosticPolicy
         Node\Expr $condition,
         Scope $scope,
         array $errors,
-        bool $reportAlwaysTrueInLastCondition
+        bool $reportAlwaysTrueInLastCondition,
+        bool $treatPhpDocTypesAsCertain
     ): array
     {
         if (
             $scope->isInTrait()
             ||
-            !self::isSuppressedAlwaysTrueLastCondition($condition, $scope, $reportAlwaysTrueInLastCondition)
+            !self::isSuppressedAlwaysTrueLastCondition(
+                $condition,
+                $scope,
+                $reportAlwaysTrueInLastCondition,
+                $treatPhpDocTypesAsCertain
+            )
         ) {
             return $errors;
         }
@@ -107,7 +116,8 @@ final class IfConditionDiagnosticPolicy
     private static function isProvablyReportedByNativeConstantLooseComparison(
         Node\Expr\BinaryOp $condition,
         Scope $scope,
-        bool $reportAlwaysTrueInLastCondition
+        bool $reportAlwaysTrueInLastCondition,
+        bool $treatPhpDocTypesAsCertain
     ): bool
     {
         if (
@@ -118,17 +128,18 @@ final class IfConditionDiagnosticPolicy
             return false;
         }
 
-        $fullValue = self::constantBooleanValue($scope->getType($condition));
-        $nativeValue = self::constantBooleanValue($scope->getNativeType($condition));
-
-        // Native overlap is only proven when PHPDoc-aware and native analysis independently reach
-        // the same constant result. If either side is uncertain, keep the extension finding.
-        if ($fullValue === null || $nativeValue === null || $fullValue !== $nativeValue) {
+        // Mirror PHPStan's ConstantLooseComparisonRule type choice exactly. If PHPDoc types are not
+        // trusted, only native types may prove overlap; otherwise the configured full type is the
+        // source of truth.
+        $value = self::constantBooleanValue(
+            self::configuredType($condition, $scope, $treatPhpDocTypesAsCertain)
+        );
+        if ($value === null) {
             return false;
         }
 
         if (
-            $fullValue
+            $value
             &&
             !$reportAlwaysTrueInLastCondition
             &&
@@ -144,7 +155,8 @@ final class IfConditionDiagnosticPolicy
     private static function isSuppressedAlwaysTrueLastCondition(
         Node\Expr $condition,
         Scope $scope,
-        bool $reportAlwaysTrueInLastCondition
+        bool $reportAlwaysTrueInLastCondition,
+        bool $treatPhpDocTypesAsCertain
     ): bool
     {
         if (
@@ -155,7 +167,23 @@ final class IfConditionDiagnosticPolicy
             return false;
         }
 
-        return $scope->getType($condition)->toBoolean()->isTrue()->yes();
+        return self::configuredType($condition, $scope, $treatPhpDocTypesAsCertain)
+            ->toBoolean()
+            ->isTrue()
+            ->yes();
+    }
+
+    private static function configuredType(
+        Node\Expr $condition,
+        Scope $scope,
+        bool $treatPhpDocTypesAsCertain
+    ): Type
+    {
+        if ($treatPhpDocTypesAsCertain) {
+            return $scope->getType($condition);
+        }
+
+        return $scope->getNativeType($condition);
     }
 
     private static function constantBooleanValue(Type $type): ?bool
