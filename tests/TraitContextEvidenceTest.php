@@ -33,9 +33,9 @@ final class TraitContextEvidenceTest extends RuleTestCase
 
     public function testTraitComparisonIsPublishedPerUsingClassContext(): void
     {
-        $intConsumerOneMessages = $this->traitMessagesByLine(self::INT_CONSUMER_ONE_FIXTURE);
-        $intConsumerTwoMessages = $this->traitMessagesByLine(self::INT_CONSUMER_TWO_FIXTURE);
-        $stringConsumerMessages = $this->traitMessagesByLine(self::STRING_CONSUMER_FIXTURE);
+        $intConsumerOneMessages = $this->messagesByLineForConsumer(self::INT_CONSUMER_ONE_FIXTURE);
+        $intConsumerTwoMessages = $this->messagesByLineForConsumer(self::INT_CONSUMER_TWO_FIXTURE);
+        $stringConsumerMessages = $this->messagesByLineForConsumer(self::STRING_CONSUMER_FIXTURE);
 
         self::assertMessageContains(
             $intConsumerOneMessages[self::TRAIT_COMPARISON_LINE] ?? [],
@@ -68,15 +68,11 @@ final class TraitContextEvidenceTest extends RuleTestCase
     /**
      * @return array<int, array<int, string>>
      */
-    private function traitMessagesByLine(string $consumerFixture): array
+    private function messagesByLineForConsumer(string $consumerFixture): array
     {
         $messages = [];
 
         foreach ($this->gatherAnalyserErrors([self::TRAIT_FIXTURE, $consumerFixture]) as $error) {
-            if ($error->getFilePath() !== self::TRAIT_FIXTURE) {
-                continue;
-            }
-
             $messages[$error->getLine()][] = $error->getMessage();
         }
 
