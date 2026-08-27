@@ -1,5 +1,11 @@
 # Changelog
 
+### Upcoming
+- propagate `checkYodaConditions` to ternary, match and switch rules, and fix definite array/non-array checks in binary and assignment operators
+- add opt-in `InArrayLooseComparisonRule` for PHP 7/8 loose-comparison surprises in `in_array()` and `array_search()`
+- add `voku.reportDuplicateNativeComparisons` to suppress proven PHPStan-native comparison overlap while preserving extension-specific advice and PHPStan last-condition/PHPDoc-certainty behavior
+- defer trait-body comparison diagnostics across using-class contexts to avoid per-use duplicates and suppress context-specific false positives
+
 ### 3.7.0 (2026-04-28)
 - detect disguised constant ternary conditions and dedupe duplicate diagnostics
 - allow enum `$this` in `match` expressions without direct-object-comparison errors
