@@ -1,0 +1,10 @@
+{
+    "description": "Isolated tool project for voku/agent-loop, kept out of the root Composer project so the library keeps its PHP 7.4 support.",
+    "require": {
+        "voku/agent-loop": "^0.18"
+    },
+    "config": {
+        "allow-plugins": false,
+        "sort-packages": true
+    }
+}

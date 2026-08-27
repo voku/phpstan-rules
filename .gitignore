@@ -12,3 +12,8 @@ build/logs/
 
 # phpcs fixer
 .php_cs.cache
+
+# agent-loop tooling (isolated tool project, see tools/agent-loop/README.md)
+/tools/agent-loop/vendor/
+# ... but its lock file is tracked, the workflow CLI must be reproducible
+!/tools/agent-loop/composer.lock

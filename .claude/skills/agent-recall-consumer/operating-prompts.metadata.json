@@ -1,0 +1,204 @@
+{
+  "schema_version": "1.0",
+  "recipes": [
+    {
+      "id": "adversarial-review",
+      "title": "Adversarial review",
+      "description": "Challenge an implementation with concrete failure-mode hypotheses.",
+      "purpose": "review",
+      "arguments": [
+        {
+          "name": "minimum_failure_modes",
+          "type": "integer",
+          "required": true,
+          "description": "Minimum number of plausible failure-mode hypotheses to investigate.",
+          "minimum": 1,
+          "examples": [3, 5]
+        }
+      ]
+    },
+    {
+      "id": "breaking-change-review",
+      "title": "Review breaking changes",
+      "description": "Review compatibility and coordinated migration boundaries.",
+      "purpose": "review",
+      "arguments": []
+    },
+    {
+      "id": "continue-until-done",
+      "title": "Continue until done",
+      "description": "Continue authorized independent slices until observable completion or a real blocker.",
+      "purpose": "recover",
+      "arguments": [
+        {
+          "name": "done_condition",
+          "type": "string",
+          "required": true,
+          "description": "Observable condition that must be satisfied before the task may stop successfully.",
+          "examples": ["the approved Done When criteria are satisfied"]
+        }
+      ]
+    },
+    {
+      "id": "coverage-mutation",
+      "title": "Harden tests with mutation testing",
+      "description": "Increase meaningful coverage and require mutation-testing evidence.",
+      "purpose": "review",
+      "arguments": [
+        {
+          "name": "minimum_percentage_points",
+          "type": "integer",
+          "required": true,
+          "description": "Minimum percentage-point increase in coverage required by the prompt.",
+          "minimum": 1,
+          "examples": [5, 10]
+        },
+        {
+          "name": "mutation_command",
+          "type": "string",
+          "required": true,
+          "description": "Repository-supported mutation-testing command to execute.",
+          "examples": ["composer infection"]
+        }
+      ]
+    },
+    {
+      "id": "deletion-first",
+      "title": "Simplify deletion first",
+      "description": "Prefer safe deletion and deduplication before extension or abstraction.",
+      "purpose": "simplify",
+      "arguments": []
+    },
+    {
+      "id": "discovery-first",
+      "title": "Re-ground with discovery",
+      "description": "Re-ground an unclear or stale task against current repository evidence before editing.",
+      "purpose": "start",
+      "arguments": []
+    },
+    {
+      "id": "execute-plan-with-blind-spot-check",
+      "title": "Execute plan with blind-spot check",
+      "description": "Challenge material plan assumptions, amend only disproved steps, then continue execution.",
+      "purpose": "execute",
+      "arguments": []
+    },
+    {
+      "id": "execution-dispatch",
+      "title": "Dispatch one execution slice",
+      "description": "Create a bounded current execution prompt from an existing durable task and authority.",
+      "purpose": "handoff",
+      "arguments": []
+    },
+    {
+      "id": "evidence-report",
+      "title": "Produce evidence report",
+      "description": "Require completion claims to be bounded by observable verification evidence.",
+      "purpose": "report",
+      "arguments": []
+    },
+    {
+      "id": "missingness-audit",
+      "title": "Audit missing pieces",
+      "description": "Find evidence-backed gaps in tests, validation, recovery, observability or boundaries.",
+      "purpose": "review",
+      "arguments": []
+    },
+    {
+      "id": "multi-pass-correctness-simplify",
+      "title": "Implement, audit, simplify",
+      "description": "Run implementation, correctness and simplification as separate evidence-backed passes.",
+      "purpose": "execute",
+      "arguments": []
+    },
+    {
+      "id": "plan-as-draft",
+      "title": "Strengthen an existing plan",
+      "description": "Treat an existing plan as the minimum floor and strengthen only evidence-backed gaps.",
+      "purpose": "plan",
+      "arguments": []
+    },
+    {
+      "id": "plan-horizon",
+      "title": "Plan a wider horizon",
+      "description": "Produce a bounded milestone plan for a stated horizon instead of only the next step.",
+      "purpose": "plan",
+      "arguments": [
+        {
+          "name": "horizon",
+          "type": "string",
+          "required": true,
+          "description": "Planning horizon to cover.",
+          "examples": ["three milestones", "the next release"]
+        }
+      ]
+    },
+    {
+      "id": "production-ready-handoff",
+      "title": "Prepare production-ready handoff",
+      "description": "Create one bounded self-contained execution handoff for a fresh coding agent.",
+      "purpose": "handoff",
+      "arguments": []
+    },
+    {
+      "id": "regression-hunt",
+      "title": "Hunt regressions",
+      "description": "Investigate a bounded number of high-risk regression hypotheses with concrete evidence.",
+      "purpose": "review",
+      "arguments": [
+        {
+          "name": "minimum_findings",
+          "type": "integer",
+          "required": true,
+          "description": "Minimum number of concrete regression hypotheses or search targets to investigate.",
+          "minimum": 1,
+          "examples": [3, 5]
+        }
+      ]
+    },
+    {
+      "id": "reproduce-before-fix",
+      "title": "Reproduce before fixing",
+      "description": "Require a failing automated reproduction before changing production code for a bug.",
+      "purpose": "start",
+      "arguments": []
+    },
+    {
+      "id": "reject-and-restart",
+      "title": "Reject and restart",
+      "description": "Discard an implementation that violated the approved contract while preserving valid evidence.",
+      "purpose": "recover",
+      "arguments": []
+    },
+    {
+      "id": "retry-stop",
+      "title": "Bound retries",
+      "description": "Stop speculative retries when repeated failures produce no new discriminating evidence.",
+      "purpose": "recover",
+      "arguments": [
+        {
+          "name": "maximum_failures",
+          "type": "integer",
+          "required": true,
+          "description": "Maximum repeated attributable failures allowed without new discriminating evidence.",
+          "minimum": 1,
+          "examples": [2, 3]
+        }
+      ]
+    },
+    {
+      "id": "test-driven-development",
+      "title": "Use test-driven development",
+      "description": "Apply a RED-GREEN-REFACTOR loop to each behavior-changing slice.",
+      "purpose": "execute",
+      "arguments": []
+    },
+    {
+      "id": "todo-card-handoff",
+      "title": "Prepare durable work package",
+      "description": "Create durable resumable task-card content without turning it into execution authority.",
+      "purpose": "handoff",
+      "arguments": []
+    }
+  ]
+}

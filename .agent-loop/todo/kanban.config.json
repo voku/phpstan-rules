@@ -1,0 +1,43 @@
+{
+    "projectPrefix": "VPR",
+    "cardDirectory": "todo/cards",
+    "legacyCardDirectory": "todo/jira",
+    "archiveDirectory": "todo/archive",
+    "lanes": [
+        "BACKLOG",
+        "READY",
+        "DOING",
+        "VERIFY",
+        "BLOCKED"
+    ],
+    "statusToLane": [],
+    "wipLimits": [],
+    "requiredFieldsByLane": {
+        "READY": [
+            "taskBrief"
+        ]
+    },
+    "transitions": {
+        "BACKLOG": [
+            "READY"
+        ],
+        "READY": [
+            "DOING",
+            "BLOCKED"
+        ],
+        "DOING": [
+            "VERIFY",
+            "BLOCKED"
+        ],
+        "VERIFY": [
+            "DOING"
+        ],
+        "BLOCKED": [
+            "READY",
+            "DOING",
+            "BACKLOG"
+        ]
+    },
+    "formatVersion": 1,
+    "externalIssueSystem": null
+}
