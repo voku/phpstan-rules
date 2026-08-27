@@ -4,16 +4,17 @@
 - **Lane:** VERIFY
 - **Status:** verify
 - **Created:** 2026-08-27T00:34:41+00:00
-- **Updated:** 2026-08-27T10:33:00+00:00
-- **Summary:** Implemented by consuming PHPStan's own `reportAlwaysTrueInLastCondition` and `treatPhpDocTypesAsCertain` parameters. Always-true claims on nodes marked by PHPStan's `LastConditionVisitor` are suppressed only when PHPStan would suppress them under the same type-certainty mode. Always-false diagnostics and extension-only style/advice remain. Match conditions immediately before a default are not treated as last; an actual final match arm without a default is. Switch/default behavior remains reportable because PHPStan's visitor does not mark switch cases as last conditions.
-- **Next:** Mark done after exact-head PHPUnit/PHPStan/CI proves both parameter modes and all three control-flow shapes.
+- **Updated:** 2026-08-27T10:47:00+00:00
+- **Summary:** Measured and implemented only on the proven native-overlap surface. `IfConditionRule` consumes PHPStan's `reportAlwaysTrueInLastCondition` and `treatPhpDocTypesAsCertain` parameters for constant loose binary comparisons. A final always-true `elseif` generic truth claim is suppressed when PHPStan suppresses it, while extension-only double-negative and PHP 7/8 advice on the same line remain. Switch cases are not marked last by PHPStan, and a match condition immediately before a default is not last, so both remain reportable. Basic array/string truthiness diagnostics are extension-only rather than native overlap and are deliberately left unchanged.
+- **Next:** Mark done after exact-head PHPUnit/PHPStan/CI proves both parameter modes and the applicable elseif/match/switch boundaries.
 - **Validation:** php vendor/bin/phpunit -c phpunit.xml --filter ComparisonDiagnosticPolicyTest
 - **Format version:** 1
 
 ## Decision evidence
 
-- Final `elseif` is tested with the flag off and on.
-- The always-false `!$nonEmptyArray` final guard remains reportable when always-true reporting is disabled.
-- Match-before-default and actual-last-match-arm are tested separately.
-- Switch-before-default remains reportable, matching `LastConditionVisitor` semantics.
-- PHPDoc-only truthiness is tested with `treatPhpDocTypesAsCertain` enabled and disabled.
+- Final binary `elseif` is tested with the flag off and on at message level.
+- Style/advice on that same line remains when only the generic native-overlap claim is removed.
+- Match-before-default remains reportable because `LastConditionVisitor` does not mark it last.
+- Switch-before-default remains reportable because PHPStan does not mark switch cases as last conditions.
+- Probes showed no corresponding generic extension truth claim for an actual final match arm, so no new diagnostic was invented merely to mirror the parameter.
+- Non-empty-array truthiness remains extension-owned; it is not filtered under VPR-5 without proven native overlap.
