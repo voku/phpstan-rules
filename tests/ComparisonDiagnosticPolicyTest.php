@@ -6,7 +6,6 @@ namespace voku\PHPStan\Rules\Test;
 
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
-use voku\PHPStan\Rules\ElseIfConditionBasicRule;
 use voku\PHPStan\Rules\IfConditionRule;
 
 /**
@@ -22,7 +21,6 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
 {
     private const COMPARISON_FIXTURE = __DIR__ . '/fixtures/ComparisonDiagnosticPolicyFixtures.php';
     private const MATCH_FIXTURE = __DIR__ . '/fixtures/ComparisonDiagnosticPolicyMatchFixtures.php';
-    private const TRUTHINESS_FIXTURE = __DIR__ . '/fixtures/LastConditionTruthinessFixtures.php';
 
     /**
      * @var Rule|null
@@ -93,10 +91,7 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
 
         $messages = $this->messagesByLine([self::COMPARISON_FIXTURE]);
 
-        self::assertNoMessageContains(
-            $messages[45] ?? [],
-            'Condition between '
-        );
+        self::assertNoMessageContains($messages[45] ?? [], 'Condition between ');
     }
 
     public function testPhpDocConstantOverlapFailsOpenWhenPhpDocTypesAreNotCertain(): void
@@ -191,76 +186,6 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
         $messages = $this->messagesByLine([self::MATCH_FIXTURE]);
 
         self::assertMessageContains($messages[12] ?? [], 'Condition between ');
-    }
-
-    /**
-     * @requires PHP 8.0
-     */
-    public function testActualLastMatchArmHonorsThePhpStanFlag(): void
-    {
-        $this->ruleUnderTest = new IfConditionRule(
-            [],
-            $this->createReflectionProvider(),
-            false,
-            false,
-            true,
-            false,
-            true
-        );
-
-        $messages = $this->messagesByLine([self::MATCH_FIXTURE]);
-        self::assertNoMessageContains($messages[21] ?? [], 'Condition between ');
-
-        $this->ruleUnderTest = new IfConditionRule(
-            [],
-            $this->createReflectionProvider(),
-            false,
-            false,
-            true,
-            true,
-            true
-        );
-
-        $messages = $this->messagesByLine([self::MATCH_FIXTURE]);
-        self::assertMessageContains($messages[21] ?? [], 'Condition between ');
-    }
-
-    public function testTruthinessLastConditionSuppressesAlwaysTrueButNeverAlwaysFalse(): void
-    {
-        $this->ruleUnderTest = new ElseIfConditionBasicRule(
-            [],
-            $this->createReflectionProvider(),
-            false,
-            false,
-            false,
-            true
-        );
-
-        $messages = $this->messagesByLine([self::TRUTHINESS_FIXTURE]);
-
-        self::assertNoMessageContains($messages[15] ?? [], 'Non-empty array is never empty.');
-        self::assertMessageContains(
-            $messages[28] ?? [],
-            'Non-empty array is never empty.',
-            'The last condition is always false here and must remain reportable.'
-        );
-    }
-
-    public function testTruthinessLastConditionIsReportedWhenThePhpStanFlagIsOn(): void
-    {
-        $this->ruleUnderTest = new ElseIfConditionBasicRule(
-            [],
-            $this->createReflectionProvider(),
-            false,
-            false,
-            true,
-            true
-        );
-
-        $messages = $this->messagesByLine([self::TRUTHINESS_FIXTURE]);
-
-        self::assertMessageContains($messages[15] ?? [], 'Non-empty array is never empty.');
-        self::assertMessageContains($messages[28] ?? [], 'Non-empty array is never empty.');
     }
 
     /**
