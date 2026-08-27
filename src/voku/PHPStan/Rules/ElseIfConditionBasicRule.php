@@ -41,6 +41,11 @@ final class ElseIfConditionBasicRule implements Rule
     private $reportAlwaysTrueInLastCondition;
 
     /**
+     * @var bool
+     */
+    private $treatPhpDocTypesAsCertain;
+
+    /**
      * @param array<int, class-string> $classesNotInIfConditions
      */
     public function __construct(
@@ -48,7 +53,8 @@ final class ElseIfConditionBasicRule implements Rule
         ?ReflectionProvider $reflectionProvider = null,
         bool $checkForAssignments = false,
         bool $checkYodaConditions = false,
-        bool $reportAlwaysTrueInLastCondition = true
+        bool $reportAlwaysTrueInLastCondition = true,
+        bool $treatPhpDocTypesAsCertain = true
     )
     {
         $this->reflectionProvider = $reflectionProvider;
@@ -60,6 +66,8 @@ final class ElseIfConditionBasicRule implements Rule
         $this->checkYodaConditions = $checkYodaConditions;
 
         $this->reportAlwaysTrueInLastCondition = $reportAlwaysTrueInLastCondition;
+
+        $this->treatPhpDocTypesAsCertain = $treatPhpDocTypesAsCertain;
     }
 
     public function getNodeType(): string
@@ -95,7 +103,8 @@ final class ElseIfConditionBasicRule implements Rule
                 $node->cond,
                 $scope,
                 $errors,
-                $this->reportAlwaysTrueInLastCondition
+                $this->reportAlwaysTrueInLastCondition,
+                $this->treatPhpDocTypesAsCertain
             );
         }
 
@@ -119,7 +128,8 @@ final class ElseIfConditionBasicRule implements Rule
             $node->cond,
             $scope,
             $errors,
-            $this->reportAlwaysTrueInLastCondition
+            $this->reportAlwaysTrueInLastCondition,
+            $this->treatPhpDocTypesAsCertain
         );
     }
 }
