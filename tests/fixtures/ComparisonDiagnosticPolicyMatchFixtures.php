@@ -14,10 +14,10 @@ final class ComparisonDiagnosticPolicyMatchFixtures
         };
     }
 
-    public function lastArmWithoutDefault(int $value): int
+    public function lastArmWithoutDefault(bool $gate, int $value): int
     {
         return match (true) {
-            $value === 0 => 0,
+            $gate => 0,
             $value != '' => 1,
         };
     }
