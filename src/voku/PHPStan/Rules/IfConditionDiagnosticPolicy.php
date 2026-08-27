@@ -11,11 +11,11 @@ use PHPStan\Rules\RuleError;
 use PHPStan\Type\Type;
 
 /**
- * Context policy for diagnostics produced by IfConditionHelper.
+ * Output policy for binary comparison diagnostics produced by IfConditionHelper.
  *
  * The helper remains responsible for discovering extension-specific findings. This class only
- * decides whether one of those findings is publishable when PHPStan already owns the same constant
- * comparison or deliberately suppresses an always-true final guard.
+ * removes a generic truth claim when PHPStan owns the same constant loose comparison, or when
+ * PHPStan deliberately suppresses an always-true final binary comparison.
  */
 final class IfConditionDiagnosticPolicy
 {
@@ -65,45 +65,7 @@ final class IfConditionDiagnosticPolicy
                 continue;
             }
 
-            if ($suppressAlwaysTrue && self::isAlwaysTrueClaim($message)) {
-                continue;
-            }
-
-            $filtered[] = $error;
-        }
-
-        return $filtered;
-    }
-
-    /**
-     * @param array<int, RuleError> $errors
-     *
-     * @return array<int, RuleError>
-     */
-    public static function filterTruthiness(
-        Node\Expr $condition,
-        Scope $scope,
-        array $errors,
-        bool $reportAlwaysTrueInLastCondition,
-        bool $treatPhpDocTypesAsCertain
-    ): array
-    {
-        if (
-            $scope->isInTrait()
-            ||
-            !self::isSuppressedAlwaysTrueLastCondition(
-                $condition,
-                $scope,
-                $reportAlwaysTrueInLastCondition,
-                $treatPhpDocTypesAsCertain
-            )
-        ) {
-            return $errors;
-        }
-
-        $filtered = [];
-        foreach ($errors as $error) {
-            if (self::isAlwaysTrueClaim($error->getMessage())) {
+            if ($suppressAlwaysTrue && self::isAlwaysTrueBinaryClaim($message)) {
                 continue;
             }
 
@@ -128,9 +90,7 @@ final class IfConditionDiagnosticPolicy
             return false;
         }
 
-        // Mirror PHPStan's ConstantLooseComparisonRule type choice exactly. If PHPDoc types are not
-        // trusted, only native types may prove overlap; otherwise the configured full type is the
-        // source of truth.
+        // Mirror PHPStan's ConstantLooseComparisonRule type choice exactly.
         $value = self::constantBooleanValue(
             self::configuredType($condition, $scope, $treatPhpDocTypesAsCertain)
         );
@@ -153,7 +113,7 @@ final class IfConditionDiagnosticPolicy
     }
 
     private static function isSuppressedAlwaysTrueLastCondition(
-        Node\Expr $condition,
+        Node\Expr\BinaryOp $condition,
         Scope $scope,
         bool $reportAlwaysTrueInLastCondition,
         bool $treatPhpDocTypesAsCertain
@@ -205,17 +165,9 @@ final class IfConditionDiagnosticPolicy
             && \strpos($message, ' are falsy, please do not mix types.') !== false;
     }
 
-    private static function isAlwaysTrueClaim(string $message): bool
+    private static function isAlwaysTrueBinaryClaim(string $message): bool
     {
-        if (self::isNativeConstantTruthClaim($message)) {
-            return true;
-        }
-
-        if (\strpos($message, ' is always true') !== false) {
-            return true;
-        }
-
-        return $message === 'Non-empty string is never empty.'
-            || $message === 'Non-empty array is never empty.';
+        return self::isNativeConstantTruthClaim($message)
+            || \strpos($message, ' is always true') !== false;
     }
 }
