@@ -80,6 +80,11 @@ final class TraitContextComparisonCollector implements Collector
             return null;
         }
 
+        $traitFile = $traitReflection->getFileName();
+        if ($traitFile === null) {
+            return null;
+        }
+
         $classReflection = $scope->getClassReflection();
         $contextName = $classReflection !== null
             ? $classReflection->getName()
@@ -98,7 +103,7 @@ final class TraitContextComparisonCollector implements Collector
             $traitReflection->getName(),
             $contextName,
             self::expressionKey($node),
-            $scope->getFile(),
+            $traitFile,
             $serializedErrors,
         ];
     }
