@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace voku\PHPStan\Rules\Test;
 
+use PHPStan\Collectors\Collector;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\PHPStanTestCase;
 use voku\PHPStan\Rules\DisallowedCallMethodOnNullRule;
@@ -19,6 +20,8 @@ use voku\PHPStan\Rules\IfConditionRule;
 use voku\PHPStan\Rules\IfConditionSwitchCaseRule;
 use voku\PHPStan\Rules\IfConditionTernaryOperatorRule;
 use voku\PHPStan\Rules\InArrayLooseComparisonRule;
+use voku\PHPStan\Rules\TraitContextComparisonCollector;
+use voku\PHPStan\Rules\TraitContextComparisonRule;
 use voku\PHPStan\Rules\WrongCastRule;
 
 /**
@@ -32,6 +35,7 @@ use voku\PHPStan\Rules\WrongCastRule;
 final class RulesNeonRegistrationTest extends PHPStanTestCase
 {
     private const PHPSTAN_RULE_TAG = 'phpstan.rules.rule';
+    private const PHPSTAN_COLLECTOR_TAG = 'phpstan.collector';
 
     /**
      * The rules a consumer gets by only including `rules.neon`.
@@ -50,7 +54,15 @@ final class RulesNeonRegistrationTest extends PHPStanTestCase
         IfConditionRule::class,
         IfConditionSwitchCaseRule::class,
         IfConditionTernaryOperatorRule::class,
+        TraitContextComparisonRule::class,
         WrongCastRule::class,
+    ];
+
+    /**
+     * @var array<int, class-string<Collector>>
+     */
+    private const SHIPPED_COLLECTORS = [
+        TraitContextComparisonCollector::class,
     ];
 
     /**
@@ -80,6 +92,16 @@ final class RulesNeonRegistrationTest extends PHPStanTestCase
         \sort($expected);
 
         $actual = $this->getRegisteredVokuRuleClasses();
+
+        static::assertSame($expected, $actual);
+    }
+
+    public function testRulesNeonRegistersExactlyTheShippedCollectors(): void
+    {
+        $expected = self::SHIPPED_COLLECTORS;
+        \sort($expected);
+
+        $actual = $this->getRegisteredVokuCollectorClasses();
 
         static::assertSame($expected, $actual);
     }
@@ -155,6 +177,25 @@ final class RulesNeonRegistrationTest extends PHPStanTestCase
         }
     }
 
+    public function testEveryRegisteredCollectorIsAnInstanceOfPhpStanCollector(): void
+    {
+        $services = self::getContainer()->getServicesByTag(self::PHPSTAN_COLLECTOR_TAG);
+
+        $vokuServices = \array_filter(
+            $services,
+            static function ($service): bool {
+                return \strpos(\get_class($service), 'voku\\PHPStan\\Rules\\') === 0;
+            }
+        );
+
+        static::assertCount(\count(self::SHIPPED_COLLECTORS), $vokuServices);
+
+        foreach ($vokuServices as $service) {
+            static::assertInstanceOf(Collector::class, $service);
+            static::assertNotSame('', $service->getNodeType());
+        }
+    }
+
     /**
      * @return array<int, class-string<Rule>>
      */
@@ -175,6 +216,29 @@ final class RulesNeonRegistrationTest extends PHPStanTestCase
         \sort($classNames);
 
         /** @var array<int, class-string<Rule>> $classNames */
+        return $classNames;
+    }
+
+    /**
+     * @return array<int, class-string<Collector>>
+     */
+    private function getRegisteredVokuCollectorClasses(): array
+    {
+        $classNames = [];
+
+        foreach (self::getContainer()->getServicesByTag(self::PHPSTAN_COLLECTOR_TAG) as $service) {
+            $className = \get_class($service);
+            if (\strpos($className, 'voku\\PHPStan\\Rules\\') !== 0) {
+                continue;
+            }
+
+            $classNames[] = $className;
+        }
+
+        $classNames = \array_values(\array_unique($classNames));
+        \sort($classNames);
+
+        /** @var array<int, class-string<Collector>> $classNames */
         return $classNames;
     }
 

@@ -73,7 +73,24 @@ services:
 			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
 			treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
 		tags:
-			- phpstan.rules.rule		
+			- phpstan.rules.rule
+
+	-
+		class: voku\PHPStan\Rules\TraitContextComparisonCollector
+		arguments:
+			classesNotInIfConditions: %voku.classesNotInIfConditions%
+			checkYodaConditions: %voku.checkYodaConditions%
+			checkForAssignments: %voku.checkForAssignments%
+			reportDuplicateNativeComparisons: %voku.reportDuplicateNativeComparisons%
+			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
+			treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
+		tags:
+			- phpstan.collector
+
+	-
+		class: voku\PHPStan\Rules\TraitContextComparisonRule
+		tags:
+			- phpstan.rules.rule
 			
 	-
 		class: voku\PHPStan\Rules\IfConditionBasicRule

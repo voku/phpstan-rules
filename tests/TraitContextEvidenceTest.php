@@ -9,12 +9,10 @@ use PHPStan\Testing\RuleTestCase;
 use voku\PHPStan\Rules\IfConditionRule;
 
 /**
- * Executable VPR-4 evidence for the current trait boundary.
+ * Direct-rule regression for the trait deferral boundary owned by #74.
  *
- * The same source expression is analysed independently in each using-class context. Two int consumers
- * therefore reproduce the same comparison findings on the same trait line, while a string consumer
- * produces different extension advice from that line. #74 owns changing this behavior to contextual
- * trait deferral; this test makes the pre-fix divergence reproducible instead of leaving it in prose.
+ * Trait diagnostics are collected through TraitContextComparisonCollector and must not be published
+ * eagerly by IfConditionRule for one using-class context.
  *
  * @extends RuleTestCase<IfConditionRule>
  */
@@ -24,86 +22,24 @@ final class TraitContextEvidenceTest extends RuleTestCase
     private const INT_CONSUMER_ONE_FIXTURE = __DIR__ . '/fixtures/TraitContext/IntTraitConsumerOne.php';
     private const INT_CONSUMER_TWO_FIXTURE = __DIR__ . '/fixtures/TraitContext/IntTraitConsumerTwo.php';
     private const STRING_CONSUMER_FIXTURE = __DIR__ . '/fixtures/TraitContext/StringTraitConsumer.php';
-    private const TRAIT_COMPARISON_LINE = 11;
 
     protected function getRule(): Rule
     {
         return new IfConditionRule([], $this->createReflectionProvider());
     }
 
-    public function testTraitComparisonIsPublishedPerUsingClassContext(): void
+    public function testDirectRuleDefersEveryUsingClassContext(): void
     {
-        $intConsumerOneMessages = $this->messagesByLineForConsumer(self::INT_CONSUMER_ONE_FIXTURE);
-        $intConsumerTwoMessages = $this->messagesByLineForConsumer(self::INT_CONSUMER_TWO_FIXTURE);
-        $stringConsumerMessages = $this->messagesByLineForConsumer(self::STRING_CONSUMER_FIXTURE);
-
-        self::assertMessageContains(
-            $intConsumerOneMessages[self::TRAIT_COMPARISON_LINE] ?? [],
-            "Condition between '' and int are falsy"
-        );
-        self::assertMessageContains(
-            $intConsumerOneMessages[self::TRAIT_COMPARISON_LINE] ?? [],
-            'double negative integer conditions'
-        );
-
-        self::assertMessageContains(
-            $intConsumerTwoMessages[self::TRAIT_COMPARISON_LINE] ?? [],
-            "Condition between '' and int are falsy"
-        );
-        self::assertMessageContains(
-            $intConsumerTwoMessages[self::TRAIT_COMPARISON_LINE] ?? [],
-            'double negative integer conditions'
-        );
-
-        self::assertMessageContains(
-            $stringConsumerMessages[self::TRAIT_COMPARISON_LINE] ?? [],
-            'double negative string conditions'
-        );
-        self::assertNoMessageContains(
-            $stringConsumerMessages[self::TRAIT_COMPARISON_LINE] ?? [],
-            'double negative integer conditions'
-        );
-    }
-
-    /**
-     * @return array<int, array<int, string>>
-     */
-    private function messagesByLineForConsumer(string $consumerFixture): array
-    {
-        $messages = [];
-
-        foreach ($this->gatherAnalyserErrors([self::TRAIT_FIXTURE, $consumerFixture]) as $error) {
-            $messages[$error->getLine()][] = $error->getMessage();
+        foreach ([
+            self::INT_CONSUMER_ONE_FIXTURE,
+            self::INT_CONSUMER_TWO_FIXTURE,
+            self::STRING_CONSUMER_FIXTURE,
+        ] as $consumerFixture) {
+            static::assertSame(
+                [],
+                $this->gatherAnalyserErrors([self::TRAIT_FIXTURE, $consumerFixture]),
+                'IfConditionRule must not publish trait diagnostics before all using-class contexts are known.'
+            );
         }
-
-        return $messages;
-    }
-
-    /**
-     * @param array<int, string> $messages
-     */
-    private static function assertMessageContains(array $messages, string $needle): void
-    {
-        foreach ($messages as $actualMessage) {
-            if (\strpos($actualMessage, $needle) !== false) {
-                static::assertTrue(true);
-
-                return;
-            }
-        }
-
-        static::fail('No trait diagnostic contained: ' . $needle);
-    }
-
-    /**
-     * @param array<int, string> $messages
-     */
-    private static function assertNoMessageContains(array $messages, string $needle): void
-    {
-        foreach ($messages as $actualMessage) {
-            static::assertStringNotContainsString($needle, $actualMessage);
-        }
-
-        static::assertTrue(true);
     }
 }
