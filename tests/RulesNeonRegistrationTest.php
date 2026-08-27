@@ -18,6 +18,7 @@ use voku\PHPStan\Rules\IfConditionMatchRule;
 use voku\PHPStan\Rules\IfConditionRule;
 use voku\PHPStan\Rules\IfConditionSwitchCaseRule;
 use voku\PHPStan\Rules\IfConditionTernaryOperatorRule;
+use voku\PHPStan\Rules\InArrayLooseComparisonRule;
 use voku\PHPStan\Rules\WrongCastRule;
 
 /**
@@ -60,6 +61,7 @@ final class RulesNeonRegistrationTest extends PHPStanTestCase
      */
     private const OPT_IN_RULES = [
         DisallowedCallMethodOnNullRule::class,
+        InArrayLooseComparisonRule::class,
     ];
 
     /**
