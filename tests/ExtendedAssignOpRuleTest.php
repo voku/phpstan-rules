@@ -42,7 +42,7 @@ final class ExtendedAssignOpRuleTest extends RuleTestCase
                     16,
                 ],
                 [
-                    'Plus: string (\'foo\') in combination with non-string (array{lall: int, foo: 1}) is not allowed.',
+                    'Plus: array (array{lall: int, foo: 1}) in combination with non-array (\'foo\') is not allowed.',
                     28,
                 ],
                 [

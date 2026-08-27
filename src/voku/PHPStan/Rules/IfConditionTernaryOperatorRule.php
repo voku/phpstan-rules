@@ -14,7 +14,6 @@ use PHPStan\Rules\Rule;
  */
 final class IfConditionTernaryOperatorRule implements Rule
 {
-
     /**
      * @var array<int, class-string>
      */
@@ -24,6 +23,11 @@ final class IfConditionTernaryOperatorRule implements Rule
      * @var bool
      */
     private $checkForAssignments;
+
+    /**
+     * @var bool
+     */
+    private $checkYodaConditions;
 
     /**
      * @var null|ReflectionProvider
@@ -36,14 +40,17 @@ final class IfConditionTernaryOperatorRule implements Rule
     public function __construct(
         array $classesNotInIfConditions,
         ?ReflectionProvider $reflectionProvider = null,
-        bool                $checkForAssignments = false
+        bool                $checkForAssignments = false,
+        bool                $checkYodaConditions = false
     )
     {
         $this->reflectionProvider = $reflectionProvider;
-        
+
         $this->classesNotInIfConditions = $classesNotInIfConditions;
 
         $this->checkForAssignments = $checkForAssignments;
+
+        $this->checkYodaConditions = $checkYodaConditions;
     }
 
     public function getNodeType(): string
@@ -83,7 +90,8 @@ final class IfConditionTernaryOperatorRule implements Rule
             $this->classesNotInIfConditions,
             $node,
             $this->reflectionProvider,
-            $this->checkForAssignments
+            $this->checkForAssignments,
+            $this->checkYodaConditions
         );
     }
 
@@ -100,7 +108,8 @@ final class IfConditionTernaryOperatorRule implements Rule
             $this->classesNotInIfConditions,
             $origNode,
             $this->reflectionProvider,
-            $this->checkForAssignments
+            $this->checkForAssignments,
+            $this->checkYodaConditions
         );
     }
 }
