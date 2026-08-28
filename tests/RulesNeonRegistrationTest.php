@@ -20,6 +20,7 @@ use voku\PHPStan\Rules\IfConditionRule;
 use voku\PHPStan\Rules\IfConditionSwitchCaseRule;
 use voku\PHPStan\Rules\IfConditionTernaryOperatorRule;
 use voku\PHPStan\Rules\InArrayLooseComparisonRule;
+use voku\PHPStan\Rules\TraitContextAssignOpCollector;
 use voku\PHPStan\Rules\TraitContextComparisonCollector;
 use voku\PHPStan\Rules\TraitContextComparisonRule;
 use voku\PHPStan\Rules\WrongCastRule;
@@ -62,6 +63,7 @@ final class RulesNeonRegistrationTest extends PHPStanTestCase
      * @var array<int, class-string<Collector>>
      */
     private const SHIPPED_COLLECTORS = [
+        TraitContextAssignOpCollector::class,
         TraitContextComparisonCollector::class,
     ];
 
