@@ -20,6 +20,7 @@ final class TraitContextIntegrationTest extends PHPStanTestCase
     private const INT_CONSUMER_TWO_FIXTURE = __DIR__ . '/fixtures/TraitContext/IntTraitConsumerTwo.php';
     private const STRING_CONSUMER_FIXTURE = __DIR__ . '/fixtures/TraitContext/StringTraitConsumer.php';
     private const TRAIT_COMPARISON_LINE = 11;
+    private const EXTENDED_BINARY_MESSAGE = "string ('') in combination with non-string (int) is not allowed.";
 
     /**
      * @return array<int, string>
@@ -40,7 +41,9 @@ final class TraitContextIntegrationTest extends PHPStanTestCase
 
         self::assertMessageCount($errors, "Condition between '' and int are falsy", 1);
         self::assertMessageCount($errors, 'double negative integer conditions', 1);
+        self::assertMessageCount($errors, self::EXTENDED_BINARY_MESSAGE, 1);
         self::assertTraitSourceForMatchingErrors($errors, 'double negative integer conditions');
+        self::assertTraitSourceForMatchingErrors($errors, self::EXTENDED_BINARY_MESSAGE);
     }
 
     public function testTwoEquivalentIntConsumersPublishEachTraitDiagnosticOnce(): void
@@ -53,7 +56,9 @@ final class TraitContextIntegrationTest extends PHPStanTestCase
 
         self::assertMessageCount($errors, "Condition between '' and int are falsy", 1);
         self::assertMessageCount($errors, 'double negative integer conditions', 1);
+        self::assertMessageCount($errors, self::EXTENDED_BINARY_MESSAGE, 1);
         self::assertTraitSourceForMatchingErrors($errors, 'double negative integer conditions');
+        self::assertTraitSourceForMatchingErrors($errors, self::EXTENDED_BINARY_MESSAGE);
     }
 
     public function testDifferentUsingClassContextsDoNotPublishContextSpecificTraitDiagnostics(): void
@@ -67,6 +72,7 @@ final class TraitContextIntegrationTest extends PHPStanTestCase
         self::assertMessageCount($errors, "Condition between '' and int are falsy", 0);
         self::assertMessageCount($errors, 'double negative integer conditions', 0);
         self::assertMessageCount($errors, 'double negative string conditions', 0);
+        self::assertMessageCount($errors, self::EXTENDED_BINARY_MESSAGE, 0);
     }
 
     /**
