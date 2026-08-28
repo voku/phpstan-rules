@@ -11,7 +11,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
- * Publishes only trait comparison diagnostics that are valid in every observed using-class context.
+ * Publishes only trait diagnostics that are valid in every observed using-class context.
  *
  * @implements Rule<CollectedDataNode>
  */
@@ -38,6 +38,32 @@ final class TraitContextComparisonRule implements Rule
         $expressions = [];
 
         foreach ($node->get(TraitContextComparisonCollector::class) as $fileData) {
+            foreach ($fileData as $data) {
+                $traitName = $data[0];
+                $contextName = $data[1];
+                $expressionKey = $data[2];
+                $file = $data[3];
+                $serializedErrors = $data[4];
+
+                if (!isset($expressions[$traitName][$expressionKey])) {
+                    $expressions[$traitName][$expressionKey] = [
+                        'file' => $file,
+                        'contexts' => [],
+                    ];
+                }
+
+                if (!isset($expressions[$traitName][$expressionKey]['contexts'][$contextName])) {
+                    $expressions[$traitName][$expressionKey]['contexts'][$contextName] = [];
+                }
+
+                foreach ($serializedErrors as $serializedError) {
+                    $errorKey = \serialize($serializedError);
+                    $expressions[$traitName][$expressionKey]['contexts'][$contextName][$errorKey] = $serializedError;
+                }
+            }
+        }
+
+        foreach ($node->get(TraitContextAssignOpCollector::class) as $fileData) {
             foreach ($fileData as $data) {
                 $traitName = $data[0];
                 $contextName = $data[1];
