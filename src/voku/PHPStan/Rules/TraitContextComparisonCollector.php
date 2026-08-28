@@ -13,7 +13,7 @@ use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\LineRuleError;
 
 /**
- * Collects IfConditionRule diagnostics for every using-class context of a trait expression.
+ * Collects binary comparison diagnostics for every using-class context of a trait expression.
  *
  * @implements Collector<BinaryOp, array{
  *     string,
@@ -28,7 +28,12 @@ final class TraitContextComparisonCollector implements Collector
     /**
      * @var IfConditionRuleDiagnostics
      */
-    private $diagnostics;
+    private $ifConditionDiagnostics;
+
+    /**
+     * @var ExtendedBinaryOpRuleDiagnostics
+     */
+    private $extendedBinaryOpDiagnostics;
 
     /**
      * @param array<int, class-string> $classesNotInIfConditions
@@ -42,7 +47,7 @@ final class TraitContextComparisonCollector implements Collector
         bool $reportAlwaysTrueInLastCondition = true,
         bool $treatPhpDocTypesAsCertain = true
     ) {
-        $this->diagnostics = new IfConditionRuleDiagnostics(
+        $this->ifConditionDiagnostics = new IfConditionRuleDiagnostics(
             $classesNotInIfConditions,
             $reflectionProvider,
             $checkForAssignments,
@@ -51,6 +56,7 @@ final class TraitContextComparisonCollector implements Collector
             $reportAlwaysTrueInLastCondition,
             $treatPhpDocTypesAsCertain
         );
+        $this->extendedBinaryOpDiagnostics = new ExtendedBinaryOpRuleDiagnostics();
     }
 
     public function getNodeType(): string
@@ -86,8 +92,13 @@ final class TraitContextComparisonCollector implements Collector
             ? $classReflection->getName()
             : $scope->getFileDescription();
 
+        $errors = \array_merge(
+            $this->ifConditionDiagnostics->processNode($node, $scope),
+            $this->extendedBinaryOpDiagnostics->processNode($node, $scope)
+        );
+
         $serializedErrors = [];
-        foreach ($this->diagnostics->processNode($node, $scope) as $error) {
+        foreach ($errors as $error) {
             $serializedErrors[] = [
                 $error->getMessage(),
                 $error instanceof IdentifierRuleError ? $error->getIdentifier() : null,
