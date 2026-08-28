@@ -52,7 +52,7 @@ jobs:
       - name: Install dependencies
         run: |
           if [[ "${{ matrix.php }}" == "7.4" ]]; then
-            composer require phpstan/phpstan --no-update
+            composer require phpstan/phpstan:2.1.56 --no-update
           fi;
 
           if [[ "${{ matrix.composer }}" == "basic" ]]; then
