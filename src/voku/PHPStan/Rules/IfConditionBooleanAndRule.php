@@ -14,7 +14,6 @@ use PHPStan\Rules\Rule;
  */
 final class IfConditionBooleanAndRule implements Rule
 {
-
     /**
      * @var array<int, class-string>
      */
@@ -36,22 +35,39 @@ final class IfConditionBooleanAndRule implements Rule
     private $reflectionProvider;
 
     /**
+     * @var bool
+     */
+    private $reportDuplicateNativeComparisons;
+
+    /**
+     * @var bool
+     */
+    private $reportAlwaysTrueInLastCondition;
+
+    /**
+     * @var bool
+     */
+    private $treatPhpDocTypesAsCertain;
+
+    /**
      * @param array<int, class-string> $classesNotInIfConditions
      */
     public function __construct(
         array $classesNotInIfConditions,
         ?ReflectionProvider $reflectionProvider = null,
         bool $checkForAssignments = false,
-        bool $checkYodaConditions = false
-    )
-    {
+        bool $checkYodaConditions = false,
+        bool $reportDuplicateNativeComparisons = true,
+        bool $reportAlwaysTrueInLastCondition = true,
+        bool $treatPhpDocTypesAsCertain = true
+    ) {
         $this->reflectionProvider = $reflectionProvider;
-
         $this->classesNotInIfConditions = $classesNotInIfConditions;
-
         $this->checkForAssignments = $checkForAssignments;
-        
         $this->checkYodaConditions = $checkYodaConditions;
+        $this->reportDuplicateNativeComparisons = $reportDuplicateNativeComparisons;
+        $this->reportAlwaysTrueInLastCondition = $reportAlwaysTrueInLastCondition;
+        $this->treatPhpDocTypesAsCertain = $treatPhpDocTypesAsCertain;
     }
 
     public function getNodeType(): string
@@ -66,10 +82,9 @@ final class IfConditionBooleanAndRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        $cond = $node->getOriginalNode();
-        
+        $condition = $node->getOriginalNode();
         $errors = IfConditionHelper::processBooleanNodeHelper(
-            $cond,
+            $condition,
             $scope,
             $this->classesNotInIfConditions,
             $node,
@@ -78,6 +93,17 @@ final class IfConditionBooleanAndRule implements Rule
             $this->checkYodaConditions
         );
 
-        return $errors;
+        if (!$condition instanceof Node\Expr\BinaryOp) {
+            return $errors;
+        }
+
+        return IfConditionDiagnosticPolicy::filterBinaryComparison(
+            $condition,
+            $scope,
+            $errors,
+            $this->reportDuplicateNativeComparisons,
+            $this->reportAlwaysTrueInLastCondition,
+            $this->treatPhpDocTypesAsCertain
+        );
     }
 }
