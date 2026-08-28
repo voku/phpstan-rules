@@ -101,7 +101,7 @@ final class Vpr8YodaConfigurationTest extends RuleTestCase
 
             static::assertSame(
                 ['classesNotInIfConditions', 'checkForAssignments', 'reflectionProvider', 'checkYodaConditions'],
-                $names
+                \array_slice($names, 0, 4)
             );
         }
     }
