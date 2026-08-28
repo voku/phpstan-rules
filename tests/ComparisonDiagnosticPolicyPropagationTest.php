@@ -36,6 +36,9 @@ final class ComparisonDiagnosticPolicyPropagationTest extends RuleTestCase
         return $this->ruleUnderTest;
     }
 
+    /**
+     * @requires PHP >= 8.0
+     */
     public function testTernaryRuleUsesDuplicateNativePolicy(): void
     {
         $this->ruleUnderTest = new IfConditionTernaryOperatorRule(
@@ -51,6 +54,9 @@ final class ComparisonDiagnosticPolicyPropagationTest extends RuleTestCase
         $this->assertGenericNativeOverlapIsSuppressed([self::FIXTURE]);
     }
 
+    /**
+     * @requires PHP >= 8.0
+     */
     public function testSwitchRuleUsesDuplicateNativePolicy(): void
     {
         $this->ruleUnderTest = new IfConditionSwitchCaseRule(
@@ -66,6 +72,9 @@ final class ComparisonDiagnosticPolicyPropagationTest extends RuleTestCase
         $this->assertGenericNativeOverlapIsSuppressed([self::FIXTURE]);
     }
 
+    /**
+     * @requires PHP >= 8.0
+     */
     public function testBooleanNotRuleUsesDuplicateNativePolicy(): void
     {
         $this->ruleUnderTest = new IfConditionBooleanNotRule(
