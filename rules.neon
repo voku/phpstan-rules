@@ -97,6 +97,14 @@ services:
 			- phpstan.collector
 
 	-
+		class: voku\PHPStan\Rules\TraitContextAssignOpCollector
+		arguments:
+			checkYodaConditions: %voku.checkYodaConditions%
+			checkForAssignments: %voku.checkForAssignments%
+		tags:
+			- phpstan.collector
+
+	-
 		class: voku\PHPStan\Rules\TraitContextComparisonRule
 		tags:
 			- phpstan.rules.rule
