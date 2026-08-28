@@ -25,15 +25,4 @@ final class DuplicateNativeComparisonPropagationFixtures
     {
         return !($value == '');
     }
-
-    /**
-     * @return string
-     */
-    public function matchCase(int $value): string
-    {
-        return match (true) {
-            $value == '' => 'a',
-            default => 'b',
-        };
-    }
 }
