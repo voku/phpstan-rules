@@ -14,14 +14,9 @@ use PHPStan\Rules\Rule;
 class ExtendedBinaryOpRule implements Rule
 {
     /**
-     * @var ExtendedBinaryOpRuleDiagnostics
+     * @var ExtendedBinaryOpRuleDiagnostics|null
      */
     private $diagnostics;
-
-    public function __construct()
-    {
-        $this->diagnostics = new ExtendedBinaryOpRuleDiagnostics();
-    }
 
     public function getNodeType(): string
     {
@@ -39,6 +34,15 @@ class ExtendedBinaryOpRule implements Rule
             return [];
         }
 
-        return $this->diagnostics->processNode($node, $scope);
+        return $this->getDiagnostics()->processNode($node, $scope);
+    }
+
+    private function getDiagnostics(): ExtendedBinaryOpRuleDiagnostics
+    {
+        if ($this->diagnostics === null) {
+            $this->diagnostics = new ExtendedBinaryOpRuleDiagnostics();
+        }
+
+        return $this->diagnostics;
     }
 }
