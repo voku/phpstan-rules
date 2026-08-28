@@ -35,6 +35,21 @@ final class IfConditionMatchRule implements Rule
     private $reflectionProvider;
 
     /**
+     * @var bool
+     */
+    private $reportDuplicateNativeComparisons;
+
+    /**
+     * @var bool
+     */
+    private $reportAlwaysTrueInLastCondition;
+
+    /**
+     * @var bool
+     */
+    private $treatPhpDocTypesAsCertain;
+
+    /**
      * The first three parameters intentionally keep the legacy positional order.
      *
      * @param array<int, class-string> $classesNotInIfConditions
@@ -43,16 +58,18 @@ final class IfConditionMatchRule implements Rule
         array $classesNotInIfConditions,
         bool $checkForAssignments = false,
         ?ReflectionProvider $reflectionProvider = null,
-        bool $checkYodaConditions = false
-    )
-    {
+        bool $checkYodaConditions = false,
+        bool $reportDuplicateNativeComparisons = true,
+        bool $reportAlwaysTrueInLastCondition = true,
+        bool $treatPhpDocTypesAsCertain = true
+    ) {
         $this->reflectionProvider = $reflectionProvider;
-
         $this->checkForAssignments = $checkForAssignments;
-
         $this->classesNotInIfConditions = $classesNotInIfConditions;
-
         $this->checkYodaConditions = $checkYodaConditions;
+        $this->reportDuplicateNativeComparisons = $reportDuplicateNativeComparisons;
+        $this->reportAlwaysTrueInLastCondition = $reportAlwaysTrueInLastCondition;
+        $this->treatPhpDocTypesAsCertain = $treatPhpDocTypesAsCertain;
     }
 
     public function getNodeType(): string
@@ -75,11 +92,11 @@ final class IfConditionMatchRule implements Rule
             }
 
             foreach ($arm->conds as $case) {
-                $errors = IfConditionHelper::processNodeHelper(
+                $caseErrors = IfConditionHelper::processNodeHelper(
                     $scope->getType($node->cond),
                     $scope->getType($case),
                     $case,
-                    $errors,
+                    [],
                     $this->classesNotInIfConditions,
                     $node,
                     $this->reflectionProvider,
@@ -87,8 +104,8 @@ final class IfConditionMatchRule implements Rule
                     $this->checkYodaConditions
                 );
 
-                $errors = array_merge(
-                    $errors,
+                $caseErrors = array_merge(
+                    $caseErrors,
                     IfConditionHelper::processNestedObjectComparisons(
                         $case,
                         $scope,
@@ -97,9 +114,22 @@ final class IfConditionMatchRule implements Rule
                         $this->reflectionProvider
                     )
                 );
+
+                if ($case instanceof Node\Expr\BinaryOp) {
+                    $caseErrors = IfConditionDiagnosticPolicy::filterBinaryComparison(
+                        $case,
+                        $scope,
+                        $caseErrors,
+                        $this->reportDuplicateNativeComparisons,
+                        $this->reportAlwaysTrueInLastCondition,
+                        $this->treatPhpDocTypesAsCertain
+                    );
+                }
+
+                $errors = array_merge($errors, $caseErrors);
             }
         }
 
-        return $errors;
+        return IfConditionHelper::deduplicateErrors($errors);
     }
 }
