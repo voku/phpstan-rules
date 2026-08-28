@@ -93,10 +93,6 @@ final class IfConditionBooleanAndRule implements Rule
             $this->checkYodaConditions
         );
 
-        if (!$condition instanceof Node\Expr\BinaryOp) {
-            return $errors;
-        }
-
         return IfConditionDiagnosticPolicy::filterBinaryComparison(
             $condition,
             $scope,
