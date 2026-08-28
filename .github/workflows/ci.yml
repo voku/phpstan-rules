@@ -67,7 +67,6 @@ jobs:
             php vendor/bin/phpunit -c phpunit.xml --coverage-clover=build/logs/clover.xml
 
       - name: Run phpstan
-        continue-on-error: true
         if: ${{ matrix.php == '7.4' }}
         run: |
           php vendor/bin/phpstan analyse
