@@ -35,22 +35,39 @@ final class IfConditionTernaryOperatorRule implements Rule
     private $reflectionProvider;
 
     /**
+     * @var bool
+     */
+    private $reportDuplicateNativeComparisons;
+
+    /**
+     * @var bool
+     */
+    private $reportAlwaysTrueInLastCondition;
+
+    /**
+     * @var bool
+     */
+    private $treatPhpDocTypesAsCertain;
+
+    /**
      * @param array<int, class-string> $classesNotInIfConditions
      */
     public function __construct(
         array $classesNotInIfConditions,
         ?ReflectionProvider $reflectionProvider = null,
-        bool                $checkForAssignments = false,
-        bool                $checkYodaConditions = false
-    )
-    {
+        bool $checkForAssignments = false,
+        bool $checkYodaConditions = false,
+        bool $reportDuplicateNativeComparisons = true,
+        bool $reportAlwaysTrueInLastCondition = true,
+        bool $treatPhpDocTypesAsCertain = true
+    ) {
         $this->reflectionProvider = $reflectionProvider;
-
         $this->classesNotInIfConditions = $classesNotInIfConditions;
-
         $this->checkForAssignments = $checkForAssignments;
-
         $this->checkYodaConditions = $checkYodaConditions;
+        $this->reportDuplicateNativeComparisons = $reportDuplicateNativeComparisons;
+        $this->reportAlwaysTrueInLastCondition = $reportAlwaysTrueInLastCondition;
+        $this->treatPhpDocTypesAsCertain = $treatPhpDocTypesAsCertain;
     }
 
     public function getNodeType(): string
@@ -84,7 +101,7 @@ final class IfConditionTernaryOperatorRule implements Rule
             );
         }
 
-        return IfConditionHelper::processBooleanNodeHelper(
+        $errors = IfConditionHelper::processBooleanNodeHelper(
             $node->cond,
             $scope,
             $this->classesNotInIfConditions,
@@ -92,6 +109,19 @@ final class IfConditionTernaryOperatorRule implements Rule
             $this->reflectionProvider,
             $this->checkForAssignments,
             $this->checkYodaConditions
+        );
+
+        if (!$node->cond instanceof Node\Expr\BinaryOp) {
+            return $errors;
+        }
+
+        return IfConditionDiagnosticPolicy::filterBinaryComparison(
+            $node->cond,
+            $scope,
+            $errors,
+            $this->reportDuplicateNativeComparisons,
+            $this->reportAlwaysTrueInLastCondition,
+            $this->treatPhpDocTypesAsCertain
         );
     }
 

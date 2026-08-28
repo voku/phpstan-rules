@@ -1,6 +1,7 @@
 # Changelog
 
 ### Upcoming
+- restore clean self-analysis for the comparison policy, make PHPStan analysis blocking in CI, and propagate duplicate-native suppression through ternary, match, switch and boolean condition rules
 - propagate `checkYodaConditions` to ternary, match and switch rules, and fix definite array/non-array checks in binary and assignment operators
 - add opt-in `InArrayLooseComparisonRule` for PHP 7/8 loose-comparison surprises in `in_array()` and `array_search()`
 - add `voku.reportDuplicateNativeComparisons` to suppress proven PHPStan-native comparison overlap while preserving extension-specific advice and PHPStan last-condition/PHPDoc-certainty behavior

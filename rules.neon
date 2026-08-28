@@ -42,6 +42,9 @@ services:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkYodaConditions: %voku.checkYodaConditions%
 			checkForAssignments: %voku.checkForAssignments%
+			reportDuplicateNativeComparisons: %voku.reportDuplicateNativeComparisons%
+			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
+			treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
 		tags:
 			- phpstan.rules.rule
 
@@ -51,6 +54,9 @@ services:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkYodaConditions: %voku.checkYodaConditions%
 			checkForAssignments: %voku.checkForAssignments%
+			reportDuplicateNativeComparisons: %voku.reportDuplicateNativeComparisons%
+			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
+			treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
 		tags:
 			- phpstan.rules.rule
 
@@ -60,6 +66,9 @@ services:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkYodaConditions: %voku.checkYodaConditions%
 			checkForAssignments: %voku.checkForAssignments%
+			reportDuplicateNativeComparisons: %voku.reportDuplicateNativeComparisons%
+			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
+			treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
 		tags:
 			- phpstan.rules.rule
 
@@ -116,6 +125,9 @@ services:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkForAssignments: %voku.checkForAssignments%
 			checkYodaConditions: %voku.checkYodaConditions%
+			reportDuplicateNativeComparisons: %voku.reportDuplicateNativeComparisons%
+			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
+			treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
 		tags:
 			- phpstan.rules.rule
 
@@ -125,6 +137,9 @@ services:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkForAssignments: %voku.checkForAssignments%
 			checkYodaConditions: %voku.checkYodaConditions%
+			reportDuplicateNativeComparisons: %voku.reportDuplicateNativeComparisons%
+			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
+			treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
 		tags:
 			- phpstan.rules.rule
 			
@@ -134,5 +149,8 @@ services:
 			classesNotInIfConditions: %voku.classesNotInIfConditions%
 			checkForAssignments: %voku.checkForAssignments%
 			checkYodaConditions: %voku.checkYodaConditions%
+			reportDuplicateNativeComparisons: %voku.reportDuplicateNativeComparisons%
+			reportAlwaysTrueInLastCondition: %reportAlwaysTrueInLastCondition%
+			treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
 		tags:
 			- phpstan.rules.rule

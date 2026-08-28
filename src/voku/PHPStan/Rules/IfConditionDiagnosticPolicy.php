@@ -6,7 +6,6 @@ namespace voku\PHPStan\Rules;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Parser\LastConditionVisitor;
 use PHPStan\Rules\RuleError;
 use PHPStan\Type\Type;
 
@@ -19,6 +18,14 @@ use PHPStan\Type\Type;
  */
 final class IfConditionDiagnosticPolicy
 {
+    /**
+     * Mirrored from PHPStan\Parser\LastConditionVisitor::ATTRIBUTE_NAME.
+     *
+     * Referencing that class constant from src/ is outside PHPStan's backward-compatibility promise,
+     * so the value is pinned by a regression test instead.
+     */
+    private const LAST_CONDITION_ATTRIBUTE = 'isLastCondition';
+
     /**
      * @param array<int, RuleError> $errors
      *
@@ -33,12 +40,6 @@ final class IfConditionDiagnosticPolicy
         bool $treatPhpDocTypesAsCertain
     ): array
     {
-        // PHPStan defers trait constant-condition decisions across all using classes. Until VPR-4
-        // / #74 has the same contextual boundary, dropping a per-use finding here is unsafe.
-        if ($scope->isInTrait()) {
-            return $errors;
-        }
-
         $suppressNativeDuplicate = !$reportDuplicateNativeComparisons
             && self::isProvablyReportedByNativeConstantLooseComparison(
                 $condition,
@@ -103,7 +104,7 @@ final class IfConditionDiagnosticPolicy
             &&
             !$reportAlwaysTrueInLastCondition
             &&
-            $condition->getAttribute(LastConditionVisitor::ATTRIBUTE_NAME) === true
+            $condition->getAttribute(self::LAST_CONDITION_ATTRIBUTE) === true
         ) {
             // PHPStan's ConstantLooseComparisonRule deliberately returns no error here.
             return false;
@@ -122,7 +123,7 @@ final class IfConditionDiagnosticPolicy
         if (
             $reportAlwaysTrueInLastCondition
             ||
-            $condition->getAttribute(LastConditionVisitor::ATTRIBUTE_NAME) !== true
+            $condition->getAttribute(self::LAST_CONDITION_ATTRIBUTE) !== true
         ) {
             return false;
         }

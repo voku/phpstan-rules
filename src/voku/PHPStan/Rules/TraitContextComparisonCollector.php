@@ -76,10 +76,6 @@ final class TraitContextComparisonCollector implements Collector
         }
 
         $traitReflection = $scope->getTraitReflection();
-        if ($traitReflection === null) {
-            return null;
-        }
-
         $traitFile = $traitReflection->getFileName();
         if ($traitFile === null) {
             return null;
