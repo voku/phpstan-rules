@@ -35,6 +35,21 @@ final class IfConditionSwitchCaseRule implements Rule
     private $reflectionProvider;
 
     /**
+     * @var bool
+     */
+    private $reportDuplicateNativeComparisons;
+
+    /**
+     * @var bool
+     */
+    private $reportAlwaysTrueInLastCondition;
+
+    /**
+     * @var bool
+     */
+    private $treatPhpDocTypesAsCertain;
+
+    /**
      * The first three parameters intentionally keep the legacy positional order.
      *
      * @param array<int, class-string> $classesNotInIfConditions
@@ -43,16 +58,18 @@ final class IfConditionSwitchCaseRule implements Rule
         array $classesNotInIfConditions,
         bool $checkForAssignments = false,
         ?ReflectionProvider $reflectionProvider = null,
-        bool $checkYodaConditions = false
-    )
-    {
+        bool $checkYodaConditions = false,
+        bool $reportDuplicateNativeComparisons = true,
+        bool $reportAlwaysTrueInLastCondition = true,
+        bool $treatPhpDocTypesAsCertain = true
+    ) {
         $this->reflectionProvider = $reflectionProvider;
-
         $this->checkForAssignments = $checkForAssignments;
-
         $this->classesNotInIfConditions = $classesNotInIfConditions;
-
         $this->checkYodaConditions = $checkYodaConditions;
+        $this->reportDuplicateNativeComparisons = $reportDuplicateNativeComparisons;
+        $this->reportAlwaysTrueInLastCondition = $reportAlwaysTrueInLastCondition;
+        $this->treatPhpDocTypesAsCertain = $treatPhpDocTypesAsCertain;
     }
 
     public function getNodeType(): string
@@ -70,11 +87,12 @@ final class IfConditionSwitchCaseRule implements Rule
         $errors = [];
 
         foreach ($node->cases as $case) {
-            $errors = IfConditionHelper::processNodeHelper(
+            $condition = $case->cond === null ? $node->cond : $case->cond;
+            $caseErrors = IfConditionHelper::processNodeHelper(
                 $scope->getType($node->cond),
                 $case->cond === null ? null : $scope->getType($case->cond),
-                $case->cond === null ? $node->cond : $case->cond,
-                $errors,
+                $condition,
+                [],
                 $this->classesNotInIfConditions,
                 $node,
                 $this->reflectionProvider,
@@ -83,8 +101,8 @@ final class IfConditionSwitchCaseRule implements Rule
             );
 
             if ($case->cond !== null) {
-                $errors = array_merge(
-                    $errors,
+                $caseErrors = array_merge(
+                    $caseErrors,
                     IfConditionHelper::processNestedObjectComparisons(
                         $case->cond,
                         $scope,
@@ -93,9 +111,22 @@ final class IfConditionSwitchCaseRule implements Rule
                         $this->reflectionProvider
                     )
                 );
+
+                if ($case->cond instanceof Node\Expr\BinaryOp) {
+                    $caseErrors = IfConditionDiagnosticPolicy::filterBinaryComparison(
+                        $case->cond,
+                        $scope,
+                        $caseErrors,
+                        $this->reportDuplicateNativeComparisons,
+                        $this->reportAlwaysTrueInLastCondition,
+                        $this->treatPhpDocTypesAsCertain
+                    );
+                }
             }
+
+            $errors = array_merge($errors, $caseErrors);
         }
 
-        return $errors;
+        return IfConditionHelper::deduplicateErrors($errors);
     }
 }
