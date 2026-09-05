@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e9896a9f47e95c42ef88e40e15d9988e",
+    "content-hash": "180ee85997165c0fb98bbd08a45c38a5",
     "packages": [
         {
             "name": "doctrine/deprecations",
@@ -570,16 +570,16 @@
         },
         {
             "name": "voku/agent-learning",
-            "version": "0.16.0",
+            "version": "0.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voku/agent-learning.git",
-                "reference": "f21a87029eaeb61aec6133363df5fed628542f31"
+                "reference": "f7afeffe43ad35eea0250f149208248ccff77469"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/agent-learning/zipball/f21a87029eaeb61aec6133363df5fed628542f31",
-                "reference": "f21a87029eaeb61aec6133363df5fed628542f31",
+                "url": "https://api.github.com/repos/voku/agent-learning/zipball/f7afeffe43ad35eea0250f149208248ccff77469",
+                "reference": "f7afeffe43ad35eea0250f149208248ccff77469",
                 "shasum": ""
             },
             "require": {
@@ -611,6 +611,18 @@
             ],
             "description": "Reviewable finding, proposal, redaction, and decision-history tooling for coding-agent learning loops.",
             "homepage": "https://github.com/voku/agent-learning",
+            "keywords": [
+                "Agent",
+                "ai",
+                "coding-agent",
+                "decision-history",
+                "findings",
+                "learning",
+                "llm",
+                "memory",
+                "precedents",
+                "proposals"
+            ],
             "support": {
                 "issues": "https://github.com/voku/agent-learning/issues",
                 "source": "https://github.com/voku/agent-learning"
@@ -621,27 +633,27 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-04T17:39:42+00:00"
+            "time": "2026-09-05T06:02:26+00:00"
         },
         {
             "name": "voku/agent-loop",
-            "version": "0.19.0",
+            "version": "0.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voku/agent-loop.git",
-                "reference": "e6972b28fd8562b08d1d581e8c0078bed585cd0a"
+                "reference": "bf0f04bc0689e5dbbffc2872a8ddc77ca576da9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/agent-loop/zipball/e6972b28fd8562b08d1d581e8c0078bed585cd0a",
-                "reference": "e6972b28fd8562b08d1d581e8c0078bed585cd0a",
+                "url": "https://api.github.com/repos/voku/agent-loop/zipball/bf0f04bc0689e5dbbffc2872a8ddc77ca576da9f",
+                "reference": "bf0f04bc0689e5dbbffc2872a8ddc77ca576da9f",
                 "shasum": ""
             },
             "require": {
                 "helgesverre/toon": "^3.1",
                 "php": "^8.3",
                 "voku/agent-kanban": "^0.4.0",
-                "voku/agent-learning": "^0.16.0",
+                "voku/agent-learning": "^0.16.1",
                 "voku/agent-map": "^0.10.0",
                 "voku/agent-recall-compiler": "^0.15.0",
                 "voku/agent-session": "^0.7.0"
@@ -660,7 +672,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "0.19.x-dev"
+                    "dev-main": "0.20.x-dev"
                 }
             },
             "autoload": {
@@ -680,6 +692,17 @@
             ],
             "description": "Unified Composer CLI for the governed coding-agent loop: edit orchestration, board, session, recall, review, learning, memory review, and verification.",
             "homepage": "https://github.com/voku/agent-loop",
+            "keywords": [
+                "Agent",
+                "agent-loop",
+                "ai",
+                "code-quality",
+                "coding-agent",
+                "developer-tools",
+                "governance",
+                "llm",
+                "orchestration"
+            ],
             "support": {
                 "issues": "https://github.com/voku/agent-loop/issues",
                 "source": "https://github.com/voku/agent-loop"
@@ -690,7 +713,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-04T17:58:51+00:00"
+            "time": "2026-09-05T06:49:11+00:00"
         },
         {
             "name": "voku/agent-map",
