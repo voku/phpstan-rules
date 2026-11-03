@@ -36,8 +36,8 @@ On PHPStan 2.3.5+, selected array-condition diagnostics from
 `IfConditionBasicRule` and `ElseIfConditionBasicRule` are auto-fixable with
 `phpstan analyse --fix`:
 
-- `if ($values)` becomes `if (\\count($values) > 0)`.
-- `elseif (!$values)` becomes `elseif (\\count($values) === 0)`.
+- `if ($values)` becomes `if (\count($values) > 0)`.
+- `elseif (!$values)` becomes `elseif (\count($values) === 0)`.
 
 A fix is offered **only** when PHPStan can prove the whole expression type is
 an array and the condition is a plain variable or its negation. The current
