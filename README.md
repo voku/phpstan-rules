@@ -30,6 +30,27 @@ includes:
 	- vendor/voku/phpstan-rules/rules.neon
 ```
 
+## PHPStan 2.3.5 automatic fixes
+
+On PHPStan 2.3.5+, selected array-condition diagnostics from
+`IfConditionBasicRule` and `ElseIfConditionBasicRule` are auto-fixable with
+`phpstan analyse --fix`:
+
+- `if ($values)` becomes `if (\\count($values) > 0)`.
+- `elseif (!$values)` becomes `elseif (\\count($values) === 0)`.
+
+A fix is offered **only** when PHPStan can prove the whole expression type is
+an array and the condition is a plain variable or its negation. The current
+diagnostics for unions, unknown types and known non-empty arrays remain
+read-only. Conversion of loose comparisons to strict comparisons is
+deliberately **not** automatically performed because it can change semantics.
+
+The package keeps `rules.neon` registration and supports PHPStan 2.1.56;
+older versions continue reporting the same errors without auto-fix metadata.
+Run `--fix` in a dedicated working branch and review the diff, then rerun
+PHPStan and the regression test suite. **Do not** enable `--fix` in a
+read-only reporting or approval workflow.
+
 ## Rules
 
 ### IfConditionHelper
