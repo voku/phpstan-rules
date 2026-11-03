@@ -17,3 +17,26 @@ function checkArrayTruthiness(array $values): void
         echo 'empty';
     }
 }
+
+/**
+ * Nullable arrays must never be rewritten to count(): count(null) is not equivalent.
+ *
+ * @param array<int, string>|null $maybe
+ */
+function checkNullableArray(?array $maybe): void
+{
+    if ($maybe) {
+        echo 'maybe non-empty';
+    }
+}
+
+/**
+ * A proven non-empty array already has a different diagnostic.
+ */
+function checkDefinitelyNonEmptyArray(): void
+{
+    $values = ['non-empty'];
+    if ($values) {
+        echo 'always true';
+    }
+}
