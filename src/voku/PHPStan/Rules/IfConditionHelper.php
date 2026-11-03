@@ -885,7 +885,9 @@ final class IfConditionHelper
 
         // A fix must only be offered when the complete inferred type is an array.
         // The existing diagnostics intentionally also inspect array members of unions.
-        $fixableArray = $type_1 !== null && $type_1->isArray()->yes();
+        $fixableArray = $type_1 !== null
+            && !($type_1 instanceof \PHPStan\Type\UnionType)
+            && $type_1->isArray()->yes();
 
         if ($type_1 instanceof \PHPStan\Type\UnionType) {
             $type_1 = $type_1->generalize(\PHPStan\Type\GeneralizePrecision::lessSpecific());
@@ -1418,7 +1420,7 @@ final class IfConditionHelper
 
     /**
      * Attach a semantics-preserving fix only for a plain array variable in if/elseif.
-     * PHPStan < 2.3.5 has no fixNode() API and keeps exactly the previous diagnostic.
+     * PHPStan < 2.3.5 has no removeNode() marker and keeps exactly the previous diagnostic.
      */
     private static function buildArrayTruthinessError(
         Node $origNode,
@@ -1428,7 +1430,7 @@ final class IfConditionHelper
     ): \PHPStan\Rules\RuleError {
         if (
             !$fixableArray
-            || !(new \ReflectionClass(\PHPStan\Rules\RuleErrorBuilder::class))->hasMethod('fixNode')
+            || !(new \ReflectionClass(\PHPStan\Rules\RuleErrorBuilder::class))->hasMethod('removeNode')
             || !($origNode instanceof Node\Stmt\If_ || $origNode instanceof Node\Stmt\ElseIf_)
             || !(
                 $cond instanceof Node\Expr\Variable
