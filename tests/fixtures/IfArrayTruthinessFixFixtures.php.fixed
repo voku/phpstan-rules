@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace voku\PHPStan\Rules\Test\fixtures;
+
+/**
+ * @param array<int, string> $values
+ */
+function checkArrayTruthiness(array $values): void
+{
+    if (\count($values) > 0) {
+        echo 'not empty';
+    }
+
+    if (\count($values) === 0) {
+        echo 'empty';
+    }
+}
