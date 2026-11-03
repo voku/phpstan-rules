@@ -71,7 +71,7 @@ jobs:
             if [[ "${{ matrix.php }}" == "7.4" ]]; then
               # PHP 7.4's current Xdebug coverage build intermittently segfaults (exit 139).
               # Keep the full compatibility test suite, without native coverage instrumentation.
-              XDEBUG_MODE=off php vendor/bin/phpunit -c phpunit.xml
+              XDEBUG_MODE=off php vendor/bin/phpunit -c phpunit.xml --debug
             else
               php vendor/bin/phpunit -c phpunit.xml --coverage-clover=build/logs/clover.xml
             fi
