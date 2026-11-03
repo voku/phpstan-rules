@@ -1,0 +1,53 @@
+name: PHP 7.4 baseline parity probe
+
+on:
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare-php74:
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 88 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [base, head]
+    steps:
+      - name: Checkout exact comparison SHA
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          ref: ${{ matrix.source == 'base' && github.event.pull_request.base.sha || github.event.pull_request.head.sha }}
+      - name: Configure PHP 7.4 without coverage
+        uses: shivammathur/setup-php@2.37.2
+        with:
+          php-version: '7.4'
+          coverage: none
+          extensions: zip
+          tools: composer
+      - name: Install exact PHPStan 2.1.56
+        run: |
+          composer require phpstan/phpstan:2.1.56 --no-update
+          composer update --prefer-dist --no-interaction
+          composer dump-autoload -o
+          php vendor/bin/phpstan --version
+      - name: Run isolated legacy elseif regression with heartbeat
+        run: |
+          set +e
+          (
+            XDEBUG_MODE=off timeout --signal=TERM --kill-after=5s 120s php vendor/bin/phpunit -c phpunit.xml --filter 'ElseIfConditionBasicRuleTest::testElseIfConditions' --debug
+          ) &
+          pid=$!
+          while kill -0 "$pid" 2>/dev/null; do
+            echo "PHP74 parity probe ${{ matrix.source }} heartbeat at $(date -u +%H:%M:%S)"
+            sleep 8
+          done
+          wait "$pid"
+          status=$?
+          echo "PHP74 parity probe ${{ matrix.source }} exit: $status"
+          exit "$status"
