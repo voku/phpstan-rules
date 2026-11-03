@@ -1428,7 +1428,7 @@ final class IfConditionHelper
     ): \PHPStan\Rules\RuleError {
         if (
             !$fixableArray
-            || \version_compare(\Composer\InstalledVersions::getVersion('phpstan/phpstan') ?? '0.0.0', '2.3.5', '<')
+            || !(new \ReflectionClass(\PHPStan\Rules\RuleErrorBuilder::class))->hasMethod('fixNode')
             || !($origNode instanceof Node\Stmt\If_ || $origNode instanceof Node\Stmt\ElseIf_)
             || !(
                 $cond instanceof Node\Expr\Variable
