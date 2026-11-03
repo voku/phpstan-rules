@@ -48,7 +48,7 @@ final class ElseIfConditionBasicRuleTest extends RuleTestCase
     public function testArrayTruthinessAutofix(): void
     {
         // The fix API is new in PHPStan 2.3.5; legacy analysis remains supported.
-        if (!\method_exists($this, 'fix')) {
+        if (\version_compare(\Composer\InstalledVersions::getVersion('phpstan/phpstan') ?? '0.0.0', '2.3.5', '<')) {
             static::markTestSkipped('PHPStan before 2.3.5 cannot execute rule fixes.');
         }
 
