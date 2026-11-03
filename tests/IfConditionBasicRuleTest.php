@@ -48,4 +48,17 @@ final class IfConditionBasicRuleTest extends RuleTestCase
             ]
         );
     }
+
+    public function testArrayTruthinessAutofix(): void
+    {
+        // The fix API is new in PHPStan 2.3.5; legacy analysis remains supported.
+        if (!\method_exists($this, 'fix')) {
+            static::markTestSkipped('PHPStan before 2.3.5 cannot execute rule fixes.');
+        }
+
+        $this->fix(
+            __DIR__ . '/fixtures/IfArrayTruthinessFixFixtures.php',
+            __DIR__ . '/fixtures/IfArrayTruthinessFixFixtures.php.fixed'
+        );
+    }
 }
