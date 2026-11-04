@@ -55,6 +55,10 @@ jobs:
             composer require phpstan/phpstan:2.1.56 --no-update
           fi;
 
+          if [[ "${{ matrix.php }}" == "8.4" ]]; then
+            composer require phpstan/phpstan:2.3.5 --no-update
+          fi;
+
           if [[ "${{ matrix.composer }}" == "basic" ]]; then
             composer update --prefer-dist --no-interaction
           fi;
@@ -64,7 +68,20 @@ jobs:
       - name: Run tests
         run: |
             mkdir -p build/logs
-            php vendor/bin/phpunit -c phpunit.xml --coverage-clover=build/logs/clover.xml
+            if [[ "${{ matrix.php }}" == "7.4" ]]; then
+              # PHP 7.4's current Xdebug coverage build intermittently segfaults (exit 139).
+              # Keep the full compatibility test suite, without native coverage instrumentation.
+              XDEBUG_MODE=off php vendor/bin/phpunit -c phpunit.xml --debug
+            else
+              php vendor/bin/phpunit -c phpunit.xml --coverage-clover=build/logs/clover.xml
+            fi
+
+      - name: Verify the tested PHPStan version
+        if: ${{ matrix.php == '8.4' }}
+        run: php vendor/bin/phpstan --version | grep -F '2.3.5'
+
+      - name: Check source files remain unchanged by tests
+        run: git diff --exit-code -- src/ tests/
 
       - name: Run phpstan
         if: ${{ matrix.php == '8.4' }}
@@ -72,6 +89,7 @@ jobs:
           php vendor/bin/phpstan analyse
 
       - name: Upload coverage results to Coveralls
+        if: ${{ matrix.php != '7.4' }}
         env:
             COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -79,6 +97,7 @@ jobs:
             php-coveralls --coverage_clover=build/logs/clover.xml -v
 
       - name: Upload coverage results to Codecov
+        if: ${{ matrix.php != '7.4' }}
         uses: codecov/codecov-action@v7
         with:
             files: build/logs/clover.xml

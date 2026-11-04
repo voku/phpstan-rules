@@ -1,6 +1,8 @@
 # Changelog
 
 ### Upcoming
+- support PHPStan 2.3.5 auto-fix for proven array-variable truthiness in `if` / `elseif`, preserving old diagnostics on PHPStan 2.1.56
+- pin the PHPStan 2.3.5 fixer test on PHP 8.4 and retain the PHP 7.4 / PHPStan 2.1.56 regression job
 - raise the supported PHPStan floor to 2.1.56 and exercise that exact lower bound in CI
 - restore clean self-analysis for the comparison policy, make PHPStan analysis blocking in CI, and propagate duplicate-native suppression through ternary, match, switch and boolean condition rules
 - propagate `checkYodaConditions` to ternary, match and switch rules, and fix definite array/non-array checks in binary and assignment operators

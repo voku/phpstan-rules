@@ -117,7 +117,8 @@ final class IfConditionHelper
         Node                $origNode,
         ?ReflectionProvider $reflectionProvider = null,
         bool                $checkForAssignments = false,
-        bool                $checkYodaConditions = false
+        bool                $checkYodaConditions = false,
+        ?Scope              $scope = null
     ): array
     {
         static $nodeFinder = null;
@@ -134,7 +135,7 @@ final class IfConditionHelper
 
         // -----------------------------------------------------------------------------------------
 
-        self::processCheckOnArray($type_1, $cond, $errors, $origNode);
+        self::processCheckOnArray($type_1, $cond, $errors, $origNode, $scope);
 
         // -----------------------------------------------------------------------------------------
 
@@ -870,7 +871,8 @@ final class IfConditionHelper
         ?\PHPStan\Type\Type $type_1,
         Node                $cond,
         array               &$errors,
-        Node $origNode
+        Node $origNode,
+        ?Scope $scope
     ): void
     {
         if (
@@ -883,6 +885,19 @@ final class IfConditionHelper
             return;
         }
 
+        // A fix must only be offered when the complete inferred type is an array.
+        // The existing diagnostics intentionally also inspect array members of unions.
+        $variable = $cond instanceof Node\Expr\BooleanNot ? $cond->expr : $cond;
+        $fixableArray = $scope !== null
+            && $variable instanceof Node\Expr\Variable
+            && \is_string($variable->name)
+            && $scope->hasVariableType($variable->name)->yes()
+            && $cond->getComments() === []
+            && $variable->getComments() === []
+            && $type_1 !== null
+            && !($type_1 instanceof \PHPStan\Type\UnionType)
+            && $type_1->isArray()->yes();
+
         if ($type_1 instanceof \PHPStan\Type\UnionType) {
             $type_1 = $type_1->generalize(\PHPStan\Type\GeneralizePrecision::lessSpecific());
         }
@@ -894,13 +909,13 @@ final class IfConditionHelper
         $arrayTypes = $type_1->getArrays();
         if ($arrayTypes !== []) {
             foreach ($arrayTypes as $type_1_inner) {
-                $errors = self::checkOnArrayInner($type_1_inner, $origNode, $cond, $errors);
+                $errors = self::checkOnArrayInner($type_1_inner, $origNode, $cond, $errors, $fixableArray);
             }
 
             return;
         }
 
-        $errors = self::checkOnArrayInner($type_1, $origNode, $cond, $errors);
+        $errors = self::checkOnArrayInner($type_1, $origNode, $cond, $errors, $fixableArray);
     }
 
     /**
@@ -1383,7 +1398,7 @@ final class IfConditionHelper
      * @param array<int, \PHPStan\Rules\RuleError> $errors
      * @return array<int, \PHPStan\Rules\RuleError>
      */
-    private static function checkOnArrayInner(?\PHPStan\Type\Type $type_1, Node $origNode, Node $cond, array $errors): array
+    private static function checkOnArrayInner(?\PHPStan\Type\Type $type_1, Node $origNode, Node $cond, array $errors, bool $fixableArray = false): array
     {
         if (!$type_1) {
             return $errors;
@@ -1393,12 +1408,72 @@ final class IfConditionHelper
             if ($type_1->isIterableAtLeastOnce()->yes()) {
                 $errors[] = self::buildErrorMessage($origNode, 'Non-empty array is never empty.', $cond->getAttribute('startLine'));
             } elseif ($cond instanceof Node\Expr\BooleanNot) {
-                $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) === 0` instead of `!$foo`.', $cond->getAttribute('startLine'));
+                $errors[] = self::buildArrayTruthinessError(
+                    $origNode,
+                    $cond,
+                    'Use a function e.g. `count($foo) === 0` instead of `!$foo`.',
+                    $fixableArray
+                );
             } else {
-                $errors[] = self::buildErrorMessage($origNode, 'Use a function e.g. `count($foo) > 0` instead of `$foo`.', $cond->getAttribute('startLine'));
+                $errors[] = self::buildArrayTruthinessError(
+                    $origNode,
+                    $cond,
+                    'Use a function e.g. `count($foo) > 0` instead of `$foo`.',
+                    $fixableArray
+                );
             }
         }
 
         return $errors;
     }
+
+    /**
+     * Attach a semantics-preserving fix only for a plain array variable in if/elseif.
+     * PHPStan < 2.3.5 has no removeNode() marker and keeps exactly the previous diagnostic.
+     */
+    private static function buildArrayTruthinessError(
+        Node $origNode,
+        Node $cond,
+        string $message,
+        bool $fixableArray
+    ): \PHPStan\Rules\RuleError {
+        if (
+            !$fixableArray
+            || !(new \ReflectionClass(\PHPStan\Rules\RuleErrorBuilder::class))->hasMethod('removeNode')
+            || !($origNode instanceof Node\Stmt\If_ || $origNode instanceof Node\Stmt\ElseIf_)
+            || !(
+                $cond instanceof Node\Expr\Variable
+                || (
+                    $cond instanceof Node\Expr\BooleanNot
+                    && $cond->expr instanceof Node\Expr\Variable
+                )
+            )
+        ) {
+            return self::buildErrorMessage($origNode, $message, $cond->getStartLine());
+        }
+
+        $nodeName = $origNode instanceof Node\Stmt\If_ ? 'If_' : 'ElseIf_';
+
+        return \PHPStan\Rules\RuleErrorBuilder::message($nodeName . ': ' . $message)
+            ->line($cond->getStartLine())
+            ->identifier('voku.' . \str_replace('_', '', $nodeName))
+            ->fixNode(
+                $cond,
+                static function (Node\Expr $expression): Node\Expr {
+                    $negated = $expression instanceof Node\Expr\BooleanNot;
+                    $variable = $negated ? $expression->expr : $expression;
+                    $countCall = new Node\Expr\FuncCall(
+                        new Node\Name\FullyQualified('count'),
+                        [new Node\Arg($variable)]
+                    );
+                    $zero = new Node\Scalar\LNumber(0);
+
+                    return $negated
+                        ? new Node\Expr\BinaryOp\Identical($countCall, $zero)
+                        : new Node\Expr\BinaryOp\Greater($countCall, $zero);
+                }
+            )
+            ->build();
+    }
+
 }
