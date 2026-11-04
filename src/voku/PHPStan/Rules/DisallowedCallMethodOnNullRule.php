@@ -29,11 +29,7 @@ use function count;
  */
 final class DisallowedCallMethodOnNullRule implements Rule
 {
-
-    /**
-     * @var ReflectionProvider
-     */
-    private $reflectionProvider;
+    private ReflectionProvider $reflectionProvider;
 
     public function __construct(ReflectionProvider $reflectionProvider)
     {

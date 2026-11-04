@@ -18,20 +18,11 @@ use function sprintf;
  */
 final class ExtendedAssignOpRuleDiagnostics
 {
-    /**
-     * @var bool
-     */
-    private $checkForAssignments;
+    private bool $checkForAssignments;
 
-    /**
-     * @var bool
-     */
-    private $checkYodaConditions;
+    private bool $checkYodaConditions;
 
-    /**
-     * @var ReflectionProvider
-     */
-    private $reflectionProvider;
+    private ReflectionProvider $reflectionProvider;
 
     public function __construct(
         ReflectionProvider $reflectionProvider,

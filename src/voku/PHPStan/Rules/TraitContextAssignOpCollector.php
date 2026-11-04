@@ -25,10 +25,7 @@ use PHPStan\Rules\LineRuleError;
  */
 final class TraitContextAssignOpCollector implements Collector
 {
-    /**
-     * @var ExtendedAssignOpRuleDiagnostics
-     */
-    private $diagnostics;
+    private ExtendedAssignOpRuleDiagnostics $diagnostics;
 
     public function __construct(
         ReflectionProvider $reflectionProvider,

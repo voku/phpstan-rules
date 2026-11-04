@@ -27,10 +27,7 @@ final class RuleConfigurationTest extends RuleTestCase
 {
     private const FIXTURE = __DIR__ . '/fixtures/ConfigurableChecksFixtures.php';
 
-    /**
-     * @var Rule|null
-     */
-    private $ruleUnderTest;
+    private ?Rule $ruleUnderTest;
 
     protected function getRule(): Rule
     {

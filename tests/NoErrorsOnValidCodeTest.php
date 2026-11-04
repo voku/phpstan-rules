@@ -34,10 +34,7 @@ use voku\PHPStan\Rules\WrongCastRule;
  */
 final class NoErrorsOnValidCodeTest extends RuleTestCase
 {
-    /**
-     * @var Rule|null
-     */
-    private $ruleUnderTest;
+    private ?Rule $ruleUnderTest;
 
     protected function getRule(): Rule
     {

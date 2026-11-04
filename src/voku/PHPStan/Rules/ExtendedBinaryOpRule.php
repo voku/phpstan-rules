@@ -13,10 +13,7 @@ use PHPStan\Rules\Rule;
  */
 class ExtendedBinaryOpRule implements Rule
 {
-    /**
-     * @var ExtendedBinaryOpRuleDiagnostics|null
-     */
-    private $diagnostics;
+    private ?ExtendedBinaryOpRuleDiagnostics $diagnostics;
 
     public function getNodeType(): string
     {

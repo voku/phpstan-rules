@@ -9,5 +9,5 @@ final class StringTraitConsumer
     use LooseComparisonTrait;
 
     /** @var string */
-    private $value = 'value';
+    private string $value = 'value';
 }

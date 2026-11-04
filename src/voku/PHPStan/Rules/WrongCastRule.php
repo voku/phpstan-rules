@@ -23,7 +23,7 @@ class WrongCastRule implements Rule
     /**
      * @var array<int, class-string>
      */
-    private $classesForCheckStringToIntCast;
+    private array $classesForCheckStringToIntCast;
 
     /**
      * @param array<int, class-string> $classesForCheckStringToIntCast

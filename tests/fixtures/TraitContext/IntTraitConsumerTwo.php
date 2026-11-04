@@ -9,5 +9,5 @@ final class IntTraitConsumerTwo
     use LooseComparisonTrait;
 
     /** @var int */
-    private $value = 2;
+    private int $value = 2;
 }

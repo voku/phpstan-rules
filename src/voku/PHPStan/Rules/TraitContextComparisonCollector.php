@@ -25,15 +25,9 @@ use PHPStan\Rules\LineRuleError;
  */
 final class TraitContextComparisonCollector implements Collector
 {
-    /**
-     * @var IfConditionRuleDiagnostics
-     */
-    private $ifConditionDiagnostics;
+    private IfConditionRuleDiagnostics $ifConditionDiagnostics;
 
-    /**
-     * @var ExtendedBinaryOpRuleDiagnostics
-     */
-    private $extendedBinaryOpDiagnostics;
+    private ExtendedBinaryOpRuleDiagnostics $extendedBinaryOpDiagnostics;
 
     /**
      * @param array<int, class-string> $classesNotInIfConditions

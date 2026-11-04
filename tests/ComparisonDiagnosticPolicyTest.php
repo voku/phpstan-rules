@@ -22,10 +22,7 @@ final class ComparisonDiagnosticPolicyTest extends RuleTestCase
     private const COMPARISON_FIXTURE = __DIR__ . '/fixtures/ComparisonDiagnosticPolicyFixtures.php';
     private const MATCH_FIXTURE = __DIR__ . '/fixtures/ComparisonDiagnosticPolicyMatchFixtures.php';
 
-    /**
-     * @var Rule|null
-     */
-    private $ruleUnderTest;
+    private ?Rule $ruleUnderTest;
 
     protected function getRule(): Rule
     {

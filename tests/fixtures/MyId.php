@@ -3,7 +3,7 @@
 namespace voku\PHPStan\Rules\Test\fixtures;
 
 final class MyId implements \Stringable {
-    private $value;
+    private string $value;
 
     final public function __construct(string $value) {
         $this->value = $value;

@@ -14,10 +14,7 @@ use PHPStan\Rules\Rule;
  */
 final class IfConditionRule implements Rule
 {
-    /**
-     * @var IfConditionRuleDiagnostics
-     */
-    private $diagnostics;
+    private IfConditionRuleDiagnostics $diagnostics;
 
     /**
      * @param array<int, class-string> $classesNotInIfConditions

@@ -14,10 +14,7 @@ use PHPStan\Rules\Rule;
  */
 class ExtendedAssignOpRule implements Rule
 {
-    /**
-     * @var ExtendedAssignOpRuleDiagnostics
-     */
-    private $diagnostics;
+    private ExtendedAssignOpRuleDiagnostics $diagnostics;
 
     public function __construct(
         ReflectionProvider $reflectionProvider,

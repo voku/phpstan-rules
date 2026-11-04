@@ -17,37 +17,19 @@ final class IfConditionBooleanNotRule implements Rule
     /**
      * @var array<int, class-string>
      */
-    private $classesNotInIfConditions;
+    private array $classesNotInIfConditions;
 
-    /**
-     * @var bool
-     */
-    private $checkForAssignments;
+    private bool $checkForAssignments;
 
-    /**
-     * @var bool
-     */
-    private $checkYodaConditions;
+    private bool $checkYodaConditions;
 
-    /**
-     * @var null|ReflectionProvider
-     */
-    private $reflectionProvider;
+    private ?ReflectionProvider $reflectionProvider;
 
-    /**
-     * @var bool
-     */
-    private $reportDuplicateNativeComparisons;
+    private bool $reportDuplicateNativeComparisons;
 
-    /**
-     * @var bool
-     */
-    private $reportAlwaysTrueInLastCondition;
+    private bool $reportAlwaysTrueInLastCondition;
 
-    /**
-     * @var bool
-     */
-    private $treatPhpDocTypesAsCertain;
+    private bool $treatPhpDocTypesAsCertain;
 
     /**
      * @param array<int, class-string> $classesNotInIfConditions

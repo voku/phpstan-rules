@@ -24,10 +24,7 @@ final class Vpr8YodaConfigurationTest extends RuleTestCase
 
     private const SWITCH_FIXTURE = __DIR__ . '/fixtures/Vpr8SwitchFixture.php';
 
-    /**
-     * @var Rule|null
-     */
-    private $ruleUnderTest;
+    private ?Rule $ruleUnderTest;
 
     protected function getRule(): Rule
     {
