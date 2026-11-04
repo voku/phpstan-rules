@@ -80,7 +80,8 @@ final class IfConditionBasicRule implements Rule
                 $node,
                 $this->reflectionProvider,
                 $this->checkForAssignments,
-                $this->checkYodaConditions
+                $this->checkYodaConditions,
+                $scope
             );
         }
         
@@ -97,7 +98,8 @@ final class IfConditionBasicRule implements Rule
             $node,
             $this->reflectionProvider,
             $this->checkForAssignments,
-            $this->checkYodaConditions
+            $this->checkYodaConditions,
+            $scope
         );
     }
 }

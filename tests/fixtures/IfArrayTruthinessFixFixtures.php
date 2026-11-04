@@ -16,6 +16,10 @@ function checkArrayTruthiness(array $values): void
     if (!$values) {
         echo 'empty';
     }
+
+    if (! /* keep this comment */ $values) {
+        echo 'empty with comment';
+    }
 }
 
 /**
@@ -38,5 +42,20 @@ function checkDefinitelyNonEmptyArray(): void
     $values = ['non-empty'];
     if ($values) {
         echo 'always true';
+    }
+}
+
+/** @param array<int, string> $input */
+function checkPossiblyUndefinedArray(bool $flag, array $input): void
+{
+    if ($flag) {
+        $positive = $input;
+        $negative = $input;
+    }
+    if ($positive) {
+        echo 'positive';
+    }
+    if (!$negative) {
+        echo 'negative';
     }
 }

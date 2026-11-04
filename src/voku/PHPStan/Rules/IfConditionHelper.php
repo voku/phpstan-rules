@@ -117,7 +117,8 @@ final class IfConditionHelper
         Node                $origNode,
         ?ReflectionProvider $reflectionProvider = null,
         bool                $checkForAssignments = false,
-        bool                $checkYodaConditions = false
+        bool                $checkYodaConditions = false,
+        ?Scope              $scope = null
     ): array
     {
         static $nodeFinder = null;
@@ -134,7 +135,7 @@ final class IfConditionHelper
 
         // -----------------------------------------------------------------------------------------
 
-        self::processCheckOnArray($type_1, $cond, $errors, $origNode);
+        self::processCheckOnArray($type_1, $cond, $errors, $origNode, $scope);
 
         // -----------------------------------------------------------------------------------------
 
@@ -870,7 +871,8 @@ final class IfConditionHelper
         ?\PHPStan\Type\Type $type_1,
         Node                $cond,
         array               &$errors,
-        Node $origNode
+        Node $origNode,
+        ?Scope $scope
     ): void
     {
         if (
@@ -885,7 +887,14 @@ final class IfConditionHelper
 
         // A fix must only be offered when the complete inferred type is an array.
         // The existing diagnostics intentionally also inspect array members of unions.
-        $fixableArray = $type_1 !== null
+        $variable = $cond instanceof Node\Expr\BooleanNot ? $cond->expr : $cond;
+        $fixableArray = $scope !== null
+            && $variable instanceof Node\Expr\Variable
+            && \is_string($variable->name)
+            && $scope->hasVariableType($variable->name)->yes()
+            && $cond->getComments() === []
+            && $variable->getComments() === []
+            && $type_1 !== null
             && !($type_1 instanceof \PHPStan\Type\UnionType)
             && $type_1->isArray()->yes();
 

@@ -40,7 +40,8 @@ On PHPStan 2.3.5+, selected array-condition diagnostics from
 - `elseif (!$values)` becomes `elseif (\count($values) === 0)`.
 
 A fix is offered **only** when PHPStan can prove the whole expression type is
-an array and the condition is a plain variable or its negation. The current
+an array and the condition is a definitely defined, plain named variable or its
+negation. Conditions with comments on the expression remain unchanged. The current
 diagnostics for unions, unknown types and known non-empty arrays remain
 read-only. Conversion of loose comparisons to strict comparisons is
 deliberately **not** automatically performed because it can change semantics.

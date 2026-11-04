@@ -21,3 +21,27 @@ function checkElseIfArrayTruthiness(array $values, bool $check): void
         echo 'empty';
     }
 }
+
+/** @param array<int, string> $input */
+function checkElseIfUnsafeFixes(bool $flag, bool $other, array $input): void
+{
+    if ($flag) {
+        $positive = $input;
+        $negative = $input;
+    }
+    if ($other) {
+        echo 'first';
+    } elseif ($positive) {
+        echo 'positive';
+    }
+    if ($other) {
+        echo 'first';
+    } elseif (!$negative) {
+        echo 'negative';
+    }
+    if ($other) {
+        echo 'first';
+    } elseif (! /* keep this comment */ $input) {
+        echo 'comment';
+    }
+}
