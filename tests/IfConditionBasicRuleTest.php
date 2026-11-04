@@ -48,4 +48,34 @@ final class IfConditionBasicRuleTest extends RuleTestCase
             ]
         );
     }
+
+    public function testArrayTruthinessAutofix(): void
+    {
+        // The fix API is new in PHPStan 2.3.5; legacy analysis remains supported.
+        if (!\method_exists(\PHPStan\Rules\RuleErrorBuilder::class, 'removeNode')) {
+            static::markTestSkipped('PHPStan before 2.3.5 cannot execute rule fixes.');
+        }
+
+        $this->fix(
+            __DIR__ . '/fixtures/IfArrayTruthinessFixFixtures.php',
+            __DIR__ . '/fixtures/IfArrayTruthinessFixFixtures.php.fixed'
+        );
+    }
+
+    public function testArrayOnlyUnionIsNeverMarkedFixable(): void
+    {
+        if (!\method_exists(\PHPStan\Rules\RuleErrorBuilder::class, 'removeNode')) {
+            static::markTestSkipped('Fixability metadata requires PHPStan 2.3.5.');
+        }
+
+        $errors = $this->gatherAnalyserErrors([
+            __DIR__ . '/fixtures/IfArrayUnionFixFixtures.php',
+        ]);
+        static::assertNotEmpty($errors, 'The union fixture must actually trigger our array diagnostic.');
+
+        foreach ($errors as $error) {
+            static::assertStringStartsWith('If_:', $error->getMessage());
+            static::assertFalse($error->isFixable(), 'Union-of-arrays conditions must remain advisory.');
+        }
+    }
 }

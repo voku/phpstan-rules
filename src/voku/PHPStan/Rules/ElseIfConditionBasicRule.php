@@ -71,7 +71,8 @@ final class ElseIfConditionBasicRule implements Rule
                 $node,
                 $this->reflectionProvider,
                 $this->checkForAssignments,
-                $this->checkYodaConditions
+                $this->checkYodaConditions,
+                $scope
             );
         }
         
@@ -88,7 +89,8 @@ final class ElseIfConditionBasicRule implements Rule
             $node,
             $this->reflectionProvider,
             $this->checkForAssignments,
-            $this->checkYodaConditions
+            $this->checkYodaConditions,
+            $scope
         );
     }
 }
